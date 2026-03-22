@@ -78,7 +78,7 @@ function KanbanCardBody({
   );
 }
 
-export function KanbanCard({ row, fields, viewConfig, collectionId, isDragging }: KanbanCardProps) {
+function KanbanCardComponent({ row, fields, viewConfig, collectionId, isDragging }: KanbanCardProps) {
   const openRow = useAppStore((s) => s.openRow);
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging: sortableDragging } =
     useSortable({ id: row.id });
@@ -116,6 +116,7 @@ export function KanbanCard({ row, fields, viewConfig, collectionId, isDragging }
 }
 
 export const KanbanCard = memo(KanbanCardComponent);
+KanbanCard.displayName = 'KanbanCard';
 
 export function KanbanCardDragPreview({ row, fields, viewConfig, collectionId }: KanbanCardProps) {
   const openRow = useAppStore((s) => s.openRow);

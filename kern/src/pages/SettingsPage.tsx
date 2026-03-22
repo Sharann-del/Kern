@@ -6,6 +6,8 @@ import { useEffect, useId, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { FunctionsHttpError } from '@supabase/supabase-js';
+
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
@@ -289,6 +291,7 @@ function IntegrationsTab() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [testOk, setTestOk] = useState<string | null>(null);
   const [testErr, setTestErr] = useState<string | null>(null);
+  const [testToolsJson, setTestToolsJson] = useState<string | null>(null);
   const [testing, setTesting] = useState(false);
 
   const copyUrl = () => {
@@ -317,38 +320,55 @@ function IntegrationsTab() {
   };
 
   const testConnection = async () => {
-    if (!mcpUrl || !accessToken) {
-      toast.error('Generate a token first.');
+    if (!mcpUrl) {
+      toast.error('Supabase URL is not configured.');
+      return;
+    }
+    const { data: sessionData, error: sessionErr } = await supabase.auth.getSession();
+    if (sessionErr || !sessionData.session?.access_token) {
+      toast.error('No active session');
       return;
     }
     setTesting(true);
     setTestOk(null);
     setTestErr(null);
+    setTestToolsJson(null);
     try {
-      const res = await fetch(mcpUrl, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ method: 'tools/list' }),
-      });
-      const text = await res.text();
-      let json: unknown;
-      try {
-        json = JSON.parse(text) as unknown;
-      } catch {
-        json = null;
-      }
-      if (!res.ok) {
-        setTestErr(text.slice(0, 200) || res.statusText);
+      // Refresh so the access token is valid at the Edge gateway (expired JWT → 401 "Invalid JWT" from Kong).
+      const { data: refreshed } = await supabase.auth.refreshSession();
+      const accessToken = refreshed.session?.access_token ?? sessionData.session.access_token;
+      if (!accessToken) {
+        toast.error('Session expired. Sign in again.');
         return;
       }
+      // Explicit Authorization avoids a race where invoke reads a stale token from storage.
+      const { data, error: fnError } = await supabase.functions.invoke('kern-mcp', {
+        body: { method: 'tools/list' },
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (fnError) {
+        if (fnError instanceof FunctionsHttpError && fnError.context instanceof Response) {
+          const res = fnError.context;
+          const snippet = await res
+            .clone()
+            .text()
+            .then((t) => (t ? t.slice(0, 400) : ''))
+            .catch(() => '');
+          setTestErr(
+            snippet ? `HTTP ${res.status}: ${snippet}` : `HTTP ${res.status} (${fnError.message})`
+          );
+        } else {
+          setTestErr(fnError.message || 'Function request failed');
+        }
+        return;
+      }
+      const json = data as unknown;
       const o = json && typeof json === 'object' ? (json as Record<string, unknown>) : {};
       const result = o.result && typeof o.result === 'object' ? (o.result as Record<string, unknown>) : {};
       const tools = result.tools;
       const n = Array.isArray(tools) ? tools.length : 0;
       setTestOk(`Connected! ${n} tools available`);
+      setTestToolsJson(Array.isArray(tools) ? JSON.stringify(tools, null, 2) : JSON.stringify(result, null, 2));
     } catch (e) {
       setTestErr(e instanceof Error ? e.message : 'Request failed');
     } finally {
@@ -412,12 +432,58 @@ function IntegrationsTab() {
           />
         </Collapsible.Trigger>
         <Collapsible.Content className="overflow-hidden pt-1">
-          <ol className="mt-3 list-decimal space-y-2 pl-5 text-sm text-kern-text-2">
-            <li>Copy the MCP Server URL above</li>
-            <li>In Claude.ai → Settings → Integrations → Add MCP server</li>
-            <li>Paste the URL and set your Auth Token as the Bearer token</li>
-            <li>Test: ask Claude &quot;What collections do I have in Kern?&quot;</li>
-          </ol>
+          <p className="mt-3 text-sm text-kern-text-2">
+            The hosted URL speaks MCP Streamable HTTP (JSON-RPC{' '}
+            <code className="font-mono text-xs">initialize</code>,{' '}
+            <code className="font-mono text-xs">tools/list</code>,{' '}
+            <code className="font-mono text-xs">tools/call</code>) and still supports the simple{' '}
+            <code className="font-mono text-xs">POST {'{'} method: &quot;tools/list&quot; {'}'}</code> shape used by
+            Test connection.
+          </p>
+          <p className="mt-3 text-sm font-medium text-kern-text">Claude Desktop / Claude Code (remote URL)</p>
+          <p className="mt-2 text-sm text-kern-text-2">
+            Supabase requires two headers on every request. Use{' '}
+            <code className="font-mono text-xs">npx mcp-remote</code> with your MCP URL plus{' '}
+            <code className="font-mono text-xs">--header</code> lines (put secrets in{' '}
+            <code className="font-mono text-xs">env</code>, not in args, if your client mangles spaces):
+          </p>
+          <p className="mt-2 text-sm text-amber-800 dark:text-amber-200">
+            In <code className="font-mono text-xs">--header</code> values, use only{' '}
+            <code className="font-mono text-xs">{'${KERN_ANON}'}</code> and{' '}
+            <code className="font-mono text-xs">{'${KERN_AUTH}'}</code> — not{' '}
+            <code className="font-mono text-xs">{'${eyJ...}'}</code>. Otherwise mcp-remote treats the JWT
+            as an env var name and sends no headers.
+          </p>
+          <pre className="mt-2 max-h-64 overflow-auto rounded-kern-md border border-kern-border bg-kern-surface-2 p-3 font-mono text-xs text-kern-text">
+            {`{
+  "mcpServers": {
+    "kern": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "YOUR_MCP_URL_FROM_ABOVE",
+        "--header",
+        "apikey:\${KERN_ANON}",
+        "--header",
+        "Authorization:\${KERN_AUTH}"
+      ],
+      "env": {
+        "KERN_ANON": "paste_supabase_anon_key_only",
+        "KERN_AUTH": "Bearer paste_user_access_token_only"
+      }
+    }
+  }
+}`}
+          </pre>
+          <p className="mt-2 text-sm text-kern-text-2">
+            Regenerate the access token here when tools return 401. Keep{' '}
+            <code className="font-mono text-xs">SERVICE_ROLE_KEY</code> set in Supabase for data tools.
+          </p>
+          <p className="mt-3 text-sm text-kern-text-2">
+            Optional: local stdio bridge <code className="font-mono text-xs">scripts/kern-mcp-bridge.mjs</code>{' '}
+            if your client cannot set custom headers on a remote server.
+          </p>
         </Collapsible.Content>
       </Collapsible.Root>
 
@@ -433,6 +499,11 @@ function IntegrationsTab() {
         </Button>
         {testOk ? <p className="text-sm text-emerald-600 dark:text-emerald-400">✓ {testOk}</p> : null}
         {testErr ? <p className="text-sm text-kern-danger">✗ Connection failed: {testErr}</p> : null}
+        {testToolsJson ? (
+          <pre className="max-h-96 overflow-auto rounded-kern-md border border-kern-border bg-kern-surface-2 p-4 font-mono text-xs text-kern-text">
+            {testToolsJson}
+          </pre>
+        ) : null}
       </div>
     </div>
   );
