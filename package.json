@@ -1,0 +1,10 @@
+{
+  "name": "kern-repo",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix kern run dev",
+    "build": "npm --prefix kern run build",
+    "lint": "npm --prefix kern run lint",
+    "preview": "npm --prefix kern run preview"
+  }
+}

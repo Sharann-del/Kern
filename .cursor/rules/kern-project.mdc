@@ -1,0 +1,27 @@
+---
+description: Kern PRD, Phases task order, stack, and DB migration + types rule
+alwaysApply: true
+---
+
+# Kern — project rules
+
+## Sources of truth
+
+- **Product & technical spec:** [Kern PRD.md](../../Kern%20PRD.md). Entry point for agents: [KERN_PRD_SPEC.md](../../KERN_PRD_SPEC.md) (points at the PRD).
+- **Build plan & prompts:** [Phases.md](../../Phases.md). Implement tasks in dependency order (Phase 1: tasks 1.1 through 1.16 unless directed otherwise).
+
+## Stack
+
+Match the PRD: React 18+, Vite 5+, TypeScript (`strict: true`), Tailwind, Radix UI, TanStack Query v5, TanStack Table, Zustand, React Router v6, Supabase JS v2, cmdk, and other listed libraries. Do not add packages without explicit approval.
+
+## Database
+
+When the schema changes: add migrations **and** regenerate the typed Supabase client / shared DB types **in the same task**, per Phases.md. Follow RLS policies and table definitions from the PRD.
+
+## Environment
+
+Use `.env.example` and placeholders in docs; never commit real secrets. State whether Supabase is **local** (`supabase start`) or **remote** when running tasks that depend on URLs/keys.
+
+## Session handoff
+
+Prefix task prompts with the template in [SESSION_OPENER.md](../../SESSION_OPENER.md) (task id, last completed task, environment notes).
