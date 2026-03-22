@@ -637,7 +637,7 @@ export function RowEditorPanel() {
 
   useEffect(() => {
     if (!visible) return;
-    const onKey = (e: KeyboardEvent) => {
+    const onKey = (e: WindowEventMap['keydown']) => {
       if (e.key === 'Escape') {
         e.preventDefault();
         closeRow();
