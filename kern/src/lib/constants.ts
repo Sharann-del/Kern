@@ -51,6 +51,7 @@ export const DEFAULT_VIEW_CONFIG: ViewConfig = {
   calendar_date_field: null,
   gallery_cover_field: null,
   gallery_card_fields: [],
+  gallery_card_size: 'medium',
   table_column_widths: {},
   kanban_collapsed_columns: [],
 };

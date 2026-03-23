@@ -78,6 +78,7 @@ export function CollectionHeader({
         open={connectLiveOpen}
         onOpenChange={setConnectLiveOpen}
         collectionId={collection.id}
+        collection={collection}
       />
 
       <div className="flex h-10 items-center border-b border-kern-border px-4">

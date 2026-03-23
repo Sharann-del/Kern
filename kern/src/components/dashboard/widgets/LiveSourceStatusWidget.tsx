@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import { useCollectionById } from '@/hooks/useCollections';
 import { describeFunctionsInvokeError } from '@/lib/functions-invoke';
+import { edgeFunctionForLiveSource } from '@/lib/live-source-sync';
 import { invokeAuthedEdgeFunction } from '@/lib/supabase-functions';
 import type { LiveSourceType, SyncStatus } from '@/types/kern';
 
@@ -52,11 +53,11 @@ export function LiveSourceStatusWidget({ config }: LiveSourceStatusWidgetProps) 
   const [syncing, setSyncing] = useState(false);
 
   const handleSync = async () => {
-    const t = collection?.live_source_type;
-    if (!t?.startsWith('github_')) return;
+    const fn = edgeFunctionForLiveSource(collection?.live_source_type);
+    if (!fn) return;
     setSyncing(true);
     try {
-      const { error, response } = await invokeAuthedEdgeFunction<unknown>('sync-github', {
+      const { error, response } = await invokeAuthedEdgeFunction<unknown>(fn, {
         body: { collection_id: config.collection_id },
       });
       if (error) {

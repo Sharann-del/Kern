@@ -1,14 +1,17 @@
-import { Calendar, CircleDot, FileText, Github, Rss, Zap } from 'lucide-react';
+import { Calendar, Check, CircleDot, FileText, Github, Rss, Zap } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { GitHubSourceConfig } from '@/components/live-sources/sources/GitHubSourceConfig';
+import { GoogleCalendarSourceConfig } from '@/components/live-sources/sources/GoogleCalendarSourceConfig';
+import { RSSSourceConfig } from '@/components/live-sources/sources/RSSSourceConfig';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useCreateCollection } from '@/hooks/useCollections';
 import { slugify } from '@/lib/utils';
 import { useAuth } from '@/providers/AuthProvider';
+import type { KernCollection } from '@/types/kern';
 
 type LiveSourceId = 'github' | 'google_calendar' | 'notion' | 'linear' | 'rss' | 'akiflow';
 
@@ -58,14 +61,36 @@ const SOURCES: {
 
 type Screen = 'create-collection' | 'pick-source' | 'configure';
 
+function isSourceConnected(sourceId: LiveSourceId, col: KernCollection | null | undefined): boolean {
+  if (!col?.is_live_source || !col.live_source_type) return false;
+  const t = col.live_source_type;
+  switch (sourceId) {
+    case 'github':
+      return t.startsWith('github_');
+    case 'google_calendar':
+      return t === 'google_calendar_events';
+    case 'rss':
+      return t === 'rss_feed';
+    default:
+      return false;
+  }
+}
+
 export type ConnectLiveSourceModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** When omitted, the modal asks for a new collection name first. */
   collectionId?: string;
+  /** When connecting from a collection page, pass the collection to show “Connected” on matching sources. */
+  collection?: KernCollection | null;
 };
 
-export function ConnectLiveSourceModal({ open, onOpenChange, collectionId: collectionIdProp }: ConnectLiveSourceModalProps) {
+export function ConnectLiveSourceModal({
+  open,
+  onOpenChange,
+  collectionId: collectionIdProp,
+  collection: collectionProp,
+}: ConnectLiveSourceModalProps) {
   const { user } = useAuth();
   const userId = user?.id;
   const queryClient = useQueryClient();
@@ -76,9 +101,12 @@ export function ConnectLiveSourceModal({ open, onOpenChange, collectionId: colle
   const [selectedSource, setSelectedSource] = useState<LiveSourceId | null>(null);
   const [newCollectionName, setNewCollectionName] = useState('');
 
-  const handleGithubSuccess = useCallback(() => {
+  const handleConnectSuccess = useCallback(() => {
     if (userId) void queryClient.invalidateQueries({ queryKey: ['collections', userId] });
     if (activeCollectionId) void queryClient.invalidateQueries({ queryKey: ['rows', activeCollectionId] });
+    if (activeCollectionId && userId) {
+      void queryClient.invalidateQueries({ queryKey: ['collectionById', activeCollectionId, userId] });
+    }
     onOpenChange(false);
   }, [activeCollectionId, onOpenChange, queryClient, userId]);
 
@@ -146,16 +174,23 @@ export function ConnectLiveSourceModal({ open, onOpenChange, collectionId: colle
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {SOURCES.map((s) => {
               const Icon = s.icon;
+              const connected = collectionIdProp ? isSourceConnected(s.id, collectionProp ?? undefined) : false;
               return (
                 <button
                   key={s.id}
                   type="button"
-                  className="flex flex-col items-start gap-2 rounded-kern-lg border border-kern-border bg-kern-bg p-4 text-left transition hover:border-kern-accent hover:bg-kern-surface-2"
+                  className="relative flex flex-col items-start gap-2 rounded-kern-lg border border-kern-border bg-kern-bg p-4 text-left transition hover:border-kern-accent hover:bg-kern-surface-2"
                   onClick={() => {
                     setSelectedSource(s.id);
                     setScreen('configure');
                   }}
                 >
+                  {connected ? (
+                    <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-400">
+                      <Check className="h-3 w-3" aria-hidden />
+                      Connected
+                    </span>
+                  ) : null}
                   <Icon className="h-5 w-5 text-kern-text" aria-hidden />
                   <span className="text-sm font-medium text-kern-text">{s.name}</span>
                   <span className="text-xs text-kern-text-3">{s.description}</span>
@@ -181,10 +216,26 @@ export function ConnectLiveSourceModal({ open, onOpenChange, collectionId: colle
             ← Back
           </Button>
           {selectedSource === 'github' && activeCollectionId ? (
-            <GitHubSourceConfig collectionId={activeCollectionId} onSuccess={handleGithubSuccess} />
-          ) : (
+            <GitHubSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
+          ) : null}
+          {selectedSource === 'google_calendar' && activeCollectionId ? (
+            <GoogleCalendarSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
+          ) : null}
+          {selectedSource === 'rss' && activeCollectionId ? (
+            <RSSSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
+          ) : null}
+          {selectedSource &&
+          selectedSource !== 'github' &&
+          selectedSource !== 'google_calendar' &&
+          selectedSource !== 'rss' ? (
             <p className="text-sm text-kern-text-2">Coming soon</p>
-          )}
+          ) : null}
+          {!activeCollectionId &&
+          (selectedSource === 'github' ||
+            selectedSource === 'google_calendar' ||
+            selectedSource === 'rss') ? (
+            <p className="text-sm text-kern-text-2">No collection selected.</p>
+          ) : null}
         </div>
       ) : null}
     </Modal>

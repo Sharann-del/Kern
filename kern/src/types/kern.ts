@@ -100,6 +100,8 @@ export interface ViewConfig {
   calendar_date_field: string | null;
   gallery_cover_field: string | null;
   gallery_card_fields: string[];
+  /** Card width in gallery grid (default medium). */
+  gallery_card_size: 'small' | 'medium' | 'large';
   table_column_widths: Record<string, number>;
   kanban_collapsed_columns: string[];
 }

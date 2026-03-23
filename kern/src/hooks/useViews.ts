@@ -33,6 +33,10 @@ function parseConfig(raw: Json): ViewConfig {
     gallery_card_fields: Array.isArray(o.gallery_card_fields)
       ? (o.gallery_card_fields as string[])
       : [],
+    gallery_card_size:
+      o.gallery_card_size === 'small' || o.gallery_card_size === 'large'
+        ? o.gallery_card_size
+        : 'medium',
     table_column_widths:
       o.table_column_widths && typeof o.table_column_widths === 'object' && !Array.isArray(o.table_column_widths)
         ? (o.table_column_widths as Record<string, number>)
@@ -78,6 +82,8 @@ export function mergeViewConfig(base: ViewConfig, partial: Partial<ViewConfig>):
       partial.gallery_card_fields !== undefined
         ? partial.gallery_card_fields
         : base.gallery_card_fields,
+    gallery_card_size:
+      partial.gallery_card_size !== undefined ? partial.gallery_card_size : base.gallery_card_size,
     table_column_widths:
       partial.table_column_widths !== undefined
         ? { ...base.table_column_widths, ...partial.table_column_widths }

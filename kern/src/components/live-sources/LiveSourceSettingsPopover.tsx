@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import { edgeFunctionInvokeHint, isLikelyEdgeFunctionTransportError } from '@/lib/edge-function-help';
 import { describeFunctionsInvokeError } from '@/lib/functions-invoke';
+import { edgeFunctionForLiveSource } from '@/lib/live-source-sync';
 import { invokeAuthedEdgeFunction } from '@/lib/supabase-functions';
 import type { KernCollection, LiveSourceType } from '@/types/kern';
 import { useAuth } from '@/providers/AuthProvider';
@@ -14,6 +15,8 @@ const SOURCE_LABELS: Partial<Record<LiveSourceType, string>> = {
   github_prs: 'GitHub Pull Requests',
   github_issues: 'GitHub Issues',
   github_repos: 'GitHub Repositories',
+  google_calendar_events: 'Google Calendar',
+  rss_feed: 'RSS Feed',
 };
 
 function labelForType(t: KernCollection['live_source_type']): string {
@@ -33,16 +36,23 @@ export function LiveSourceSettingsPopover({ collection }: LiveSourceSettingsPopo
 
   const handleSync = async () => {
     if (syncing) return;
+    const fn = edgeFunctionForLiveSource(collection.live_source_type);
+    if (!fn) {
+      toast.error('Sync is not available for this source.');
+      return;
+    }
     setSyncing(true);
     try {
-      const { error, response } = await invokeAuthedEdgeFunction<unknown>('sync-github', {
+      const { error, response } = await invokeAuthedEdgeFunction<unknown>(fn, {
         body: { collection_id: collection.id },
       });
       if (error) {
         const msg = await describeFunctionsInvokeError(error, response);
         if (isLikelyEdgeFunctionTransportError(msg)) {
           console.error(edgeFunctionInvokeHint());
-          toast.error('Could not reach Edge Function', { description: 'Serve or deploy sync-github (see console).' });
+          toast.error('Could not reach Edge Function', {
+            description: `Serve or deploy ${fn} (see console).`,
+          });
         } else {
           toast.error(msg);
         }
@@ -57,7 +67,9 @@ export function LiveSourceSettingsPopover({ collection }: LiveSourceSettingsPopo
       const raw = e instanceof Error ? e.message : String(e);
       if (isLikelyEdgeFunctionTransportError(raw)) {
         console.error(edgeFunctionInvokeHint());
-        toast.error('Could not reach Edge Function', { description: 'Serve or deploy sync-github (see console).' });
+        toast.error('Could not reach Edge Function', {
+          description: `Serve or deploy ${edgeFunctionForLiveSource(collection.live_source_type) ?? 'sync'} (see console).`,
+        });
       } else {
         toast.error(await describeFunctionsInvokeError(e));
       }

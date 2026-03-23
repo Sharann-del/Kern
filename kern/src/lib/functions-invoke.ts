@@ -105,7 +105,8 @@ export async function describeFunctionsInvokeError(
   if (status === 401) {
     out += '\n\nThe function rejected your session. Sign out and sign in again, then retry.';
   } else if (status === 404) {
-    out += '\n\nThat function name is not deployed on this project. Deploy sync-github / oauth-callback-github.';
+    out +=
+      '\n\nThat function name is not deployed on this project. Deploy: sync-github, oauth-callback-github, sync-google-calendar, oauth-callback-google, sync-rss, test-rss-feed.';
   } else if (status >= 500) {
     out +=
       '\n\nCheck Dashboard → Edge Functions → Logs. Common fixes: set secrets ENCRYPTION_KEY (64 hex), GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET; verify GitHub OAuth callback URL matches this app.';

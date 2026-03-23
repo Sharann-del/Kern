@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
 import { describeFunctionsInvokeError } from '@/lib/functions-invoke';
+import { edgeFunctionForLiveSource } from '@/lib/live-source-sync';
 import { invokeAuthedEdgeFunction } from '@/lib/supabase-functions';
 import type { KernCollection } from '@/types/kern';
 import { useAuth } from '@/providers/AuthProvider';
@@ -32,10 +33,10 @@ export function CollectionActionsMenu({ collection, onOpenConnectLiveSource }: C
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const handleSync = async () => {
-    const t = collection.live_source_type;
-    if (!t?.startsWith('github_')) return;
+    const fn = edgeFunctionForLiveSource(collection.live_source_type);
+    if (!fn) return;
     try {
-      const { error, response } = await invokeAuthedEdgeFunction<unknown>('sync-github', {
+      const { error, response } = await invokeAuthedEdgeFunction<unknown>(fn, {
         body: { collection_id: collection.id },
       });
       if (error) {

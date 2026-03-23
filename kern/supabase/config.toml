@@ -376,6 +376,18 @@ verify_jwt = false
 [functions.oauth-callback-github]
 verify_jwt = false
 
+[functions.sync-google-calendar]
+verify_jwt = false
+
+[functions.oauth-callback-google]
+verify_jwt = false
+
+[functions.sync-rss]
+verify_jwt = false
+
+[functions.test-rss-feed]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

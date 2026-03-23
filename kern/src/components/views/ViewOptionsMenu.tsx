@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import type { KernField, KernView, ViewConfig } from '@/types/kern';
 
+const NONE = '__none__';
+
 export type ViewOptionsMenuProps = {
   activeView: KernView | null;
   fields: KernField[];
@@ -17,6 +19,7 @@ export type ViewOptionsMenuProps = {
 
 export function ViewOptionsMenu({ activeView, fields, onUpdateViewConfig }: ViewOptionsMenuProps) {
   const selectFields = useMemo(() => fields.filter((f) => f.type === 'select'), [fields]);
+  const fileFields = useMemo(() => fields.filter((f) => f.type === 'file'), [fields]);
   const orderedFields = useMemo(
     () => [...fields].sort((a, b) => a.sort_order - b.sort_order),
     [fields]
@@ -27,20 +30,32 @@ export function ViewOptionsMenu({ activeView, fields, onUpdateViewConfig }: View
   const groupByValid =
     Boolean(groupBySlug) && selectFields.some((f) => f.slug === groupBySlug);
 
-  const toggleCardField = (slug: string) => {
+  const toggleKanbanCardField = (slug: string) => {
     const set = new Set(cardSlugs);
     if (set.has(slug)) set.delete(slug);
     else set.add(slug);
     onUpdateViewConfig({ gallery_card_fields: [...set] });
   };
 
-  const isKanban = activeView?.type === 'kanban';
+  const toggleGalleryCardField = (slug: string) => {
+    const set = new Set(cardSlugs);
+    if (set.has(slug)) set.delete(slug);
+    else {
+      if (set.size >= 3) return;
+      set.add(slug);
+    }
+    onUpdateViewConfig({ gallery_card_fields: [...set] });
+  };
 
-  const content = !activeView ? null : !isKanban ? (
-    <div className="w-[240px] p-2">
-      <p className="text-xs text-kern-text-3">No extra options for this view.</p>
-    </div>
-  ) : (
+  const isKanban = activeView?.type === 'kanban';
+  const isGallery = activeView?.type === 'gallery';
+
+  const coverSlug = activeView?.config.gallery_cover_field;
+  const coverSelectValue =
+    coverSlug && fileFields.some((f) => f.slug === coverSlug) ? coverSlug : NONE;
+  const gallerySize = activeView?.config.gallery_card_size ?? 'medium';
+
+  const kanbanContent = (
     <div className="w-[280px] p-2">
       <p className="mb-2 text-xs font-medium text-kern-text-2">Kanban</p>
 
@@ -104,7 +119,7 @@ export function ViewOptionsMenu({ activeView, fields, onUpdateViewConfig }: View
             >
               <Checkbox.Root
                 checked={checked}
-                onCheckedChange={() => toggleCardField(f.slug)}
+                onCheckedChange={() => toggleKanbanCardField(f.slug)}
                 className={cn(
                   'flex h-4 w-4 shrink-0 items-center justify-center rounded-kern-sm border border-kern-border bg-kern-bg',
                   'data-[state=checked]:border-kern-accent data-[state=checked]:bg-kern-accent'
@@ -120,6 +135,111 @@ export function ViewOptionsMenu({ activeView, fields, onUpdateViewConfig }: View
           );
         })}
       </div>
+    </div>
+  );
+
+  const galleryContent = (
+    <div className="w-[280px] p-2">
+      <p className="mb-2 text-xs font-medium text-kern-text-2">Gallery</p>
+
+      <p className="mb-1 text-xs text-kern-text-3">Cover field</p>
+      <Select.Root
+        value={coverSelectValue}
+        onValueChange={(v) =>
+          onUpdateViewConfig({ gallery_cover_field: v === NONE ? null : v })
+        }
+      >
+        <Select.Trigger
+          className={cn(
+            'mb-3 flex h-9 w-full items-center justify-between gap-2 rounded-kern-md border border-kern-border bg-kern-surface px-2.5 text-sm',
+            'outline-none focus:ring-2 focus:ring-kern-accent/30'
+          )}
+        >
+          <Select.Value placeholder="None" />
+          <ChevronDown size={14} className="shrink-0 text-kern-text-3" />
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content
+            className="z-[60] max-h-72 overflow-hidden rounded-kern-md border border-kern-border bg-kern-bg shadow-lg"
+            position="popper"
+            sideOffset={4}
+          >
+            <Select.Viewport className="p-1">
+              <Select.Item
+                value={NONE}
+                className="flex cursor-pointer items-center gap-2 rounded-kern-sm px-2 py-1.5 text-sm outline-none data-[highlighted]:bg-kern-surface-2"
+              >
+                <Select.ItemText>None</Select.ItemText>
+              </Select.Item>
+              {fileFields.map((f) => (
+                <Select.Item
+                  key={f.id}
+                  value={f.slug}
+                  className="flex cursor-pointer items-center gap-2 rounded-kern-sm px-2 py-1.5 text-sm outline-none data-[highlighted]:bg-kern-surface-2"
+                >
+                  <FieldTypeIcon type={f.type} size={14} className="text-kern-text-2" />
+                  <Select.ItemText>{f.name}</Select.ItemText>
+                </Select.Item>
+              ))}
+            </Select.Viewport>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+
+      <p className="mb-1 text-xs text-kern-text-3">Card fields (max 3)</p>
+      <div className="mb-3 max-h-40 space-y-1 overflow-y-auto pr-1">
+        {orderedFields.map((f) => {
+          const checked = cardSlugs.includes(f.slug);
+          return (
+            <label
+              key={f.id}
+              className="flex cursor-pointer items-center gap-2 rounded-kern-sm px-1 py-1 hover:bg-kern-surface-2"
+            >
+              <Checkbox.Root
+                checked={checked}
+                onCheckedChange={() => toggleGalleryCardField(f.slug)}
+                className={cn(
+                  'flex h-4 w-4 shrink-0 items-center justify-center rounded-kern-sm border border-kern-border bg-kern-bg',
+                  'data-[state=checked]:border-kern-accent data-[state=checked]:bg-kern-accent'
+                )}
+              >
+                <Checkbox.Indicator className="text-kern-on-accent">
+                  <Check size={12} strokeWidth={3} />
+                </Checkbox.Indicator>
+              </Checkbox.Root>
+              <FieldTypeIcon type={f.type} size={14} className="shrink-0 text-kern-text-2" />
+              <span className="min-w-0 flex-1 truncate text-sm text-kern-text">{f.name}</span>
+            </label>
+          );
+        })}
+      </div>
+
+      <p className="mb-1 text-xs text-kern-text-3">Card size</p>
+      <div className="flex rounded-kern-md border border-kern-border p-0.5">
+        {(['small', 'medium', 'large'] as const).map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => onUpdateViewConfig({ gallery_card_size: s })}
+            className={cn(
+              'flex-1 rounded-kern-sm px-2 py-1 text-xs font-medium capitalize',
+              gallerySize === s ? 'bg-kern-accent text-white' : 'text-kern-text-2'
+            )}
+          >
+            {s}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const content = !activeView ? null : isKanban ? (
+    kanbanContent
+  ) : isGallery ? (
+    galleryContent
+  ) : (
+    <div className="w-[240px] p-2">
+      <p className="text-xs text-kern-text-3">No extra options for this view.</p>
     </div>
   );
 

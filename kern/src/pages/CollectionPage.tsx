@@ -11,7 +11,10 @@ import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { Skeleton, SkeletonText } from '@/components/ui/Skeleton';
 import { useCollection } from '@/hooks/useCollections';
 import { useFields, useSetPrimaryField } from '@/hooks/useFields';
+import { CalendarView } from '@/components/views/CalendarView/CalendarView';
+import { GalleryView } from '@/components/views/GalleryView/GalleryView';
 import { KanbanView } from '@/components/views/KanbanView/KanbanView';
+import { ListView } from '@/components/views/ListView/ListView';
 import { TableView } from '@/components/views/TableView/TableView';
 import { useRows } from '@/hooks/useRows';
 import { useCreateView, useUpdateView, useViews } from '@/hooks/useViews';
@@ -325,6 +328,36 @@ export function CollectionPage() {
                 collection={collection}
                 onUpdateViewConfig={handleUpdateViewConfig}
                 onAddField={() => setPanel({ mode: 'create' })}
+              />
+            </div>
+          ) : activeView?.type === 'calendar' && activeView ? (
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg p-4">
+              <CalendarView
+                rows={rows}
+                fields={fields}
+                viewConfig={activeView.config}
+                viewId={activeView.id}
+                collectionId={collection.id}
+                collection={collection}
+              />
+            </div>
+          ) : activeView?.type === 'gallery' && activeView ? (
+            <div className="min-h-0 flex-1 overflow-auto">
+              <GalleryView
+                rows={rows}
+                fields={fields}
+                viewConfig={activeView.config}
+                collectionId={collection.id}
+                collection={collection}
+              />
+            </div>
+          ) : activeView?.type === 'list' && activeView ? (
+            <div className="min-h-0 flex-1 overflow-auto">
+              <ListView
+                rows={rows}
+                fields={fields}
+                viewConfig={activeView.config}
+                collectionId={collection.id}
               />
             </div>
           ) : (
