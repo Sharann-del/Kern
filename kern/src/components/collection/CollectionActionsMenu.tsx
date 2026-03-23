@@ -1,7 +1,8 @@
 import { MoreHorizontal } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
-import { ConnectLiveSourceModal } from '@/components/collection/ConnectLiveSourceModal';
 import { DeleteCollectionDialog } from '@/components/collection/DeleteCollectionDialog';
 import { EditCollectionModal } from '@/components/collection/EditCollectionModal';
 import {
@@ -12,25 +13,42 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
-import { supabase } from '@/lib/supabase';
+import { describeFunctionsInvokeError } from '@/lib/functions-invoke';
+import { invokeAuthedEdgeFunction } from '@/lib/supabase-functions';
 import type { KernCollection } from '@/types/kern';
+import { useAuth } from '@/providers/AuthProvider';
 
 export type CollectionActionsMenuProps = {
   collection: KernCollection;
+  /** Opens the same modal as the header “Connect live source” button. */
+  onOpenConnectLiveSource?: () => void;
 };
 
-export function CollectionActionsMenu({ collection }: CollectionActionsMenuProps) {
+export function CollectionActionsMenu({ collection, onOpenConnectLiveSource }: CollectionActionsMenuProps) {
+  const { user } = useAuth();
+  const userId = user?.id;
+  const queryClient = useQueryClient();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [connectOpen, setConnectOpen] = useState(false);
 
   const handleSync = async () => {
     const t = collection.live_source_type;
-    if (!t) return;
+    if (!t?.startsWith('github_')) return;
     try {
-      await supabase.functions.invoke(`sync-${t}`, { body: {} });
+      const { error, response } = await invokeAuthedEdgeFunction<unknown>('sync-github', {
+        body: { collection_id: collection.id },
+      });
+      if (error) {
+        toast.error(await describeFunctionsInvokeError(error, response));
+        return;
+      }
+      if (userId) void queryClient.invalidateQueries({ queryKey: ['collections', userId] });
+      void queryClient.invalidateQueries({ queryKey: ['rows', collection.id] });
+      void queryClient.invalidateQueries({ queryKey: ['collection', collection.slug, userId] });
+      void queryClient.invalidateQueries({ queryKey: ['collectionById', collection.id, userId] });
+      toast.success('Synced');
     } catch (e) {
-      console.warn('Sync invoke failed', e);
+      toast.error(await describeFunctionsInvokeError(e));
     }
   };
 
@@ -45,7 +63,13 @@ export function CollectionActionsMenu({ collection }: CollectionActionsMenuProps
         <DropdownMenuContent align="end">
           <DropdownMenuItem onSelect={() => setEditOpen(true)}>Edit collection</DropdownMenuItem>
           {!collection.is_live_source ? (
-            <DropdownMenuItem onSelect={() => setConnectOpen(true)}>Connect live source</DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() => {
+                onOpenConnectLiveSource?.();
+              }}
+            >
+              Connect live source
+            </DropdownMenuItem>
           ) : (
             <DropdownMenuItem onSelect={() => void handleSync()}>Sync now</DropdownMenuItem>
           )}
@@ -69,7 +93,6 @@ export function CollectionActionsMenu({ collection }: CollectionActionsMenuProps
         onOpenChange={setEditOpen}
         collection={collection}
       />
-      <ConnectLiveSourceModal open={connectOpen} onOpenChange={setConnectOpen} />
       {deleteOpen ? (
         <DeleteCollectionDialog
           key={collection.id}

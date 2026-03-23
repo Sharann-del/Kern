@@ -1,6 +1,10 @@
+import { useState } from 'react';
+
 import { CollectionActionsMenu } from '@/components/collection/CollectionActionsMenu';
 import { CollectionViewTabs } from '@/components/collection/CollectionViewTabs';
-import { LiveSourceBadge } from '@/components/collection/LiveSourceBadge';
+import { ConnectLiveSourceModal } from '@/components/live-sources/ConnectLiveSourceModal';
+import { LiveSourceBadge } from '@/components/live-sources/LiveSourceBadge';
+import { Button } from '@/components/ui/Button';
 import { ViewFieldsMenu } from '@/components/views/ViewFieldsMenu';
 import { ViewFilterBar } from '@/components/views/ViewFilterBar';
 import { ViewOptionsMenu } from '@/components/views/ViewOptionsMenu';
@@ -25,6 +29,7 @@ export function CollectionHeader({
   onViewChange,
   onUpdateViewConfig,
 }: CollectionHeaderProps) {
+  const [connectLiveOpen, setConnectLiveOpen] = useState(false);
   const filtersPopoverOpen = useAppStore((s) => s.filtersPopoverOpen);
   const setFiltersPopoverOpen = useAppStore((s) => s.setFiltersPopoverOpen);
 
@@ -45,15 +50,35 @@ export function CollectionHeader({
           {iconBlock}
           <h1 className="truncate text-base font-semibold text-kern-text">{collection.name}</h1>
         </div>
-        {collection.is_live_source ? (
-          <div className="hidden shrink-0 sm:block">
-            <LiveSourceBadge />
-          </div>
-        ) : null}
-        <div className="shrink-0">
-          <CollectionActionsMenu collection={collection} />
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          {!collection.is_live_source ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="shrink-0 whitespace-nowrap"
+              onClick={() => setConnectLiveOpen(true)}
+            >
+              Connect live source
+            </Button>
+          ) : (
+            <div className="hidden sm:block">
+              <LiveSourceBadge collection={collection} />
+            </div>
+          )}
+          <CollectionActionsMenu
+            collection={collection}
+            onOpenConnectLiveSource={() => setConnectLiveOpen(true)}
+          />
         </div>
       </div>
+
+      <ConnectLiveSourceModal
+        key={connectLiveOpen ? `${collection.id}-connect-live-open` : `${collection.id}-connect-live-closed`}
+        open={connectLiveOpen}
+        onOpenChange={setConnectLiveOpen}
+        collectionId={collection.id}
+      />
 
       <div className="flex h-10 items-center border-b border-kern-border px-4">
         <CollectionViewTabs

@@ -129,11 +129,17 @@ export type CreateCollectionInput = {
   description: string | null;
 };
 
-export function useCreateCollection() {
+export type UseCreateCollectionOptions = {
+  /** When false, do not redirect after create (e.g. live source modal). Default true. */
+  navigateOnSuccess?: boolean;
+};
+
+export function useCreateCollection(options?: UseCreateCollectionOptions) {
   const { user } = useAuth();
   const userId = user?.id;
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const navigateOnSuccess = options?.navigateOnSuccess !== false;
 
   return useMutation({
     mutationFn: async (input: CreateCollectionInput) => {
@@ -178,11 +184,11 @@ export function useCreateCollection() {
 
       if (fieldErr) throw fieldErr;
 
-      return created.slug;
+      return { slug: created.slug, id: created.id };
     },
-    onSuccess: (newSlug) => {
+    onSuccess: (created) => {
       if (userId) void queryClient.invalidateQueries({ queryKey: ['collections', userId] });
-      navigate(`/c/${newSlug}`);
+      if (navigateOnSuccess) navigate(`/c/${created.slug}`);
     },
     onError: (e) => toastMutationError(e),
   });

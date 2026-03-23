@@ -369,6 +369,13 @@ deno_version = 2
 [functions.kern-mcp]
 verify_jwt = false
 
+# GitHub live source — same as kern-mcp: auth is enforced via getAuthenticatedUserId() in the function.
+[functions.sync-github]
+verify_jwt = false
+
+[functions.oauth-callback-github]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

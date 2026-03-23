@@ -10,10 +10,12 @@ import {
 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/Button';
 import { useCollectionById } from '@/hooks/useCollections';
-import { supabase } from '@/lib/supabase';
+import { describeFunctionsInvokeError } from '@/lib/functions-invoke';
+import { invokeAuthedEdgeFunction } from '@/lib/supabase-functions';
 import type { LiveSourceType, SyncStatus } from '@/types/kern';
 
 export type LiveSourceStatusWidgetProps = {
@@ -51,14 +53,22 @@ export function LiveSourceStatusWidget({ config }: LiveSourceStatusWidgetProps) 
 
   const handleSync = async () => {
     const t = collection?.live_source_type;
-    if (!t) return;
+    if (!t?.startsWith('github_')) return;
     setSyncing(true);
     try {
-      await supabase.functions.invoke(`sync-${t}`, { body: {} });
+      const { error, response } = await invokeAuthedEdgeFunction<unknown>('sync-github', {
+        body: { collection_id: config.collection_id },
+      });
+      if (error) {
+        toast.error(await describeFunctionsInvokeError(error, response));
+        return;
+      }
       await queryClient.invalidateQueries({ queryKey: ['collectionById', config.collection_id] });
       await queryClient.invalidateQueries({ queryKey: ['collections'] });
+      await queryClient.invalidateQueries({ queryKey: ['rows', config.collection_id] });
+      toast.success('Synced');
     } catch (e) {
-      console.warn('Sync invoke failed', e);
+      toast.error(await describeFunctionsInvokeError(e));
     } finally {
       setSyncing(false);
     }

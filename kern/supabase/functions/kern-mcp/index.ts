@@ -250,7 +250,7 @@ async function nextUniqueCollectionSlug(
   userId: string,
   name: string
 ): Promise<string> {
-  let base = slugify(name) || 'collection';
+  const base = slugify(name) || 'collection';
   const { data: rows, error } = await supabase.from('collections').select('slug').eq('user_id', userId);
   if (error) throw error;
   const taken = new Set((rows ?? []).map((r: { slug: string }) => r.slug));
