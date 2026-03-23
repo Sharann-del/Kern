@@ -78,11 +78,16 @@ export default {
           from: { opacity: '0', transform: 'scale(0.95)' },
           to: { opacity: '1', transform: 'scale(1)' },
         },
+        'kern-upload-bar': {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(350%)' },
+        },
       },
       animation: {
         'kern-fade-in': 'kern-fade-in 150ms ease-out forwards',
         'kern-dialog-in': 'kern-dialog-in 150ms ease-out forwards',
         'kern-pop-in': 'kern-pop-in 150ms ease-out forwards',
+        'kern-upload-bar': 'kern-upload-bar 1.1s ease-in-out infinite',
       },
     },
   },

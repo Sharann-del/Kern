@@ -4,6 +4,8 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { GitHubSourceConfig } from '@/components/live-sources/sources/GitHubSourceConfig';
 import { GoogleCalendarSourceConfig } from '@/components/live-sources/sources/GoogleCalendarSourceConfig';
+import { LinearSourceConfig } from '@/components/live-sources/sources/LinearSourceConfig';
+import { NotionSourceConfig } from '@/components/live-sources/sources/NotionSourceConfig';
 import { RSSSourceConfig } from '@/components/live-sources/sources/RSSSourceConfig';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -71,6 +73,10 @@ function isSourceConnected(sourceId: LiveSourceId, col: KernCollection | null | 
       return t === 'google_calendar_events';
     case 'rss':
       return t === 'rss_feed';
+    case 'notion':
+      return t === 'notion_database';
+    case 'linear':
+      return t === 'linear_issues';
     default:
       return false;
   }
@@ -224,16 +230,26 @@ export function ConnectLiveSourceModal({
           {selectedSource === 'rss' && activeCollectionId ? (
             <RSSSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
           ) : null}
+          {selectedSource === 'notion' && activeCollectionId ? (
+            <NotionSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
+          ) : null}
+          {selectedSource === 'linear' && activeCollectionId ? (
+            <LinearSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
+          ) : null}
           {selectedSource &&
           selectedSource !== 'github' &&
           selectedSource !== 'google_calendar' &&
-          selectedSource !== 'rss' ? (
+          selectedSource !== 'rss' &&
+          selectedSource !== 'notion' &&
+          selectedSource !== 'linear' ? (
             <p className="text-sm text-kern-text-2">Coming soon</p>
           ) : null}
           {!activeCollectionId &&
           (selectedSource === 'github' ||
             selectedSource === 'google_calendar' ||
-            selectedSource === 'rss') ? (
+            selectedSource === 'rss' ||
+            selectedSource === 'notion' ||
+            selectedSource === 'linear') ? (
             <p className="text-sm text-kern-text-2">No collection selected.</p>
           ) : null}
         </div>

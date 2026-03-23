@@ -75,4 +75,18 @@ function RelationPillInner({
   );
 }
 
-export const RelationPill = memo(RelationPillInner);
+function relationPillPropsEqual(a: RelationPillProps, b: RelationPillProps): boolean {
+  return (
+    a.row.id === b.row.id &&
+    a.row.updated_at === b.row.updated_at &&
+    a.collectionId === b.collectionId &&
+    a.clickable === b.clickable &&
+    a.fields === b.fields &&
+    a.collection?.name === b.collection?.name &&
+    a.collection?.icon === b.collection?.icon &&
+    a.collection?.color === b.collection?.color &&
+    Boolean(a.onRemove) === Boolean(b.onRemove)
+  );
+}
+
+export const RelationPill = memo(RelationPillInner, relationPillPropsEqual);

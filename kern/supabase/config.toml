@@ -388,6 +388,18 @@ verify_jwt = false
 [functions.test-rss-feed]
 verify_jwt = false
 
+[functions.sync-notion]
+verify_jwt = false
+
+[functions.oauth-callback-notion]
+verify_jwt = false
+
+[functions.sync-linear]
+verify_jwt = false
+
+[functions.oauth-callback-linear]
+verify_jwt = false
+
 [analytics]
 enabled = true
 port = 54327

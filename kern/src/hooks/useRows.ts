@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -108,6 +109,12 @@ export function useRowsCreatedTodayCount(collectionId: string | null) {
   });
 }
 
+type RelationJoinRow = {
+  field_id: string;
+  source_row_id: string;
+  target_row: RowDb | null;
+};
+
 export function useRows(
   collectionId: string,
   viewConfig?: ViewConfig,
@@ -122,12 +129,62 @@ export function useRows(
         .eq('collection_id', collectionId)
         .order('sort_order', { ascending: true });
       if (error) throw error;
-      return (data ?? []) as RowDb[];
+      const rowDbs = (data ?? []) as RowDb[];
+      const relFields = (fields ?? []).filter((f) => f.type === 'relation');
+      const fieldIdToSlug = new Map((fields ?? []).map((f) => [f.id, f.slug] as const));
+
+      if (relFields.length === 0 || rowDbs.length === 0) {
+        return rowDbs.map((r) => mapRowToKernRow(r));
+      }
+
+      const rowIds = rowDbs.map((r) => r.id);
+      const { data: relData, error: relErr } = await supabase
+        .from('row_relations')
+        .select(
+          `
+          field_id,
+          source_row_id,
+          target_row:rows!row_relations_target_row_id_fkey (
+            id,
+            collection_id,
+            user_id,
+            data,
+            external_id,
+            sort_order,
+            created_at,
+            updated_at
+          )
+        `
+        )
+        .in('source_row_id', rowIds)
+        .order('created_at', { ascending: true });
+      if (relErr) throw relErr;
+
+      const relBySource = new Map<string, Record<string, KernRow[]>>();
+      for (const rel of (relData ?? []) as RelationJoinRow[]) {
+        if (!rel.target_row) continue;
+        const slug = fieldIdToSlug.get(rel.field_id);
+        if (!slug) continue;
+        const kernTarget = mapRowToKernRow(rel.target_row);
+        let bySlug = relBySource.get(rel.source_row_id);
+        if (!bySlug) {
+          bySlug = {};
+          relBySource.set(rel.source_row_id, bySlug);
+        }
+        const list = bySlug[slug] ?? (bySlug[slug] = []);
+        list.push(kernTarget);
+      }
+
+      return rowDbs.map((r) => {
+        const base = mapRowToKernRow(r);
+        const rels = relBySource.get(r.id);
+        return rels && Object.keys(rels).length > 0 ? { ...base, relations: rels } : base;
+      });
     },
     enabled: Boolean(collectionId),
     staleTime: 10_000,
-    select: (result) => {
-      const kernRows = result.map(mapRowToKernRow);
+    placeholderData: keepPreviousData,
+    select: (kernRows) => {
       const filtered = applyFilters(kernRows, viewConfig?.filters ?? [], fields ?? []);
       return applySorts(filtered, viewConfig?.sorts ?? [], fields ?? []);
     },

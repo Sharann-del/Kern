@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent }
 import { toast } from 'sonner';
 
 import { ReferencedBySection } from '@/components/row/ReferencedBySection';
+import { RowEditorFileField } from '@/components/row/RowEditorFileField';
 import { RelationPicker } from '@/components/row/RelationPicker';
 import { RowDatePickerButton } from '@/components/row/RowDatePickerButton';
 import { RowEditorRichText } from '@/components/row/RowEditorRichText';
@@ -602,11 +603,7 @@ function RowFieldEditor({
       );
     }
     case 'file':
-      return (
-        <div className="rounded-kern-md border border-dashed border-kern-border px-3 py-6 text-center text-sm text-kern-text-3">
-          File upload coming soon
-        </div>
-      );
+      return <RowEditorFileField slug={slug} row={row} mutateBanner={mutateBanner} />;
     default:
       return (
         <input

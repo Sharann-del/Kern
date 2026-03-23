@@ -101,6 +101,104 @@ export function OAuthCallbackPage() {
         return;
       }
 
+      if (provider === 'notion') {
+        const redirectUri = `${window.location.origin}/oauth/callback/notion`;
+
+        const { data, error, response } = await invokeAuthedEdgeFunction<unknown>('oauth-callback-notion', {
+          body: {
+            code,
+            collection_id: collectionId,
+            redirect_uri: redirectUri,
+          },
+        });
+
+        if (error) {
+          if (!cancelled) {
+            const detail = await describeFunctionsInvokeError(error, response);
+            setMessage(appendEdgeFunctionHintForDisplay(detail));
+          }
+          return;
+        }
+
+        const payload = data as {
+          success?: boolean;
+          error?: string;
+          databases?: { id: string; title: string }[];
+          workspace_name?: string | null;
+        } | null;
+
+        if (!payload?.success) {
+          if (!cancelled) {
+            setMessage(typeof payload?.error === 'string' ? payload.error : 'Connection failed');
+          }
+          return;
+        }
+
+        sessionStorage.removeItem('oauth_state');
+        sessionStorage.removeItem('oauth_collection_id');
+
+        if (window.opener) {
+          window.opener.postMessage(
+            {
+              type: 'OAUTH_SUCCESS',
+              provider: 'notion',
+              databases: payload.databases ?? [],
+              workspace_name: payload.workspace_name ?? null,
+            },
+            window.location.origin
+          );
+          window.close();
+          return;
+        }
+
+        if (!cancelled) setMessage('Notion connected. Return to Kern to choose a database.');
+        return;
+      }
+
+      if (provider === 'linear') {
+        const redirectUri = `${window.location.origin}/oauth/callback/linear`;
+
+        const { data, error, response } = await invokeAuthedEdgeFunction<unknown>('oauth-callback-linear', {
+          body: {
+            code,
+            collection_id: collectionId,
+            redirect_uri: redirectUri,
+          },
+        });
+
+        if (error) {
+          if (!cancelled) {
+            const detail = await describeFunctionsInvokeError(error, response);
+            setMessage(appendEdgeFunctionHintForDisplay(detail));
+          }
+          return;
+        }
+
+        const payload = data as { success?: boolean; error?: string; collection_id?: string } | null;
+        if (!payload?.success || !payload.collection_id) {
+          if (!cancelled) {
+            setMessage(typeof payload?.error === 'string' ? payload.error : 'Connection failed');
+          }
+          return;
+        }
+
+        sessionStorage.removeItem('oauth_state');
+        sessionStorage.removeItem('oauth_collection_id');
+
+        if (window.opener) {
+          window.opener.postMessage({ type: 'OAUTH_SUCCESS', provider: 'linear' }, window.location.origin);
+          window.close();
+          return;
+        }
+
+        const col = await fetchCollectionById(payload.collection_id);
+        if (!cancelled) {
+          if (col) navigate(`/c/${col.slug}`, { replace: true });
+          else navigate('/dashboard', { replace: true });
+        }
+        return;
+      }
+
       if (provider === 'google') {
         const rawDays = sessionStorage.getItem('google_sync_days_back');
         const parsed = rawDays ? Number(rawDays) : 90;

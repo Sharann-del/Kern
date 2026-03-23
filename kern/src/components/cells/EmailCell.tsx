@@ -1,42 +1,34 @@
+import { DebouncedStringCellEditor } from '@/components/cells/DebouncedStringCellEditor';
 import type { CellComponentProps } from '@/components/cells/types';
 
 export function EmailCell({
   value,
+  field,
   row: _row,
+  rowId,
   isEditing,
   onStartEdit,
   onSave,
   onCancel,
   onEditNavigate,
+  persistWhileEditing,
+  onPendingChange,
 }: CellComponentProps) {
   void _row;
   const raw = typeof value === 'string' ? value.trim() : '';
 
   if (isEditing) {
     return (
-      <input
-        key={raw}
-        autoFocus
-        type="email"
+      <DebouncedStringCellEditor
+        key={`${rowId}-${field.slug}-${raw}`}
+        display={raw}
+        inputType="email"
         className="h-full w-full bg-transparent px-2 text-sm outline-none"
-        defaultValue={raw}
-        onKeyDown={(e) => {
-          const v = e.currentTarget.value.trim();
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            onSave(v);
-          }
-          if (e.key === 'Escape') {
-            e.preventDefault();
-            onCancel();
-          }
-          if (e.key === 'Tab') {
-            e.preventDefault();
-            onSave(v);
-            onEditNavigate?.(e.shiftKey ? 'prev' : 'next');
-          }
-        }}
-        onBlur={(e) => onSave(e.currentTarget.value.trim())}
+        onSave={onSave}
+        onCancel={onCancel}
+        onEditNavigate={onEditNavigate}
+        persistWhileEditing={persistWhileEditing}
+        onPendingChange={onPendingChange}
       />
     );
   }

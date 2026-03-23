@@ -1,3 +1,4 @@
+import { DebouncedNumberCellEditor } from '@/components/cells/DebouncedNumberCellEditor';
 import type { CellComponentProps } from '@/components/cells/types';
 import type { NumberFieldOptions } from '@/types/kern';
 import { cn } from '@/lib/utils';
@@ -13,11 +14,14 @@ export function NumberCell({
   value,
   field,
   row: _row,
+  rowId,
   isEditing,
   onStartEdit,
   onSave,
   onCancel,
   onEditNavigate,
+  persistWhileEditing,
+  onPendingChange,
 }: CellComponentProps) {
   void _row;
   const opts = numOpts(field);
@@ -31,33 +35,14 @@ export function NumberCell({
 
   if (isEditing) {
     return (
-      <input
-        key={display}
-        autoFocus
-        type="number"
-        className="h-full w-full bg-transparent text-right text-sm outline-none"
-        defaultValue={display}
-        onKeyDown={(e) => {
-          const parsed = parseFloat(e.currentTarget.value);
-          const out = Number.isFinite(parsed) ? parsed : null;
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            onSave(out);
-          }
-          if (e.key === 'Escape') {
-            e.preventDefault();
-            onCancel();
-          }
-          if (e.key === 'Tab') {
-            e.preventDefault();
-            onSave(out);
-            onEditNavigate?.(e.shiftKey ? 'prev' : 'next');
-          }
-        }}
-        onBlur={(e) => {
-          const parsed = parseFloat(e.currentTarget.value);
-          onSave(Number.isFinite(parsed) ? parsed : null);
-        }}
+      <DebouncedNumberCellEditor
+        key={`${rowId}-${field.slug}-${display}`}
+        display={display}
+        onSave={onSave}
+        onCancel={onCancel}
+        onEditNavigate={onEditNavigate}
+        persistWhileEditing={persistWhileEditing}
+        onPendingChange={onPendingChange}
       />
     );
   }

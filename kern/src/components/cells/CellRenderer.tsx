@@ -45,4 +45,34 @@ function CellRendererInner(props: CellComponentProps) {
   }
 }
 
-export const CellRenderer = memo(CellRendererInner);
+function sameValue(a: unknown, b: unknown): boolean {
+  if (a === b) return true;
+  if (typeof a === 'object' && a !== null && typeof b === 'object' && b !== null) {
+    try {
+      return JSON.stringify(a) === JSON.stringify(b);
+    } catch {
+      return false;
+    }
+  }
+  return false;
+}
+
+function relationTargetIds(row: CellComponentProps['row'], slug: string): string {
+  const rel = row.relations?.[slug];
+  if (rel?.length) return rel.map((r) => r.id).join('\0');
+  return '';
+}
+
+function areCellPropsEqual(a: CellComponentProps, b: CellComponentProps): boolean {
+  if (a.rowId !== b.rowId) return false;
+  if (a.field.id !== b.field.id) return false;
+  if (a.isEditing !== b.isEditing) return false;
+  if (a.field.type !== b.field.type) return false;
+  if (!sameValue(a.value, b.value)) return false;
+  if (a.field.type === 'relation') {
+    return relationTargetIds(a.row, a.field.slug) === relationTargetIds(b.row, b.field.slug);
+  }
+  return true;
+}
+
+export const CellRenderer = memo(CellRendererInner, areCellPropsEqual);

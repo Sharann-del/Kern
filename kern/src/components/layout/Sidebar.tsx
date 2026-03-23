@@ -17,8 +17,9 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, LayoutDashboard, Plus } from 'lucide-react';
-import { useCallback, useMemo, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { NavLink, useMatch } from 'react-router-dom';
 import { SidebarCollectionItem } from '@/components/layout/SidebarCollectionItem';
 import { Button } from '@/components/ui/Button';
@@ -29,7 +30,9 @@ import {
   useReorderCollections,
   type CreateCollectionInput,
 } from '@/hooks/useCollections';
+import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/providers/AuthProvider';
 import { useAppStore } from '@/stores/appStore';
 import type { KernCollection } from '@/types/kern';
 
@@ -94,6 +97,36 @@ function SortableCollectionRow({
 }
 
 export function Sidebar() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const userId = user?.id;
+
+  useEffect(() => {
+    if (!userId) return;
+    const channel = supabase
+      .channel('collections-sync-status')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'collections',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const next = payload.new as { sync_status?: string } | null | undefined;
+          const prev = payload.old as { sync_status?: string } | null | undefined;
+          if (next?.sync_status !== prev?.sync_status) {
+            void queryClient.invalidateQueries({ queryKey: ['collections', userId] });
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [userId, queryClient]);
+
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const openCreateCollectionModal = useAppStore((s) => s.openCreateCollectionModal);
   const openCollectionEditModal = useAppStore((s) => s.openCollectionEditModal);

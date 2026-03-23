@@ -212,6 +212,8 @@ function sidebarCollectionItemPropsEqual(
     a.collection.icon === b.collection.icon &&
     a.collection.color === b.collection.color &&
     (a.collection.row_count ?? 0) === (b.collection.row_count ?? 0) &&
+    a.collection.sync_status === b.collection.sync_status &&
+    a.collection.last_synced_at === b.collection.last_synced_at &&
     a.isActive === b.isActive &&
     a.collapsed === b.collapsed &&
     a.dragAttributes === b.dragAttributes &&

@@ -4,5 +4,7 @@ export function edgeFunctionForLiveSource(liveSourceType: string | null | undefi
   if (liveSourceType.startsWith('github_')) return 'sync-github';
   if (liveSourceType === 'google_calendar_events') return 'sync-google-calendar';
   if (liveSourceType === 'rss_feed') return 'sync-rss';
+  if (liveSourceType === 'notion_database') return 'sync-notion';
+  if (liveSourceType === 'linear_issues') return 'sync-linear';
   return null;
 }

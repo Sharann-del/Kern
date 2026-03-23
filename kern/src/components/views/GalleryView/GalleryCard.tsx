@@ -1,32 +1,12 @@
 import { useMemo } from 'react';
 
 import { FieldTypeIcon } from '@/components/field/FieldTypeIcon';
-import { useFileUrl } from '@/hooks/useFileUrl';
+import { asFileAttachments, useFileUrl } from '@/hooks/useFileUpload';
 import { formatCellValueForCard } from '@/lib/formatCellDisplay';
 import { rowPrimaryLabel } from '@/lib/rowDisplay';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/stores/appStore';
 import type { KernCollection, KernField, KernRow } from '@/types/kern';
-
-type FileEntry = { name?: string; url?: string };
-
-function asFiles(value: unknown): FileEntry[] {
-  if (!Array.isArray(value)) return [];
-  return value.filter((x): x is FileEntry => x !== null && typeof x === 'object');
-}
-
-function firstImageFileRef(value: unknown): { url: string; name?: string } | null {
-  const files = asFiles(value);
-  for (const f of files) {
-    const u = f.url;
-    if (typeof u !== 'string' || !u.trim()) continue;
-    const hint = `${f.name ?? ''} ${u}`.toLowerCase();
-    if (/\.(jpe?g|png|gif|webp|svg|avif)(\?|#|$)/i.test(hint) || /^https?:\/\//i.test(u)) {
-      return { url: u.trim(), name: f.name };
-    }
-  }
-  return files[0]?.url ? { url: String(files[0].url), name: files[0].name } : null;
-}
 
 function hashHue(id: string): string {
   let h = 0;
@@ -54,12 +34,16 @@ export function GalleryCard({
 }: GalleryCardProps) {
   const openRow = useAppStore((s) => s.openRow);
   const coverRaw = coverFieldSlug ? row.data[coverFieldSlug] : null;
-  const coverRef = useMemo(() => firstImageFileRef(coverRaw), [coverRaw]);
-  const signedCoverUrl = useFileUrl(coverRef?.url ?? null);
+  const coverFiles = useMemo(() => asFileAttachments(coverRaw), [coverRaw]);
+  const coverPath =
+    coverFieldSlug && coverFiles.length > 0 && coverFiles[0].type.startsWith('image/')
+      ? coverFiles[0].path
+      : null;
+  const { data: signedCoverUrl } = useFileUrl(coverPath);
   const primaryText = rowPrimaryLabel(row, fields);
   const slugs = cardFieldSlugs.slice(0, 3);
 
-  const showImage = Boolean(coverFieldSlug && signedCoverUrl);
+  const showImage = Boolean(coverPath && signedCoverUrl);
   const fallbackBg = collection.color ?? hashHue(collection.id);
 
   return (

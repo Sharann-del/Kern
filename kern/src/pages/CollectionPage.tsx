@@ -1,4 +1,5 @@
-import { FolderX, Plus, Table2 } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { FolderX, Plus, Table2, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
@@ -18,6 +19,7 @@ import { ListView } from '@/components/views/ListView/ListView';
 import { TableView } from '@/components/views/TableView/TableView';
 import { useRows } from '@/hooks/useRows';
 import { useCreateView, useUpdateView, useViews } from '@/hooks/useViews';
+import { supabase } from '@/lib/supabase';
 import { useAppStore } from '@/stores/appStore';
 import type { KernField, ViewConfig } from '@/types/kern';
 
@@ -30,8 +32,10 @@ export function CollectionPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const queryClient = useQueryClient();
   const setActiveCollection = useAppStore((s) => s.setActiveCollection);
   const [panel, setPanel] = useState<FieldPanelState>(null);
+  const [newRowCount, setNewRowCount] = useState(0);
 
   const { data: collection, isLoading, isFetched, isError } = useCollection(slug ?? '');
   const collectionId = collection?.id ?? '';
@@ -122,6 +126,41 @@ export function CollectionPage() {
   };
 
   const { data: rows = [], isLoading: rowsLoading } = useRows(collectionId, activeView?.config, fields);
+
+  useEffect(() => {
+    setNewRowCount(0);
+  }, [collectionId]);
+
+  useEffect(() => {
+    if (!collection?.is_live_source || !collectionId) return;
+    const channel = supabase
+      .channel(`rows-${collectionId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'rows',
+          filter: `collection_id=eq.${collectionId}`,
+        },
+        (payload) => {
+          void queryClient.invalidateQueries({ queryKey: ['rows', collectionId] });
+          if (payload.eventType === 'INSERT') {
+            setNewRowCount((prev) => prev + 1);
+          }
+        }
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [collection?.is_live_source, collectionId, queryClient]);
+
+  useEffect(() => {
+    if (newRowCount <= 0) return;
+    const t = window.setTimeout(() => setNewRowCount(0), 10_000);
+    return () => window.clearTimeout(t);
+  }, [newRowCount]);
 
   useEffect(() => {
     if (slug) setActiveCollection(slug);
@@ -215,6 +254,30 @@ export function CollectionPage() {
           onUpdateViewConfig={handleUpdateViewConfig}
         />
       )}
+
+      {collection.is_live_source && newRowCount > 0 ? (
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-kern-accent/25 bg-kern-accent/10 px-6 py-2.5 text-sm text-kern-text">
+          <button
+            type="button"
+            className="min-w-0 flex-1 text-left font-medium hover:underline"
+            onClick={() => {
+              setNewRowCount(0);
+              void queryClient.invalidateQueries({ queryKey: ['rows', collectionId] });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          >
+            {newRowCount} new row{newRowCount === 1 ? '' : 's'} synced — Click to refresh
+          </button>
+          <button
+            type="button"
+            className="shrink-0 rounded-kern-sm p-1 text-kern-text-2 hover:bg-kern-surface-2 hover:text-kern-text"
+            aria-label="Dismiss"
+            onClick={() => setNewRowCount(0)}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      ) : null}
 
       <ErrorBoundary>
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-8">

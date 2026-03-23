@@ -1,4 +1,10 @@
-import { useMutation, useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 
 import { DEFAULT_VIEW_CONFIG } from '@/lib/constants';
 import { supabase } from '@/lib/supabase';
@@ -111,6 +117,7 @@ export function useViews(collectionId: string): UseQueryResult<KernView[]> {
     queryFn: () => fetchViewsForCollection(collectionId),
     enabled: Boolean(collectionId),
     staleTime: 120_000,
+    placeholderData: keepPreviousData,
   });
 }
 

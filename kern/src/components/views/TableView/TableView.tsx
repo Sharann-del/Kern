@@ -296,7 +296,14 @@ function TableViewInner({
           const m = table.options.meta as TableMeta;
           const isEditing =
             m.editingCell?.rowId === row.original.id && m.editingCell?.fieldSlug === field.slug;
-          const persistable = field.type === 'text' || field.type === 'rich_text';
+          const persistable =
+            field.type === 'text' ||
+            field.type === 'rich_text' ||
+            field.type === 'file' ||
+            field.type === 'email' ||
+            field.type === 'url' ||
+            field.type === 'phone' ||
+            field.type === 'number';
           const rowId = row.original.id;
           const slug = field.slug;
 
@@ -345,7 +352,11 @@ function TableViewInner({
                   persistWhileEditing={
                     persistable
                       ? (v) => {
-                          m.updateRow.mutate({ id: rowId, collectionId: m.collectionId, data: { [slug]: v } });
+                          m.updateRow.mutate({
+                            id: rowId,
+                            collectionId: m.collectionId,
+                            data: { [slug]: v } as Record<string, unknown>,
+                          });
                         }
                       : undefined
                   }
@@ -385,9 +396,10 @@ function TableViewInner({
     onAddFieldBefore,
     onEditField,
     toggleSort,
-    viewConfig.sorts,
-    viewConfig.table_column_widths,
-    visibleFields,
+    fields,
+    viewConfig.hidden_fields.join(','),
+    JSON.stringify(viewConfig.table_column_widths),
+    JSON.stringify(viewConfig.sorts),
   ]);
 
   const tableMeta: TableMeta = useMemo(
