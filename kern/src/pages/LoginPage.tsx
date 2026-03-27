@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { OAuthAuthSection } from '@/components/auth/OAuthAuthSection';
 import { AuthPageShell } from '@/components/layout/AuthPageShell';
 import { getAuthErrorMessage } from '@/lib/authMessages';
 import { useAuth } from '@/providers/AuthProvider';
@@ -106,6 +107,9 @@ export function LoginPage() {
           {loading ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
+      <div className="mt-8">
+        <OAuthAuthSection />
+      </div>
     </AuthPageShell>
   );
 }

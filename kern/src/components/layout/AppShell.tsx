@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
 import { CreateCollectionModal } from '@/components/collection/CreateCollectionModal';
@@ -9,7 +9,10 @@ import { CommandPalette } from '@/components/layout/CommandPalette';
 import { RowEditorPanel } from '@/components/layout/RowEditorPanel';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
+import { WelcomeOnboardingModal } from '@/components/onboarding/WelcomeOnboardingModal';
 import { KeyboardShortcutsModal } from '@/components/ui/KeyboardShortcutsModal';
+import { useCollections } from '@/hooks/useCollections';
+import { useAuth } from '@/providers/AuthProvider';
 import { useAppStore } from '@/stores/appStore';
 
 function isEditableTarget(target: EventTarget | null): boolean {
@@ -19,6 +22,9 @@ function isEditableTarget(target: EventTarget | null): boolean {
 }
 
 export function AppShell() {
+  const navigate = useNavigate();
+  const { user, profile, loading: authLoading, updateProfile } = useAuth();
+  const { data: collections = [], isLoading: colLoading } = useCollections();
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const openPalette = useAppStore((s) => s.openPalette);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
@@ -31,6 +37,101 @@ export function AppShell() {
   const closeCollectionDeleteDialog = useAppStore((s) => s.closeCollectionDeleteDialog);
   const keyboardShortcutsModalOpen = useAppStore((s) => s.keyboardShortcutsModalOpen);
   const closeKeyboardShortcutsModal = useAppStore((s) => s.closeKeyboardShortcutsModal);
+
+  const welcomeOpen = Boolean(
+    user &&
+      profile &&
+      !authLoading &&
+      !colLoading &&
+      collections.length === 0 &&
+      profile.preferences.onboarded !== true
+  );
+
+  useEffect(() => {
+    if (!user || !profile) return;
+    if (collections.length === 0) return;
+    if (profile.preferences.onboarded === true) return;
+    void updateProfile({ preferences: { ...profile.preferences, onboarded: true } });
+  }, [user, profile?.preferences.onboarded, collections.length, updateProfile]);
+
+  const chordArmRef = useRef(false);
+  const chordTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const welcomeOpenRef = useRef(welcomeOpen);
+  welcomeOpenRef.current = welcomeOpen;
+
+  useEffect(() => {
+    const cancelChord = () => {
+      chordArmRef.current = false;
+      if (chordTimerRef.current !== null) {
+        clearTimeout(chordTimerRef.current);
+        chordTimerRef.current = null;
+      }
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) {
+        cancelChord();
+        return;
+      }
+      if (isEditableTarget(e.target)) {
+        cancelChord();
+        return;
+      }
+      if (welcomeOpenRef.current) {
+        cancelChord();
+        return;
+      }
+
+      const st = useAppStore.getState();
+      if (
+        st.paletteOpen ||
+        st.keyboardShortcutsModalOpen ||
+        st.createCollectionModalOpen ||
+        st.collectionForEdit ||
+        st.collectionForDelete ||
+        st.openRowId
+      ) {
+        cancelChord();
+        return;
+      }
+
+      const k = e.key.length === 1 ? e.key.toLowerCase() : '';
+
+      if (chordArmRef.current) {
+        if (k === 'd') {
+          e.preventDefault();
+          cancelChord();
+          navigate('/dashboard');
+          return;
+        }
+        if (k === 's') {
+          e.preventDefault();
+          cancelChord();
+          navigate('/settings');
+          return;
+        }
+        if (k !== 'g') {
+          cancelChord();
+        }
+      }
+
+      if (k === 'g') {
+        e.preventDefault();
+        chordArmRef.current = true;
+        if (chordTimerRef.current !== null) clearTimeout(chordTimerRef.current);
+        chordTimerRef.current = setTimeout(() => {
+          chordArmRef.current = false;
+          chordTimerRef.current = null;
+        }, 500);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      cancelChord();
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [navigate]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -100,6 +201,7 @@ export function AppShell() {
           if (!o) closeKeyboardShortcutsModal();
         }}
       />
+      <WelcomeOnboardingModal open={welcomeOpen} />
       <Toaster position="bottom-right" richColors closeButton />
     </div>
   );

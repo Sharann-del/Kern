@@ -581,7 +581,7 @@ function TableViewInner({
                   role="row"
                   className={cn(
                     'group absolute left-0 top-0 flex h-9 w-full border-b border-kern-surface-2 hover:bg-kern-surface',
-                    isFocused && 'ring-1 ring-inset ring-kern-accent/35'
+                    isFocused && 'bg-kern-accent/5'
                   )}
                   style={{
                     transform: `translateY(${virtualRow.start}px)`,

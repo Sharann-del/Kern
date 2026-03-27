@@ -14,7 +14,8 @@ export type ButtonProps = {
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'children'>;
 
 const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
-  primary: 'bg-kern-accent text-white hover:bg-kern-accent/90',
+  primary:
+    'bg-kern-accent text-kern-on-accent hover:bg-kern-accent-hover active:brightness-95',
   secondary:
     'bg-kern-surface border border-kern-border text-kern-text hover:bg-kern-surface-2',
   ghost:

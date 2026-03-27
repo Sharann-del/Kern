@@ -32,9 +32,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         className={cn(
           'h-8 w-full rounded-kern-md border bg-kern-bg px-3 text-sm text-kern-text outline-none transition-shadow duration-ds-fast',
           'placeholder:text-kern-text-3',
-          'focus:border-kern-accent focus:ring-2 focus:ring-kern-accent/30',
+          'focus-visible:border-kern-accent focus-visible:ring-2 focus-visible:ring-kern-accent/30',
           error
-            ? 'border-kern-danger ring-2 ring-kern-danger/30 focus:border-kern-danger focus:ring-kern-danger/30'
+            ? 'border-kern-danger ring-2 ring-kern-danger/30 focus-visible:border-kern-danger focus-visible:ring-kern-danger/30'
             : 'border-kern-border'
         )}
         {...props}

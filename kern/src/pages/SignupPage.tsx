@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { OAuthAuthSection } from '@/components/auth/OAuthAuthSection';
 import { AuthPageShell } from '@/components/layout/AuthPageShell';
 import { getAuthErrorMessage, isEmailAlreadyRegisteredMessage } from '@/lib/authMessages';
 import { useAuth } from '@/providers/AuthProvider';
@@ -92,7 +93,6 @@ export function SignupPage() {
   return (
     <AuthPageShell
       title="Create account"
-      subtitle={"Set up your workspace. You can organize everything in one place once you're in."}
       footer={
         <>
           Already have an account?{' '}
@@ -180,6 +180,9 @@ export function SignupPage() {
           {loading ? 'Creating account…' : 'Sign up'}
         </button>
       </form>
+      <div className="mt-8">
+        <OAuthAuthSection />
+      </div>
     </AuthPageShell>
   );
 }

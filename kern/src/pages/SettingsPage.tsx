@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 import { FunctionsHttpError } from '@supabase/supabase-js';
 
+import { CustomViewsSettingsTab } from '@/components/settings/CustomViewsSettingsTab';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
@@ -118,7 +119,7 @@ function ProfileTab() {
         <p className="mb-3 text-sm font-medium text-kern-text">Avatar</p>
         <div className="flex items-center gap-4">
           <div
-            className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-kern-accent text-lg font-semibold text-white"
+            className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-kern-accent text-lg font-semibold text-kern-on-accent"
             aria-hidden={Boolean(displayAvatarUrl)}
           >
             {displayAvatarUrl ? (
@@ -168,14 +169,14 @@ function ThemePreviewLight({ selected }: { selected: boolean }) {
   return (
     <div
       className={cn(
-        'h-20 w-[120px] shrink-0 rounded-kern-md border bg-white p-2 shadow-sm transition-shadow',
-        selected ? 'ring-2 ring-kern-accent ring-offset-2 ring-offset-kern-bg' : 'border-kern-border'
+        'h-20 w-[120px] shrink-0 rounded-kern-md border border-[#e8e6e1] bg-[#f5f4f0] p-2 shadow-sm transition-shadow',
+        selected ? 'ring-2 ring-[#c8a84b] ring-offset-2 ring-offset-[#f5f4f0]' : ''
       )}
     >
-      <div className="h-2 w-3/4 rounded-sm bg-neutral-200" />
+      <div className="h-2 w-3/4 rounded-sm bg-[#c8a84b]/70" />
       <div className="mt-2 space-y-1">
-        <div className="h-1.5 w-full rounded-sm bg-neutral-100" />
-        <div className="h-1.5 w-5/6 rounded-sm bg-neutral-100" />
+        <div className="h-1.5 w-full rounded-sm bg-[#ffffff]" />
+        <div className="h-1.5 w-5/6 rounded-sm bg-[#ffffff]" />
       </div>
     </div>
   );
@@ -185,14 +186,14 @@ function ThemePreviewDark({ selected }: { selected: boolean }) {
   return (
     <div
       className={cn(
-        'h-20 w-[120px] shrink-0 rounded-kern-md border border-neutral-700 bg-neutral-900 p-2 shadow-sm transition-shadow',
-        selected ? 'ring-2 ring-kern-accent ring-offset-2 ring-offset-kern-bg' : ''
+        'h-20 w-[120px] shrink-0 rounded-kern-md border border-[#3f3d38] bg-[#1a1a18] p-2 shadow-sm transition-shadow',
+        selected ? 'ring-2 ring-[#c8a84b] ring-offset-2 ring-offset-[#1a1a18]' : ''
       )}
     >
-      <div className="h-2 w-3/4 rounded-sm bg-neutral-600" />
+      <div className="h-2 w-3/4 rounded-sm bg-[#c8a84b]" />
       <div className="mt-2 space-y-1">
-        <div className="h-1.5 w-full rounded-sm bg-neutral-800" />
-        <div className="h-1.5 w-5/6 rounded-sm bg-neutral-800" />
+        <div className="h-1.5 w-full rounded-sm bg-[#2c2c2a]" />
+        <div className="h-1.5 w-5/6 rounded-sm bg-[#2c2c2a]" />
       </div>
     </div>
   );
@@ -680,7 +681,7 @@ export function SettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl p-8">
+    <div className="mx-auto max-w-5xl p-8">
       <h1 className="mb-8 text-2xl font-semibold text-kern-text">Settings</h1>
 
       <Tabs.Root defaultValue="profile" className="w-full">
@@ -693,6 +694,9 @@ export function SettingsPage() {
           </Tabs.Trigger>
           <Tabs.Trigger value="integrations" className={TAB_TRIGGER}>
             Integrations
+          </Tabs.Trigger>
+          <Tabs.Trigger value="custom-views" className={TAB_TRIGGER}>
+            Custom views
           </Tabs.Trigger>
           <Tabs.Trigger value="danger" className={TAB_TRIGGER}>
             Danger zone
@@ -707,6 +711,9 @@ export function SettingsPage() {
         </Tabs.Content>
         <Tabs.Content value="integrations" className="outline-none">
           <IntegrationsTab />
+        </Tabs.Content>
+        <Tabs.Content value="custom-views" className="outline-none">
+          <CustomViewsSettingsTab />
         </Tabs.Content>
         <Tabs.Content value="danger" className="outline-none">
           <DangerTab />

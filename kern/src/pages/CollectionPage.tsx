@@ -16,8 +16,10 @@ import { CalendarView } from '@/components/views/CalendarView/CalendarView';
 import { GalleryView } from '@/components/views/GalleryView/GalleryView';
 import { KanbanView } from '@/components/views/KanbanView/KanbanView';
 import { ListView } from '@/components/views/ListView/ListView';
+import { CustomViewRenderer } from '@/components/views/CustomView/CustomViewRenderer';
 import { TableView } from '@/components/views/TableView/TableView';
-import { useRows } from '@/hooks/useRows';
+import { useCustomView } from '@/hooks/useCustomViews';
+import { useRows, useCreateRow, useUpdateRow, useDeleteRow } from '@/hooks/useRows';
 import { useCreateView, useUpdateView, useViews } from '@/hooks/useViews';
 import { supabase } from '@/lib/supabase';
 import { useAppStore } from '@/stores/appStore';
@@ -36,6 +38,7 @@ export function CollectionPage() {
   const setActiveCollection = useAppStore((s) => s.setActiveCollection);
   const [panel, setPanel] = useState<FieldPanelState>(null);
   const [newRowCount, setNewRowCount] = useState(0);
+  const [rowSearchQuery, setRowSearchQuery] = useState('');
 
   const { data: collection, isLoading, isFetched, isError } = useCollection(slug ?? '');
   const collectionId = collection?.id ?? '';
@@ -125,10 +128,25 @@ export function CollectionPage() {
     updateView.mutate({ id: activeView.id, collectionId, config: partial });
   };
 
-  const { data: rows = [], isLoading: rowsLoading } = useRows(collectionId, activeView?.config, fields);
+  const { data: rows = [], isLoading: rowsLoading } = useRows(
+    collectionId,
+    activeView?.config,
+    fields,
+    rowSearchQuery
+  );
+
+  const customRegistryId =
+    activeView?.type === 'custom' ? (activeView.custom_view_id ?? undefined) : undefined;
+  const { data: customRegistry, isLoading: customRegistryLoading } = useCustomView(customRegistryId);
+
+  const createRow = useCreateRow();
+  const updateRow = useUpdateRow();
+  const deleteRow = useDeleteRow();
+  const openRow = useAppStore((s) => s.openRow);
 
   useEffect(() => {
     setNewRowCount(0);
+    setRowSearchQuery('');
   }, [collectionId]);
 
   useEffect(() => {
@@ -239,7 +257,7 @@ export function CollectionPage() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-[calc(100vh-48px)] flex-1 flex-col">
       {viewsLoading && views.length === 0 ? (
         <div className="border-b border-kern-border px-6 py-3">
           <Skeleton className="h-8 w-full max-w-xl rounded-kern-md" />
@@ -247,11 +265,14 @@ export function CollectionPage() {
       ) : (
         <CollectionHeader
           collection={collection}
+          collectionSlug={slug}
           fields={fields}
           views={views}
           activeView={activeView}
           onViewChange={handleViewChange}
           onUpdateViewConfig={handleUpdateViewConfig}
+          rowSearchQuery={rowSearchQuery}
+          onRowSearchChange={setRowSearchQuery}
         />
       )}
 
@@ -422,6 +443,37 @@ export function CollectionPage() {
                 viewConfig={activeView.config}
                 collectionId={collection.id}
               />
+            </div>
+          ) : activeView?.type === 'custom' && activeView ? (
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg">
+              {!activeView.custom_view_id ? (
+                <div className="flex min-h-0 flex-1 items-center justify-center p-6 text-center text-sm text-kern-text-3">
+                  This custom view is not linked to code. Open the custom view editor to fix it.
+                </div>
+              ) : customRegistryLoading ? (
+                <Skeleton className="min-h-0 w-full flex-1 rounded-none" />
+              ) : (
+                <CustomViewRenderer
+                  code={customRegistry?.compiled_code ?? null}
+                  rows={rows}
+                  fields={fields}
+                  collectionName={collection.name}
+                  onRowUpdate={(rowId, data) =>
+                    updateRow.mutateAsync({ id: rowId, collectionId: collection.id, data })
+                  }
+                  onRowCreate={async (data) => {
+                    await createRow.mutateAsync({ collectionId: collection.id, data });
+                  }}
+                  onRowDelete={(rowId) =>
+                    deleteRow.mutateAsync({ id: rowId, collectionId: collection.id })
+                  }
+                  onRowClick={(rowId) => openRow(rowId, collection.id)}
+                  onOpenEditor={() =>
+                    activeView.custom_view_id &&
+                    navigate(`/c/${slug}/views/custom/${activeView.custom_view_id}/edit`)
+                  }
+                />
+              )}
             </div>
           ) : (
             <div className="flex flex-1 items-center justify-center rounded-kern-lg border border-dashed border-kern-border py-16 text-sm text-kern-text-3">

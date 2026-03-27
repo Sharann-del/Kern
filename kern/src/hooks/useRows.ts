@@ -11,6 +11,7 @@ import { startOfDay } from 'date-fns';
 import { applyFilters } from '@/lib/apply-filters';
 import { toastMutationError } from '@/lib/toast-errors';
 import { applySorts } from '@/lib/apply-sorts';
+import { primaryFieldSearchText } from '@/lib/row-primary-search-text';
 import { supabase } from '@/lib/supabase';
 import type { Json } from '@/types/database';
 import type { KernField, KernRow, SelectFieldOptions, ViewConfig } from '@/types/kern';
@@ -66,11 +67,17 @@ function fieldsQueryKeyFragment(fields?: KernField[]): string {
   );
 }
 
-function rowsQueryKey(collectionId: string, viewConfig?: ViewConfig, fields?: KernField[]) {
+function rowsQueryKey(
+  collectionId: string,
+  viewConfig?: ViewConfig,
+  fields?: KernField[],
+  searchQuery?: string
+) {
   const filtersKey = JSON.stringify(viewConfig?.filters ?? []);
   const sortsKey = JSON.stringify(viewConfig?.sorts ?? []);
   const fieldsKey = fieldsQueryKeyFragment(fields);
-  return ['rows', collectionId, filtersKey, sortsKey, fieldsKey] as const;
+  const searchKey = (searchQuery ?? '').trim().toLowerCase();
+  return ['rows', collectionId, filtersKey, sortsKey, fieldsKey, searchKey] as const;
 }
 
 export function useRowsDashboard(collectionId: string | null) {
@@ -118,10 +125,13 @@ type RelationJoinRow = {
 export function useRows(
   collectionId: string,
   viewConfig?: ViewConfig,
-  fields?: KernField[]
+  fields?: KernField[],
+  searchQuery?: string
 ): UseQueryResult<KernRow[]> {
+  const normalizedSearch = (searchQuery ?? '').trim().toLowerCase();
+
   return useQuery({
-    queryKey: rowsQueryKey(collectionId, viewConfig, fields),
+    queryKey: rowsQueryKey(collectionId, viewConfig, fields, searchQuery),
     queryFn: async () => {
       const { data, error } = await supabase
         .from('rows')
@@ -186,7 +196,12 @@ export function useRows(
     placeholderData: keepPreviousData,
     select: (kernRows) => {
       const filtered = applyFilters(kernRows, viewConfig?.filters ?? [], fields ?? []);
-      return applySorts(filtered, viewConfig?.sorts ?? [], fields ?? []);
+      const sorted = applySorts(filtered, viewConfig?.sorts ?? [], fields ?? []);
+      if (!normalizedSearch) return sorted;
+      const flist = fields ?? [];
+      return sorted.filter((row) =>
+        primaryFieldSearchText(row, flist).toLowerCase().includes(normalizedSearch)
+      );
     },
   });
 }

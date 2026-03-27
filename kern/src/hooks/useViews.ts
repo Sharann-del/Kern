@@ -264,6 +264,7 @@ export function useDeleteView() {
     },
     onSuccess: (_void, { collectionId }) => {
       void queryClient.invalidateQueries({ queryKey: ['views', collectionId] });
+      void queryClient.invalidateQueries({ queryKey: ['custom_view_assignments'] });
     },
     onError: (e) => toastMutationError(e),
   });

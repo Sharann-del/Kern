@@ -2,6 +2,7 @@ import * as Checkbox from '@radix-ui/react-checkbox';
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDown, MoreHorizontal } from 'lucide-react';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { FieldTypeIcon } from '@/components/field/FieldTypeIcon';
 import { Popover } from '@/components/ui/Popover';
@@ -13,11 +14,18 @@ const NONE = '__none__';
 
 export type ViewOptionsMenuProps = {
   activeView: KernView | null;
+  collectionSlug: string;
   fields: KernField[];
   onUpdateViewConfig: (partial: Partial<ViewConfig>) => void;
 };
 
-export function ViewOptionsMenu({ activeView, fields, onUpdateViewConfig }: ViewOptionsMenuProps) {
+export function ViewOptionsMenu({
+  activeView,
+  collectionSlug,
+  fields,
+  onUpdateViewConfig,
+}: ViewOptionsMenuProps) {
+  const navigate = useNavigate();
   const selectFields = useMemo(() => fields.filter((f) => f.type === 'select'), [fields]);
   const fileFields = useMemo(() => fields.filter((f) => f.type === 'file'), [fields]);
   const orderedFields = useMemo(
@@ -223,7 +231,7 @@ export function ViewOptionsMenu({ activeView, fields, onUpdateViewConfig }: View
             onClick={() => onUpdateViewConfig({ gallery_card_size: s })}
             className={cn(
               'flex-1 rounded-kern-sm px-2 py-1 text-xs font-medium capitalize',
-              gallerySize === s ? 'bg-kern-accent text-white' : 'text-kern-text-2'
+              gallerySize === s ? 'bg-kern-accent text-kern-on-accent' : 'text-kern-text-2'
             )}
           >
             {s}
@@ -233,7 +241,31 @@ export function ViewOptionsMenu({ activeView, fields, onUpdateViewConfig }: View
     </div>
   );
 
-  const content = !activeView ? null : isKanban ? (
+  const customContent =
+    activeView?.type === 'custom' ? (
+      <div className="w-[240px] space-y-2 p-2">
+        <p className="text-xs font-medium text-kern-text-2">Custom view</p>
+        {activeView.custom_view_id ? (
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="w-full"
+            onClick={() =>
+              navigate(`/c/${collectionSlug}/views/custom/${activeView.custom_view_id}/edit`)
+            }
+          >
+            Edit view code
+          </Button>
+        ) : (
+          <p className="text-xs text-kern-text-3">This tab is not linked to saved code yet.</p>
+        )}
+      </div>
+    ) : null;
+
+  const content = !activeView ? null : activeView.type === 'custom' ? (
+    customContent
+  ) : isKanban ? (
     kanbanContent
   ) : isGallery ? (
     galleryContent

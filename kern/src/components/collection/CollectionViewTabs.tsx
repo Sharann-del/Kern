@@ -1,13 +1,6 @@
-import {
-  Calendar,
-  Code2,
-  Columns2,
-  LayoutGrid,
-  List,
-  Table2,
-  Plus,
-} from 'lucide-react';
+import { Calendar, CodeXml, Columns2, LayoutGrid, List, Table2, Plus } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { Popover } from '@/components/ui/Popover';
 import { VIEW_TYPES } from '@/lib/constants';
@@ -21,7 +14,7 @@ const VIEW_TYPE_ICONS: Record<ViewType, typeof Table2> = {
   calendar: Calendar,
   gallery: LayoutGrid,
   list: List,
-  custom: Code2,
+  custom: CodeXml,
 };
 
 export type CollectionViewTabsProps = {
@@ -29,10 +22,12 @@ export type CollectionViewTabsProps = {
   activeViewId: string;
   onViewChange: (viewId: string) => void;
   collectionId: string;
+  collectionSlug: string;
 };
 
-function AddViewPopover({ collectionId }: { collectionId: string }) {
+function AddViewPopover({ collectionId, collectionSlug }: { collectionId: string; collectionSlug: string }) {
   const createView = useCreateView();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   return (
@@ -62,6 +57,11 @@ function AddViewPopover({ collectionId }: { collectionId: string }) {
               type="button"
               className="flex w-full items-center gap-2 rounded-kern-sm px-2 py-2 text-left text-sm text-kern-text hover:bg-kern-surface-2"
               onClick={() => {
+                if (vt.type === 'custom') {
+                  navigate(`/c/${collectionSlug}/views/custom/new`);
+                  setOpen(false);
+                  return;
+                }
                 createView.mutate({ collectionId, type: vt.type });
                 setOpen(false);
               }}
@@ -81,6 +81,7 @@ export function CollectionViewTabs({
   activeViewId,
   onViewChange,
   collectionId,
+  collectionSlug,
 }: CollectionViewTabsProps) {
   const updateView = useUpdateView();
   const [renamingId, setRenamingId] = useState<string | null>(null);
@@ -124,7 +125,7 @@ export function CollectionViewTabs({
             {renamingId === v.id ? (
               <input
                 autoFocus
-                className="mx-1 my-1 w-[120px] rounded-kern-sm border border-kern-border bg-kern-bg px-2 py-1 text-sm text-kern-text outline-none focus:ring-2 focus:ring-kern-accent/30"
+                className="mx-1 my-1 w-[120px] rounded-kern-sm border border-kern-border bg-kern-bg px-2 py-1 text-sm text-kern-text outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/30"
                 value={renameValue}
                 onChange={(e) => setRenameValue(e.target.value)}
                 onBlur={() => commitRename(v.id)}
@@ -152,7 +153,7 @@ export function CollectionViewTabs({
           </div>
         );
       })}
-      <AddViewPopover collectionId={collectionId} />
+      <AddViewPopover collectionId={collectionId} collectionSlug={collectionSlug} />
     </div>
   );
 }

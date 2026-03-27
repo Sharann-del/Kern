@@ -1,3 +1,4 @@
+import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { CollectionActionsMenu } from '@/components/collection/CollectionActionsMenu';
@@ -14,20 +15,26 @@ import type { KernCollection, KernField, KernView, ViewConfig } from '@/types/ke
 
 export type CollectionHeaderProps = {
   collection: KernCollection;
+  collectionSlug: string;
   fields: KernField[];
   views: KernView[];
   activeView: KernView | null;
   onViewChange: (viewId: string) => void;
   onUpdateViewConfig: (partial: Partial<ViewConfig>) => void;
+  rowSearchQuery: string;
+  onRowSearchChange: (value: string) => void;
 };
 
 export function CollectionHeader({
   collection,
+  collectionSlug,
   fields,
   views,
   activeView,
   onViewChange,
   onUpdateViewConfig,
+  rowSearchQuery,
+  onRowSearchChange,
 }: CollectionHeaderProps) {
   const [connectLiveOpen, setConnectLiveOpen] = useState(false);
   const filtersPopoverOpen = useAppStore((s) => s.filtersPopoverOpen);
@@ -81,13 +88,37 @@ export function CollectionHeader({
         collection={collection}
       />
 
-      <div className="flex h-10 items-center border-b border-kern-border px-4">
+      <div className="flex h-10 min-w-0 items-center gap-2 border-b border-kern-border px-4">
         <CollectionViewTabs
           views={views}
           activeViewId={activeView?.id ?? ''}
           onViewChange={onViewChange}
           collectionId={collection.id}
+          collectionSlug={collectionSlug}
         />
+        {activeView ? (
+          <div className="flex h-7 w-[160px] shrink-0 items-center gap-1 rounded-kern-md border border-kern-border bg-kern-surface px-2 focus-within:ring-2 focus-within:ring-kern-accent/30">
+            <Search size={14} className="shrink-0 text-kern-text-3" aria-hidden />
+            <input
+              type="search"
+              value={rowSearchQuery}
+              onChange={(e) => onRowSearchChange(e.target.value)}
+              placeholder="Search rows…"
+              className="min-w-0 flex-1 bg-transparent text-sm text-kern-text outline-none placeholder:text-kern-text-3"
+              aria-label="Search rows by primary field"
+            />
+            {rowSearchQuery ? (
+              <button
+                type="button"
+                onClick={() => onRowSearchChange('')}
+                className="shrink-0 rounded-kern-sm p-0.5 text-kern-text-3 hover:bg-kern-surface-2 hover:text-kern-text"
+                aria-label="Clear search"
+              >
+                <X size={14} />
+              </button>
+            ) : null}
+          </div>
+        ) : null}
         {activeView ? (
           <div className="ml-auto flex shrink-0 gap-1">
             <ViewFilterBar
@@ -110,6 +141,7 @@ export function CollectionHeader({
             />
             <ViewOptionsMenu
               activeView={activeView}
+              collectionSlug={collectionSlug}
               fields={fields}
               onUpdateViewConfig={onUpdateViewConfig}
             />

@@ -12,7 +12,8 @@ function mapPreferences(raw: unknown): KernProfile['preferences'] {
   const o = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
   const theme = o.theme === 'dark' ? 'dark' : 'light';
   const sidebar_collapsed = Boolean(o.sidebar_collapsed);
-  return { theme, sidebar_collapsed };
+  const onboarded = o.onboarded === true ? true : undefined;
+  return { theme, sidebar_collapsed, ...(onboarded ? { onboarded: true } : {}) };
 }
 
 function mapProfile(row: ProfileRow): KernProfile {
@@ -37,6 +38,8 @@ type AuthContextValue = {
     password: string,
     fullName?: string
   ) => Promise<{ needsEmailConfirmation: boolean }>;
+  /** Starts OAuth in the same window (Supabase Auth); redirects or throws. */
+  signInWithOAuth: (provider: 'google' | 'github') => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (
     data: Partial<Pick<KernProfile, 'full_name' | 'avatar_url' | 'preferences'>>
@@ -45,7 +48,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-/** Supabase may return a fake user (no identities) when re-signing up with a confirmed email while email+phone confirm are both on. */
+/** Supabase may return a fake user (no identities) when re-signing up with a confirmed email in some configurations. */
 function isObfuscatedDuplicateSignupUser(user: User | null): boolean {
   if (!user) return false;
   return Array.isArray(user.identities) && user.identities.length === 0;
@@ -121,6 +124,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (error) throw error;
   }, []);
 
+  const getAuthOAuthRedirectTo = useCallback(() => `${window.location.origin}/auth/callback`, []);
+
+  const signInWithOAuth = useCallback(
+    async (provider: 'google' | 'github') => {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: getAuthOAuthRedirectTo(),
+          skipBrowserRedirect: true,
+        },
+      });
+      if (error) throw error;
+      if (data.url) window.location.assign(data.url);
+    },
+    [getAuthOAuthRedirectTo]
+  );
+
   const signUp = useCallback(async (email: string, password: string, fullName?: string) => {
     const redirectTo = `${window.location.origin}/dashboard`;
     const { data, error } = await supabase.auth.signUp({
@@ -185,6 +205,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     signIn,
     signUp,
+    signInWithOAuth,
     signOut,
     updateProfile,
   };

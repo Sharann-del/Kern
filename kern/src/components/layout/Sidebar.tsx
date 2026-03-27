@@ -26,33 +26,14 @@ import { Button } from '@/components/ui/Button';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 import {
   useCollections,
-  useCreateCollection,
+  useDuplicateCollection,
   useReorderCollections,
-  type CreateCollectionInput,
 } from '@/hooks/useCollections';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/providers/AuthProvider';
 import { useAppStore } from '@/stores/appStore';
 import type { KernCollection } from '@/types/kern';
-
-function makeDuplicateInput(c: KernCollection, all: KernCollection[]): CreateCollectionInput {
-  const name = `${c.name} (copy)`;
-  const slugs = new Set(all.map((x) => x.slug));
-  let slug = `${c.slug}-copy`;
-  let n = 2;
-  while (slugs.has(slug)) {
-    slug = `${c.slug}-copy-${n}`;
-    n += 1;
-  }
-  return {
-    name,
-    slug,
-    icon: c.icon,
-    color: c.color,
-    description: c.description,
-  };
-}
 
 function SortableCollectionRow({
   collection,
@@ -136,7 +117,7 @@ export function Sidebar() {
   const activeSlug = collectionMatch?.params.slug;
 
   const { data: collections = [], isLoading } = useCollections();
-  const createCollection = useCreateCollection();
+  const duplicateCollection = useDuplicateCollection();
   const reorderCollections = useReorderCollections();
 
   const sensors = useSensors(
@@ -193,7 +174,7 @@ export function Sidebar() {
               isActive={activeSlug === c.slug}
               collapsed={sidebarCollapsed}
               onEdit={() => openCollectionEditModal(c)}
-              onDuplicate={() => createCollection.mutate(makeDuplicateInput(c, collections))}
+              onDuplicate={() => duplicateCollection.mutate({ source: c })}
               onDelete={() => openCollectionDeleteDialog(c)}
             />
           ))}
@@ -208,7 +189,7 @@ export function Sidebar() {
     activeSlug,
     sidebarCollapsed,
     collections,
-    createCollection,
+    duplicateCollection,
     openCollectionEditModal,
     openCollectionDeleteDialog,
   ]);
@@ -234,7 +215,7 @@ export function Sidebar() {
           isActive={isActive}
           collapsed={sidebarCollapsed}
           onEdit={() => openCollectionEditModal(c)}
-          onDuplicate={() => createCollection.mutate(makeDuplicateInput(c, collections))}
+          onDuplicate={() => duplicateCollection.mutate({ source: c })}
           onDelete={() => openCollectionDeleteDialog(c)}
         />
       );
@@ -244,8 +225,7 @@ export function Sidebar() {
     live,
     activeSlug,
     sidebarCollapsed,
-    collections,
-    createCollection,
+    duplicateCollection,
     openCollectionEditModal,
     openCollectionDeleteDialog,
   ]);

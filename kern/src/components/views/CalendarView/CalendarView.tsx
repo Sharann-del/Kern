@@ -136,7 +136,7 @@ function DayDropZone({
     >
       <div className="flex justify-end">
         {isTodayCell ? (
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-kern-accent text-xs font-medium text-white">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-kern-accent text-xs font-medium text-kern-on-accent">
             {format(day, 'd')}
           </span>
         ) : (
@@ -415,7 +415,7 @@ export function CalendarView({
               onClick={() => setDisplayMode('month')}
               className={cn(
                 'rounded-kern-sm px-2.5 py-1 text-xs font-medium',
-                displayMode === 'month' ? 'bg-kern-accent text-white' : 'text-kern-text-2'
+                displayMode === 'month' ? 'bg-kern-accent text-kern-on-accent' : 'text-kern-text-2'
               )}
             >
               Month
@@ -425,7 +425,7 @@ export function CalendarView({
               onClick={() => setDisplayMode('week')}
               className={cn(
                 'rounded-kern-sm px-2.5 py-1 text-xs font-medium',
-                displayMode === 'week' ? 'bg-kern-accent text-white' : 'text-kern-text-2'
+                displayMode === 'week' ? 'bg-kern-accent text-kern-on-accent' : 'text-kern-text-2'
               )}
             >
               Week

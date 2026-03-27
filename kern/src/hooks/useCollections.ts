@@ -1,11 +1,33 @@
 import { useMutation, useQuery, useQueryClient, type UseQueryResult } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { supabase } from '@/lib/supabase';
 import { toastMutationError } from '@/lib/toast-errors';
 import type { Json } from '@/types/database';
 import type { KernCollection } from '@/types/kern';
 import { useAuth } from '@/providers/AuthProvider';
+
+type FieldRowRaw = {
+  name: string;
+  slug: string;
+  type: string;
+  options: Json | null;
+  is_required: boolean;
+  is_primary: boolean;
+  is_hidden_by_default: boolean;
+  sort_order: number;
+};
+
+function uniqueCopySlug(sourceSlug: string, taken: Set<string>): string {
+  let slug = `${sourceSlug}-copy`;
+  let n = 2;
+  while (taken.has(slug)) {
+    slug = `${sourceSlug}-copy-${n}`;
+    n += 1;
+  }
+  return slug;
+}
 
 type CollectionRow = {
   id: string;
@@ -189,6 +211,96 @@ export function useCreateCollection(options?: UseCreateCollectionOptions) {
     onSuccess: (created) => {
       if (userId) void queryClient.invalidateQueries({ queryKey: ['collections', userId] });
       if (navigateOnSuccess) navigate(`/c/${created.slug}`);
+    },
+    onError: (e) => toastMutationError(e),
+  });
+}
+
+export function useDuplicateCollection() {
+  const { user } = useAuth();
+  const userId = user?.id;
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async ({ source }: { source: KernCollection }) => {
+      if (!userId) throw new Error('Not signed in');
+
+      const list = queryClient.getQueryData<KernCollection[]>(['collections', userId]) ?? [];
+      const slugs = new Set(list.map((c) => c.slug));
+      const newSlug = uniqueCopySlug(source.slug, slugs);
+      const name = `${source.name} (copy)`;
+
+      const { data: maxRow } = await supabase
+        .from('collections')
+        .select('sort_order')
+        .order('sort_order', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const nextSort = (maxRow?.sort_order ?? -1) + 1;
+
+      const { data: created, error: insertErr } = await supabase
+        .from('collections')
+        .insert({
+          user_id: userId,
+          name,
+          slug: newSlug,
+          icon: source.icon,
+          color: source.color,
+          description: source.description,
+          is_live_source: false,
+          live_source_type: null,
+          live_source_config: null,
+          last_synced_at: null,
+          sync_status: 'idle',
+          sync_error_message: null,
+          sort_order: nextSort,
+        })
+        .select('*')
+        .single();
+
+      if (insertErr) throw insertErr;
+      if (!created) throw new Error('No collection returned');
+
+      const { data: fieldRows, error: fieldsErr } = await supabase
+        .from('fields')
+        .select('name, slug, type, options, is_required, is_primary, is_hidden_by_default, sort_order')
+        .eq('collection_id', source.id)
+        .order('sort_order', { ascending: true });
+
+      if (fieldsErr) throw fieldsErr;
+
+      const rows = (fieldRows ?? []) as FieldRowRaw[];
+      if (rows.length > 0) {
+        const { error: insFieldsErr } = await supabase.from('fields').insert(
+          rows.map((f) => ({
+            collection_id: created.id,
+            user_id: userId,
+            name: f.name,
+            slug: f.slug,
+            type: f.type,
+            options: f.options,
+            is_required: f.is_required,
+            is_primary: f.is_primary,
+            is_hidden_by_default: f.is_hidden_by_default,
+            sort_order: f.sort_order,
+          }))
+        );
+        if (insFieldsErr) throw insFieldsErr;
+      }
+
+      return { slug: created.slug as string, id: created.id as string, sourceName: source.name };
+    },
+    onSuccess: (created) => {
+      if (userId) {
+        void queryClient.invalidateQueries({ queryKey: ['collections', userId] });
+        void queryClient.invalidateQueries({ queryKey: ['collection', created.slug, userId] });
+        void queryClient.invalidateQueries({ queryKey: ['collectionById', created.id, userId] });
+        void queryClient.invalidateQueries({ queryKey: ['fields', created.id] });
+      }
+      navigate(`/c/${created.slug}`);
+      toast.success(`${created.sourceName} duplicated`);
     },
     onError: (e) => toastMutationError(e),
   });

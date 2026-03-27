@@ -111,7 +111,12 @@ export interface KernProfile {
   email: string;
   full_name: string | null;
   avatar_url: string | null;
-  preferences: { theme: 'light' | 'dark'; sidebar_collapsed: boolean };
+  preferences: {
+    theme: 'light' | 'dark';
+    sidebar_collapsed: boolean;
+    /** Set after the user has at least one collection (onboarding complete). */
+    onboarded?: boolean;
+  };
   created_at: string;
   updated_at: string;
 }

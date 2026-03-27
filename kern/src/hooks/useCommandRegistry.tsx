@@ -108,6 +108,7 @@ export function useCommandRegistry(): CommandDefinition[] {
         group: 'Navigation',
         label: 'Go to Settings',
         icon: Settings,
+        shortcut: 'G then S',
         action: () => navigate('/settings'),
       },
       {

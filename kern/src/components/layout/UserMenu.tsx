@@ -31,7 +31,7 @@ export function UserMenu() {
           className="rounded-full outline-none ring-offset-2 ring-offset-kern-bg focus-visible:ring-2 focus-visible:ring-kern-accent/40"
           aria-label="User menu"
         >
-          <Avatar.Root className="flex h-8 w-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-kern-accent font-medium text-sm text-white">
+          <Avatar.Root className="flex h-8 w-8 shrink-0 select-none items-center justify-center overflow-hidden rounded-full bg-kern-accent font-medium text-sm text-kern-on-accent">
             {avatarUrl ? (
               <Avatar.Image src={avatarUrl} alt="" className="h-full w-full object-cover" />
             ) : null}

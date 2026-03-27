@@ -13,9 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
+import { exportCollectionAsCSV } from '@/lib/export-collection-csv';
 import { describeFunctionsInvokeError } from '@/lib/functions-invoke';
 import { edgeFunctionForLiveSource } from '@/lib/live-source-sync';
 import { invokeAuthedEdgeFunction } from '@/lib/supabase-functions';
+import { useDuplicateCollection } from '@/hooks/useCollections';
+import { useFields } from '@/hooks/useFields';
 import type { KernCollection } from '@/types/kern';
 import { useAuth } from '@/providers/AuthProvider';
 
@@ -29,6 +32,8 @@ export function CollectionActionsMenu({ collection, onOpenConnectLiveSource }: C
   const { user } = useAuth();
   const userId = user?.id;
   const queryClient = useQueryClient();
+  const { data: fields = [], isLoading: fieldsLoading } = useFields(collection.id);
+  const duplicateCollection = useDuplicateCollection();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -63,6 +68,12 @@ export function CollectionActionsMenu({ collection, onOpenConnectLiveSource }: C
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onSelect={() => setEditOpen(true)}>Edit collection</DropdownMenuItem>
+          <DropdownMenuItem
+            disabled={duplicateCollection.isPending}
+            onSelect={() => duplicateCollection.mutate({ source: collection })}
+          >
+            Duplicate
+          </DropdownMenuItem>
           {!collection.is_live_source ? (
             <DropdownMenuItem
               onSelect={() => {
@@ -76,8 +87,20 @@ export function CollectionActionsMenu({ collection, onOpenConnectLiveSource }: C
           )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
+            disabled={fieldsLoading || fields.length === 0}
             onSelect={() => {
-              console.log('Export as CSV — Task 3.4');
+              void (async () => {
+                if (fields.length === 0) {
+                  toast.error('Add at least one field before exporting');
+                  return;
+                }
+                try {
+                  await exportCollectionAsCSV(collection, fields);
+                  toast.success('CSV downloaded');
+                } catch (e) {
+                  toast.error(e instanceof Error ? e.message : 'Export failed');
+                }
+              })();
             }}
           >
             Export as CSV
