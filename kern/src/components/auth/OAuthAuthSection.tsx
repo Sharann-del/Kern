@@ -1,12 +1,18 @@
 import { useState } from 'react';
 
+import {
+  authDividerExpand,
+  authOrLabelReveal,
+  motion,
+  shouldAnimate,
+} from '@/lib/animations';
 import { getAuthErrorMessage } from '@/lib/authMessages';
 import { useAuth } from '@/providers/AuthProvider';
 
 type AuthOAuthProvider = 'google' | 'github';
 
 const oauthButtonClass =
-  'flex w-full items-center justify-center gap-2 rounded-kern-sm border border-kern-border bg-kern-surface-2 px-3 py-2.5 text-sm font-medium text-kern-text transition-colors duration-ds-fast hover:border-kern-border-2 hover:bg-kern-surface disabled:opacity-50';
+  'auth-oauth-button flex w-full items-center justify-center gap-2 rounded-kern-sm border border-kern-border bg-kern-surface-2 px-3 py-2.5 text-sm font-medium text-kern-text transition-colors duration-ds-fast disabled:opacity-50';
 
 export function OAuthAuthSection() {
   const { signInWithOAuth } = useAuth();
@@ -27,32 +33,51 @@ export function OAuthAuthSection() {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="h-px flex-1 bg-kern-border" />
-        <span className="text-xs font-medium uppercase tracking-wide text-kern-text-3">
+        <motion.div
+          aria-hidden
+          className="h-px flex-1 origin-center bg-kern-border"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={authDividerExpand}
+        />
+        <motion.span
+          className="text-xs font-medium uppercase tracking-wide text-kern-text-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={authOrLabelReveal}
+        >
           Or continue with
-        </span>
-        <div className="h-px flex-1 bg-kern-border" />
+        </motion.span>
+        <motion.div
+          aria-hidden
+          className="h-px flex-1 origin-center bg-kern-border"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={authDividerExpand}
+        />
       </div>
 
       <div className="flex flex-col gap-2">
-        <button
+        <motion.button
           type="button"
           disabled={loading !== null}
           onClick={() => void handleOAuth('google')}
           className={oauthButtonClass}
+          whileTap={shouldAnimate ? { scale: 0.98 } : undefined}
         >
           <GoogleGlyph />
           {loading === 'google' ? 'Redirecting…' : 'Continue with Google'}
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           type="button"
           disabled={loading !== null}
           onClick={() => void handleOAuth('github')}
           className={oauthButtonClass}
+          whileTap={shouldAnimate ? { scale: 0.98 } : undefined}
         >
           <GitHubGlyph />
           {loading === 'github' ? 'Redirecting…' : 'Continue with GitHub'}
-        </button>
+        </motion.button>
       </div>
 
       {error ? <p className="text-sm text-kern-danger">{error}</p> : null}

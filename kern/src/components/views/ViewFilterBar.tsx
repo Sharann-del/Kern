@@ -327,10 +327,10 @@ export function ViewFilterBar({
         <button
           type="button"
           className={cn(
-            'relative flex h-8 items-center gap-1.5 rounded-kern-md border px-2.5 text-sm transition-colors',
+            'relative flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm transition-colors',
             hasFilters
-              ? 'border-kern-accent/30 bg-kern-accent/10 text-kern-accent'
-              : 'border-kern-border bg-kern-surface text-kern-text-2 hover:text-kern-text'
+              ? 'bg-kern-accent/15 text-kern-accent hover:bg-kern-accent/22'
+              : 'bg-kern-surface-2 text-kern-text-2 hover:bg-kern-surface hover:text-kern-text'
           )}
         >
           <Filter size={14} />

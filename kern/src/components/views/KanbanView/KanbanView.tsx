@@ -266,21 +266,24 @@ export function KanbanView({
         onDragEnd={handleDragEnd}
         onDragCancel={handleDragCancel}
       >
-        <div className="flex min-h-0 flex-1 gap-4 overflow-x-auto overflow-y-hidden p-4">
-        {columns.map((col) => (
-          <KanbanColumn
-            key={col.id}
-            columnId={col.id}
-            option={col.option}
-            rows={rowsByColumn[col.id] ?? []}
-            fields={fields}
-            viewConfig={viewConfig}
-            groupByField={groupByField}
-            collectionId={collectionId}
-            isCollapsed={collapsed.has(col.id)}
-            onToggleCollapse={() => toggleCollapse(col.id)}
-          />
-        ))}
+        <div
+          key={`${collectionId}-kanban`}
+          className="flex min-h-0 flex-1 gap-4 overflow-x-auto overflow-y-hidden p-4"
+        >
+          {columns.map((col) => (
+            <KanbanColumn
+              key={col.id}
+              columnId={col.id}
+              option={col.option}
+              rows={rowsByColumn[col.id] ?? []}
+              fields={fields}
+              viewConfig={viewConfig}
+              groupByField={groupByField}
+              collectionId={collectionId}
+              isCollapsed={collapsed.has(col.id)}
+              onToggleCollapse={() => toggleCollapse(col.id)}
+            />
+          ))}
         </div>
         <DragOverlay dropAnimation={null}>
           {activeRow ? (

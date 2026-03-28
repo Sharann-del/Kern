@@ -1,6 +1,10 @@
+import { composeRefs } from '@radix-ui/react-compose-refs';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { forwardRef, type ComponentPropsWithoutRef, type ElementRef } from 'react';
+import { motion } from 'framer-motion';
+import { forwardRef, useState, type ComponentPropsWithoutRef, type ElementRef } from 'react';
 
+import { useRadixDataStateOpen } from '@/hooks/useRadixDataStateOpen';
+import { VARIANTS } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
@@ -10,21 +14,38 @@ const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
 const DropdownMenuContent = forwardRef<
   ElementRef<typeof DropdownMenuPrimitive.Content>,
   ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, align = 'end', ...props }, ref) => (
-  <DropdownMenuPrimitive.Portal>
-    <DropdownMenuPrimitive.Content
-      ref={ref}
-      sideOffset={sideOffset}
-      align={align}
-      className={cn(
-        'z-[220] min-w-[160px] origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-1 shadow-lg outline-none',
-        'animate-kern-pop-in',
-        className
-      )}
-      {...props}
-    />
-  </DropdownMenuPrimitive.Portal>
-));
+>(({ className, sideOffset = 4, align = 'end', children, ...props }, ref) => {
+  const [node, setNode] = useState<HTMLDivElement | null>(null);
+  const menuOpen = useRadixDataStateOpen(node);
+  const setRef = composeRefs(ref, (el) => setNode(el));
+
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.Content
+        forceMount
+        asChild
+        sideOffset={sideOffset}
+        align={align}
+        {...props}
+      >
+        <motion.div
+          ref={setRef}
+          className={cn(
+            'z-[220] min-w-[160px] origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-1 shadow-lg outline-none',
+            !menuOpen && 'pointer-events-none',
+            className
+          )}
+          style={{ transformOrigin: 'var(--radix-dropdown-menu-content-transform-origin)' }}
+          variants={VARIANTS.scaleIn}
+          initial="hidden"
+          animate={menuOpen ? 'visible' : 'hidden'}
+        >
+          {children}
+        </motion.div>
+      </DropdownMenuPrimitive.Content>
+    </DropdownMenuPrimitive.Portal>
+  );
+});
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 
 type ItemProps = ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {

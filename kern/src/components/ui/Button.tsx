@@ -21,7 +21,7 @@ const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
   ghost:
     'bg-transparent text-kern-text-2 hover:bg-kern-surface hover:text-kern-text border border-transparent',
   danger:
-    'bg-transparent text-kern-danger hover:bg-red-50 border border-transparent hover:border-red-200',
+    'border border-kern-danger bg-kern-danger text-white shadow-none hover:brightness-110 active:brightness-95 focus-visible:ring-2 focus-visible:ring-kern-danger/55 focus-visible:ring-offset-0',
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {

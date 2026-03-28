@@ -670,35 +670,37 @@ function TableViewInner({
                       openRow(row.original.id, collectionId);
                     }}
                   >
-                    {pendingRowIds.has(row.original.id) ? (
-                      <span
-                        className="pointer-events-none absolute left-1 top-1/2 z-[2] h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-kern-text-3"
-                        aria-hidden
-                      />
-                    ) : null}
-                    {row.getVisibleCells().map((cell) => (
-                      <div
-                        key={cell.id}
-                        className={cn(
-                          'flex min-w-0 shrink-0 overflow-hidden',
-                          cell.column.id !== '_add_field' && 'border-r border-kern-surface-2'
-                        )}
-                        style={{ width: cell.column.getSize() }}
+                    <div className="flex h-9 min-w-0 flex-1">
+                      {pendingRowIds.has(row.original.id) ? (
+                        <span
+                          className="pointer-events-none absolute left-1 top-1/2 z-[2] h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-kern-text-3"
+                          aria-hidden
+                        />
+                      ) : null}
+                      {row.getVisibleCells().map((cell) => (
+                        <div
+                          key={cell.id}
+                          className={cn(
+                            'flex min-w-0 shrink-0 overflow-hidden',
+                            cell.column.id !== '_add_field' && 'border-r border-kern-surface-2'
+                          )}
+                          style={{ width: cell.column.getSize() }}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="absolute right-2 top-1/2 z-[1] hidden -translate-y-1/2 rounded-kern-sm p-1 text-kern-text-3 hover:bg-kern-surface-2 hover:text-kern-text group-hover:inline-flex"
+                        aria-label="Open row"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openRow(row.original.id, collectionId);
+                        }}
                       >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      className="absolute right-2 top-1/2 z-[1] hidden -translate-y-1/2 rounded-kern-sm p-1 text-kern-text-3 hover:bg-kern-surface-2 hover:text-kern-text group-hover:inline-flex"
-                      aria-label="Open row"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openRow(row.original.id, collectionId);
-                      }}
-                    >
-                      <ArrowUpRight size={12} />
-                    </button>
+                        <ArrowUpRight size={12} />
+                      </button>
+                    </div>
                   </div>
                 </RowContextMenu>
               );

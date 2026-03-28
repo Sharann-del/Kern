@@ -7,13 +7,10 @@ import { DeleteCollectionDialog } from '@/components/collection/DeleteCollection
 import { EditCollectionModal } from '@/components/collection/EditCollectionModal';
 import { CommandPalette } from '@/components/layout/CommandPalette';
 import { RowEditorPanel } from '@/components/layout/RowEditorPanel';
-import {
-  LAYOUT_SIDEBAR_COLLAPSED_PX,
-  LAYOUT_SIDEBAR_EXPANDED_PX,
-  LAYOUT_TOPBAR_PX,
-} from '@/components/layout/layoutConstants';
+import { LAYOUT_TOPBAR_PX } from '@/components/layout/layoutConstants';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
+import { CollectionChromeProvider } from '@/contexts/CollectionChromeContext';
 import { WelcomeOnboardingModal } from '@/components/onboarding/WelcomeOnboardingModal';
 import { KeyboardShortcutsModal } from '@/components/ui/KeyboardShortcutsModal';
 import { useCollections } from '@/hooks/useCollections';
@@ -30,7 +27,6 @@ export function AppShell() {
   const navigate = useNavigate();
   const { user, profile, loading: authLoading, updateProfile } = useAuth();
   const { data: collections = [], isLoading: colLoading } = useCollections();
-  const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const openPalette = useAppStore((s) => s.openPalette);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
   const openCreateCollectionModal = useAppStore((s) => s.openCreateCollectionModal);
@@ -167,23 +163,24 @@ export function AppShell() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [openPalette, openCreateCollectionModal, toggleSidebar]);
 
-  const mainMarginLeft = sidebarCollapsed ? LAYOUT_SIDEBAR_COLLAPSED_PX : LAYOUT_SIDEBAR_EXPANDED_PX;
-
   return (
-    <div className="flex min-h-screen flex-col bg-kern-bg">
-      <Topbar />
-      <Sidebar />
-      <main
-        className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-kern-bg text-kern-text"
-        style={{
-          marginTop: LAYOUT_TOPBAR_PX,
-          marginLeft: mainMarginLeft,
-          transition: 'margin-left 150ms ease',
-          minHeight: `calc(100vh - ${LAYOUT_TOPBAR_PX}px)`,
-        }}
-      >
-        <Outlet />
-      </main>
+    <CollectionChromeProvider>
+      <div className="flex min-h-screen flex-col bg-kern-bg">
+        <Topbar />
+        <div
+          className="flex min-h-0 w-full overflow-hidden"
+          style={{
+            marginTop: LAYOUT_TOPBAR_PX,
+            height: `calc(100vh - ${LAYOUT_TOPBAR_PX}px)`,
+          }}
+        >
+          <Sidebar />
+          <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto bg-kern-bg text-kern-text">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+              <Outlet />
+            </div>
+          </main>
+        </div>
       <CommandPalette />
       <RowEditorPanel />
       <CreateCollectionModal
@@ -208,6 +205,7 @@ export function AppShell() {
       />
       <WelcomeOnboardingModal open={welcomeOpen} />
       <KernToaster />
-    </div>
+      </div>
+    </CollectionChromeProvider>
   );
 }

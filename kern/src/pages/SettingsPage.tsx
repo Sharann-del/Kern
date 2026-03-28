@@ -278,7 +278,7 @@ function AppearanceTab() {
             </Checkbox.Indicator>
           </Checkbox.Root>
           <label htmlFor={checkboxId} className="cursor-pointer text-sm text-kern-text">
-            Collapse sidebar by default
+            Keep sidebar hidden by default
           </label>
         </div>
       </div>
@@ -635,25 +635,31 @@ function DangerTab() {
   };
 
   return (
-    <div className="space-y-8 rounded-kern-xl border-2 border-kern-danger/30 p-6">
-      <div>
-        <p className="text-sm font-medium text-kern-text">Export all data</p>
-        <p className="mt-1 text-sm text-kern-text-2">Download all your Kern data as JSON</p>
-        <Button type="button" variant="secondary" size="sm" className="mt-3" onClick={() => void runExport()}>
-          Export
-        </Button>
+    <>
+      <div className="rounded-kern-xl border border-kern-border bg-kern-surface-2 p-6">
+        <div className="flex flex-col gap-3">
+          <div className="text-left">
+            <p className="text-sm font-medium text-kern-text">Export all data</p>
+            <p className="mt-1 text-sm text-kern-text-2">Download all your Kern data as JSON</p>
+          </div>
+          <Button type="button" variant="secondary" size="sm" className="self-start" onClick={() => void runExport()}>
+            Export
+          </Button>
+        </div>
       </div>
 
-      <div className="h-px bg-kern-border" />
-
-      <div>
-        <p className="text-sm font-medium text-kern-text">Delete account</p>
-        <p className="mt-1 text-sm text-kern-text-2">
-          This will permanently delete your account and all data
-        </p>
-        <Button type="button" variant="danger" size="sm" className="mt-3" onClick={() => setDeleteOpen(true)}>
-          Delete account
-        </Button>
+      <div className="mt-6 rounded-kern-xl border-2 border-kern-danger bg-kern-danger/15 p-6 dark:bg-kern-danger/20">
+        <div className="flex flex-col gap-3">
+          <div className="text-left">
+            <p className="text-sm font-medium text-kern-text">Delete account</p>
+            <p className="mt-1 text-sm text-kern-text-2">
+              This will permanently delete your account and all data
+            </p>
+          </div>
+          <Button type="button" variant="danger" size="sm" className="self-start" onClick={() => setDeleteOpen(true)}>
+            Delete account
+          </Button>
+        </div>
       </div>
 
       <DeleteAccountModal
@@ -662,7 +668,7 @@ function DangerTab() {
         email={email}
         onConfirm={() => void handleDeleteConfirm()}
       />
-    </div>
+    </>
   );
 }
 
@@ -674,14 +680,14 @@ export function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-3xl p-8">
+      <div className="min-h-full w-full p-8">
         <p className="text-sm text-kern-text-2">Loading…</p>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-5xl p-8">
+    <div className="min-h-full w-full p-8">
       <h1 className="mb-8 text-2xl font-semibold text-kern-text">Settings</h1>
 
       <Tabs.Root defaultValue="profile" className="w-full">

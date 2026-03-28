@@ -209,8 +209,10 @@ export function ViewSortBar({ fields, viewConfig, onUpdateConfig }: ViewSortBarP
         <button
           type="button"
           className={cn(
-            'flex h-8 items-center gap-1.5 rounded-kern-md border border-kern-border bg-kern-surface px-2.5 text-sm text-kern-text-2 transition-colors hover:text-kern-text',
-            sorts.length > 0 && 'border-kern-accent/30 bg-kern-accent/10 text-kern-accent'
+            'flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm transition-colors',
+            sorts.length > 0
+              ? 'bg-kern-accent/15 text-kern-accent hover:bg-kern-accent/22'
+              : 'bg-kern-surface-2 text-kern-text-2 hover:bg-kern-surface hover:text-kern-text'
           )}
         >
           <ListOrdered size={14} />

@@ -23,9 +23,21 @@ export type CollectionViewTabsProps = {
   onViewChange: (viewId: string) => void;
   collectionId: string;
   collectionSlug: string;
+  /** `boxed`: dark segmented control. `topbarAccent`: centered title-bar strip with accent styling. */
+  variant?: 'default' | 'boxed' | 'topbarAccent';
 };
 
-function AddViewPopover({ collectionId, collectionSlug }: { collectionId: string; collectionSlug: string }) {
+function AddViewPopover({
+  collectionId,
+  collectionSlug,
+  boxed,
+  topbarAccent,
+}: {
+  collectionId: string;
+  collectionSlug: string;
+  boxed?: boolean;
+  topbarAccent?: boolean;
+}) {
   const createView = useCreateView();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -38,10 +50,22 @@ function AddViewPopover({ collectionId, collectionSlug }: { collectionId: string
       trigger={
         <button
           type="button"
-          className="flex shrink-0 items-center gap-1 border-b-2 border-transparent px-3 py-2 text-sm text-kern-text-2 transition-colors hover:text-kern-text"
+          className={cn(
+            'flex shrink-0 items-center gap-1 transition-colors',
+            topbarAccent &&
+              'rounded-md px-3 py-2 text-sm font-medium text-kern-accent/90 hover:bg-white/[0.06] hover:text-kern-accent',
+            boxed &&
+              !topbarAccent &&
+              'rounded-[4px] px-2 py-1 text-[11px] font-medium text-[#A8A89E] hover:bg-[#353533]/80 hover:text-[#F5F4F0]',
+            !boxed && !topbarAccent && 'border-b-2 border-transparent px-3 py-2 text-sm text-kern-text-2 hover:text-kern-text'
+          )}
         >
-          <Plus size={14} />
-          <span>Add view</span>
+          <Plus size={topbarAccent ? 16 : boxed ? 12 : 14} />
+          {boxed || topbarAccent ? (
+            <span className="hidden sm:inline">Add</span>
+          ) : (
+            <span>Add view</span>
+          )}
         </button>
       }
     >
@@ -82,7 +106,10 @@ export function CollectionViewTabs({
   onViewChange,
   collectionId,
   collectionSlug,
+  variant = 'default',
 }: CollectionViewTabsProps) {
+  const boxed = variant === 'boxed';
+  const topbarAccent = variant === 'topbarAccent';
   const updateView = useUpdateView();
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
@@ -110,7 +137,17 @@ export function CollectionViewTabs({
   );
 
   return (
-    <div className="flex min-w-0 flex-1 items-stretch overflow-x-auto">
+    <div
+      className={cn(
+        'flex min-w-0 items-stretch overflow-x-auto',
+        topbarAccent &&
+          'pointer-events-auto max-w-[min(100vw-10rem,640px)] shrink-0 gap-1 rounded-lg bg-black/35 p-1',
+        boxed &&
+          !topbarAccent &&
+          'shrink-0 gap-0.5 rounded-[6px] border border-[#3f3f3c] bg-[#2c2c2a] p-0.5',
+        !boxed && !topbarAccent && 'flex-1 items-stretch'
+      )}
+    >
       {views.map((v) => {
         const active = v.id === activeViewId;
         const Icon = VIEW_TYPE_ICONS[v.type];
@@ -118,14 +155,26 @@ export function CollectionViewTabs({
           <div
             key={v.id}
             className={cn(
-              'flex shrink-0 items-stretch border-b-2 transition-colors',
-              active ? 'border-kern-accent' : 'border-transparent'
+              'flex shrink-0 items-stretch transition-colors',
+              boxed || topbarAccent
+                ? ''
+                : active
+                  ? 'border-b-2 border-kern-accent'
+                  : 'border-b-2 border-transparent'
             )}
           >
             {renamingId === v.id ? (
               <input
                 autoFocus
-                className="mx-1 my-1 w-[120px] rounded-kern-sm border border-kern-border bg-kern-bg px-2 py-1 text-sm text-kern-text outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/30"
+                className={cn(
+                  'rounded-kern-sm border px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/30',
+                  topbarAccent &&
+                    'mx-0.5 my-0.5 w-[min(200px,40vw)] border-0 bg-[#1a1a18] text-sm text-[#F5F4F0] focus-visible:ring-2 focus-visible:ring-kern-accent/35',
+                  boxed &&
+                    !topbarAccent &&
+                    'mx-0.5 my-0.5 w-[100px] border-kern-border bg-kern-bg text-[11px] text-kern-text',
+                  !boxed && !topbarAccent && 'mx-1 my-1 w-[120px] border-kern-border bg-kern-bg text-sm text-kern-text'
+                )}
                 value={renameValue}
                 onChange={(e) => setRenameValue(e.target.value)}
                 onBlur={() => commitRename(v.id)}
@@ -140,20 +189,52 @@ export function CollectionViewTabs({
                 onClick={() => onViewChange(v.id)}
                 onDoubleClick={() => active && startRename(v)}
                 className={cn(
-                  'flex max-w-[148px] items-center gap-2 px-3 py-2 text-sm transition-colors',
-                  active
-                    ? 'font-medium text-kern-text'
-                    : 'text-kern-text-2 hover:text-kern-text'
+                  'flex max-w-[148px] items-center gap-1.5 transition-colors',
+                  topbarAccent &&
+                    cn(
+                      'max-w-[200px] gap-2 rounded-md px-3 py-2 text-sm',
+                      active
+                        ? 'bg-[#32322f] font-semibold text-kern-accent'
+                        : 'text-[#A8A89E] hover:bg-white/[0.06] hover:text-kern-accent'
+                    ),
+                  boxed &&
+                    !topbarAccent &&
+                    cn(
+                      'rounded-[4px] px-2 py-1 text-[11px]',
+                      active
+                        ? 'bg-[#353533] font-medium text-[#F5F4F0]'
+                        : 'text-[#A8A89E] hover:bg-[#353533]/60 hover:text-[#F5F4F0]'
+                    ),
+                  !boxed &&
+                    !topbarAccent &&
+                    cn(
+                      'gap-2 px-3 py-2 text-sm',
+                      active ? 'font-medium text-kern-text' : 'text-kern-text-2 hover:text-kern-text'
+                    )
                 )}
               >
-                <Icon size={14} className="shrink-0 opacity-80" />
-                <span className="max-w-[120px] truncate">{v.name}</span>
+                <Icon
+                  size={topbarAccent ? 16 : boxed ? 12 : 14}
+                  className={cn('shrink-0 opacity-80', topbarAccent && active && 'text-kern-accent')}
+                />
+                <span
+                  className={cn(
+                    topbarAccent ? 'max-w-[140px] truncate' : boxed ? 'max-w-[88px] truncate' : 'max-w-[120px] truncate'
+                  )}
+                >
+                  {v.name}
+                </span>
               </button>
             )}
           </div>
         );
       })}
-      <AddViewPopover collectionId={collectionId} collectionSlug={collectionSlug} />
+      <AddViewPopover
+        collectionId={collectionId}
+        collectionSlug={collectionSlug}
+        boxed={boxed && !topbarAccent}
+        topbarAccent={topbarAccent}
+      />
     </div>
   );
 }

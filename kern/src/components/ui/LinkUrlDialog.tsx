@@ -1,8 +1,10 @@
 import * as Dialog from '@radix-ui/react-dialog';
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { VARIANTS } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 
 export type LinkUrlDialogProps = {
@@ -33,13 +35,28 @@ export function LinkUrlDialog({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
-        <Dialog.Content
-          className={cn(
-            'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-sm -translate-x-1/2 -translate-y-1/2',
-            'rounded-kern-xl border border-kern-border bg-kern-bg p-5 shadow-xl outline-none animate-kern-dialog-in'
-          )}
-        >
+        <Dialog.Overlay forceMount asChild>
+          <motion.div
+            className={cn(
+              'fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm',
+              !open && 'pointer-events-none'
+            )}
+            variants={VARIANTS.fade}
+            initial="hidden"
+            animate={open ? 'visible' : 'hidden'}
+          />
+        </Dialog.Overlay>
+        <Dialog.Content forceMount asChild>
+          <motion.div
+            className={cn(
+              'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-sm -translate-x-1/2 -translate-y-1/2',
+              'rounded-kern-xl border border-kern-border bg-kern-bg p-5 shadow-xl outline-none',
+              !open && 'pointer-events-none'
+            )}
+            variants={VARIANTS.fadeUp}
+            initial="hidden"
+            animate={open ? 'visible' : 'hidden'}
+          >
           <Dialog.Title className="text-base font-semibold text-kern-text">Link URL</Dialog.Title>
           <Dialog.Description className="mt-1 text-sm text-kern-text-2">
             Enter a web address. Include <span className="font-mono text-xs">https://</span> when
@@ -84,6 +101,7 @@ export function LinkUrlDialog({
               Save
             </Button>
           </div>
+          </motion.div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

@@ -1,4 +1,5 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -6,6 +7,7 @@ import { CollectionIconDisplay } from '@/components/collection/CollectionIconDis
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useCreateCollection, useDeleteCollection, type CreateCollectionInput } from '@/hooks/useCollections';
+import { VARIANTS } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 import type { KernCollection } from '@/types/kern';
 
@@ -79,13 +81,24 @@ function DeleteCollectionDialogInner({
       }}
     >
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
-        <AlertDialog.Content
-          className={cn(
-            'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2',
-            'animate-kern-dialog-in rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none'
-          )}
-        >
+        <AlertDialog.Overlay forceMount asChild>
+          <motion.div
+            className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm"
+            variants={VARIANTS.fade}
+            initial="hidden"
+            animate="visible"
+          />
+        </AlertDialog.Overlay>
+        <AlertDialog.Content forceMount asChild>
+          <motion.div
+            className={cn(
+              'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2',
+              'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none'
+            )}
+            variants={VARIANTS.fadeUp}
+            initial="hidden"
+            animate="visible"
+          >
           <div className="flex items-start gap-3">
             {iconBlock}
             <div className="min-w-0 flex-1">
@@ -133,6 +146,7 @@ function DeleteCollectionDialogInner({
               </Button>
             </AlertDialog.Action>
           </div>
+          </motion.div>
         </AlertDialog.Content>
       </AlertDialog.Portal>
     </AlertDialog.Root>

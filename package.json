@@ -6,5 +6,8 @@
     "build": "npm --prefix kern run build",
     "lint": "npm --prefix kern run lint",
     "preview": "npm --prefix kern run preview"
+  },
+  "dependencies": {
+    "framer-motion": "^12.38.0"
   }
 }

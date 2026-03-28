@@ -1,9 +1,11 @@
+import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/Button';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { VARIANTS } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 import type { DashboardWidget, DashboardWidgetType } from '@/types/kern';
 
@@ -41,12 +43,13 @@ export function WidgetWrapper({ widget, children, onDelete }: WidgetWrapperProps
   };
 
   return (
-    <section
+    <motion.section
       className="group flex min-h-0 flex-col overflow-hidden rounded-kern-xl border border-kern-border bg-kern-bg shadow-sm"
       style={{
         gridColumn: `${widget.position_x} / span ${widget.width}`,
         gridRow: `${widget.position_y} / span ${widget.height}`,
       }}
+      variants={VARIANTS.dashboardStaggerChild}
     >
       <header
         className={cn(
@@ -69,6 +72,6 @@ export function WidgetWrapper({ widget, children, onDelete }: WidgetWrapperProps
       <div className="min-h-0 flex-1 overflow-auto p-4">
         <ErrorBoundary>{children}</ErrorBoundary>
       </div>
-    </section>
+    </motion.section>
   );
 }

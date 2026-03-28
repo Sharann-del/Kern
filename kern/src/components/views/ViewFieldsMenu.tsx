@@ -147,7 +147,7 @@ export function ViewFieldsMenu({
       trigger={
         <button
           type="button"
-          className="flex h-8 items-center gap-1.5 rounded-kern-md border border-kern-border bg-kern-surface px-2.5 text-sm text-kern-text-2 transition-colors hover:text-kern-text"
+          className="flex h-9 items-center gap-1.5 rounded-lg bg-kern-surface-2 px-2.5 text-sm text-kern-text-2 transition-colors hover:bg-kern-surface hover:text-kern-text"
         >
           <Columns2 size={14} />
           <span>Fields</span>

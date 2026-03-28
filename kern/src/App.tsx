@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { GuestRoute } from '@/components/auth/GuestRoute';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { AppShell } from '@/components/layout/AppShell';
+import { AuthLayout } from '@/components/layout/AuthLayout';
 import { RootLayout } from '@/components/layout/RootLayout';
 import { CollectionPage } from '@/pages/CollectionPage';
 import { CustomViewEditorPage } from '@/pages/CustomViewEditorPage';
@@ -20,20 +21,15 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path: 'login',
         element: (
           <GuestRoute>
-            <LoginPage />
+            <AuthLayout />
           </GuestRoute>
         ),
-      },
-      {
-        path: 'signup',
-        element: (
-          <GuestRoute>
-            <SignupPage />
-          </GuestRoute>
-        ),
+        children: [
+          { path: 'login', element: <LoginPage /> },
+          { path: 'signup', element: <SignupPage /> },
+        ],
       },
       { path: 'auth/callback', element: <AuthSessionCallbackPage /> },
       { path: 'oauth/callback/:provider', element: <OAuthCallbackPage /> },

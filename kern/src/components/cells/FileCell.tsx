@@ -1,4 +1,5 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { motion } from 'framer-motion';
 import { Paperclip } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -6,7 +7,9 @@ import { toast } from 'sonner';
 import type { CellComponentProps } from '@/components/cells/types';
 import { FileAttachmentRowPopover } from '@/components/files/FileAttachmentRow';
 import { Button } from '@/components/ui/Button';
+import { useRadixDataStateOpen } from '@/hooks/useRadixDataStateOpen';
 import { asFileAttachments, useFileUpload } from '@/hooks/useFileUpload';
+import { VARIANTS } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 
 function UploadProgressLine() {
@@ -36,6 +39,8 @@ export function FileCell({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState<{ key: string; name: string }[]>([]);
   const [busyPath, setBusyPath] = useState<string | null>(null);
+  const [attachmentPopoverContent, setAttachmentPopoverContent] = useState<HTMLDivElement | null>(null);
+  const attachmentPopoverOpen = useRadixDataStateOpen(attachmentPopoverContent);
 
   const persist = useCallback(
     (next: unknown) => {
@@ -211,17 +216,21 @@ export function FileCell({
         </div>
       </PopoverPrimitive.Anchor>
       <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Content
-          align="start"
-          side="bottom"
-          sideOffset={6}
-          className={cn(
-            'z-[220] origin-[var(--radix-popover-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-2 shadow-lg outline-none',
-            'animate-kern-pop-in'
-          )}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {manager}
+        <PopoverPrimitive.Content forceMount asChild align="start" side="bottom" sideOffset={6}>
+          <motion.div
+            ref={setAttachmentPopoverContent}
+            className={cn(
+              'z-[220] origin-[var(--radix-popover-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-2 shadow-lg outline-none',
+              !attachmentPopoverOpen && 'pointer-events-none'
+            )}
+            style={{ transformOrigin: 'var(--radix-popover-content-transform-origin)' }}
+            variants={VARIANTS.scaleIn}
+            initial="hidden"
+            animate={attachmentPopoverOpen ? 'visible' : 'hidden'}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {manager}
+          </motion.div>
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>

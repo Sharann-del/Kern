@@ -78,7 +78,13 @@ function KanbanCardBody({
   );
 }
 
-function KanbanCardComponent({ row, fields, viewConfig, collectionId, isDragging }: KanbanCardProps) {
+function KanbanCardComponent({
+  row,
+  fields,
+  viewConfig,
+  collectionId,
+  isDragging,
+}: KanbanCardProps) {
   const openRow = useAppStore((s) => s.openRow);
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging: sortableDragging } =
     useSortable({ id: row.id });
@@ -103,7 +109,7 @@ function KanbanCardComponent({ row, fields, viewConfig, collectionId, isDragging
   );
 
   return (
-    <div ref={setNodeRef} style={style} className={cn((isDragging ?? sortableDragging) && 'opacity-0')}>
+    <div ref={setNodeRef} style={style} className={cn('min-w-0', (isDragging ?? sortableDragging) && 'opacity-0')}>
       <KanbanCardBody
         row={row}
         fields={fields}

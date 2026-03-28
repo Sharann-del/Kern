@@ -137,7 +137,7 @@ function SidebarCollectionItemInner({
 
   if (collapsed) {
     return (
-      <div className="flex w-full min-w-0 shrink-0 justify-center overflow-x-hidden">
+      <div className="flex w-full min-w-0 shrink-0 justify-center overflow-x-hidden px-1.5">
         <Tooltip.Root delayDuration={300}>
           <Tooltip.Trigger asChild>
             <NavLink
@@ -176,7 +176,7 @@ function SidebarCollectionItemInner({
   return (
     <div
       className={cn(
-        'group relative mb-px mx-1 flex h-[28px] cursor-pointer items-center rounded-[4px] pl-2 pr-2 transition-[background-color] duration-[80ms] ease-in-out',
+        'group relative mb-px mx-2.5 flex h-[28px] cursor-pointer items-center rounded-[4px] pl-2 pr-2 transition-[background-color] duration-[80ms] ease-in-out',
         isActive ? 'bg-[#353533]' : 'bg-transparent hover:bg-[#2C2C2A]'
       )}
       onMouseEnter={onRowMouseEnter}

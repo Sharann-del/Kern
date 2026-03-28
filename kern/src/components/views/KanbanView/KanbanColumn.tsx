@@ -49,21 +49,23 @@ export function KanbanColumn({
 
   if (isCollapsed) {
     return (
-      <button
-        type="button"
-        onClick={onToggleCollapse}
-        className="flex w-10 shrink-0 flex-col rounded-kern-lg border border-kern-border bg-kern-surface py-2 transition-colors hover:bg-kern-surface-2"
-        aria-expanded={false}
-      >
-        <div
-          className="flex flex-1 flex-col items-center justify-center gap-1 text-kern-text-2"
-          style={{ writingMode: 'vertical-rl' }}
+      <div className="flex shrink-0">
+        <button
+          type="button"
+          onClick={onToggleCollapse}
+          className="flex w-10 shrink-0 flex-col rounded-kern-lg border border-kern-border bg-kern-surface py-2 transition-colors hover:bg-kern-surface-2"
+          aria-expanded={false}
         >
-          <ChevronLeft className="shrink-0 rotate-180" size={14} aria-hidden />
-          <span className="max-h-[200px] truncate text-xs font-medium">{label}</span>
-          <span className="text-xs text-kern-text-3">{rows.length}</span>
-        </div>
-      </button>
+          <div
+            className="flex flex-1 flex-col items-center justify-center gap-1 text-kern-text-2"
+            style={{ writingMode: 'vertical-rl' }}
+          >
+            <ChevronLeft className="shrink-0 rotate-180" size={14} aria-hidden />
+            <span className="max-h-[200px] truncate text-xs font-medium">{label}</span>
+            <span className="text-xs text-kern-text-3">{rows.length}</span>
+          </div>
+        </button>
+      </div>
     );
   }
 
@@ -101,13 +103,7 @@ export function KanbanColumn({
             </div>
           ) : (
             rows.map((r) => (
-              <KanbanCard
-                key={r.id}
-                row={r}
-                fields={fields}
-                viewConfig={viewConfig}
-                collectionId={collectionId}
-              />
+              <KanbanCard key={r.id} row={r} fields={fields} viewConfig={viewConfig} collectionId={collectionId} />
             ))
           )}
         </div>

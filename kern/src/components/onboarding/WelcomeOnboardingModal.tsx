@@ -1,9 +1,11 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { VARIANTS } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 import { createOnboardingCollection, type OnboardingTemplateId } from '@/lib/create-onboarding-collection';
 import { useAuth } from '@/providers/AuthProvider';
@@ -38,18 +40,35 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
+        <Dialog.Overlay forceMount asChild>
+          <motion.div
+            className={cn(
+              'fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm',
+              !open && 'pointer-events-none'
+            )}
+            variants={VARIANTS.fade}
+            initial="hidden"
+            animate={open ? 'visible' : 'hidden'}
+          />
+        </Dialog.Overlay>
         <Dialog.Content
-          className={cn(
-            'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
-            'animate-kern-dialog-in rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none',
-            'focus:outline-none'
-          )}
+          forceMount
+          asChild
           onPointerDownOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
           onInteractOutside={(e) => e.preventDefault()}
           aria-describedby={undefined}
         >
+          <motion.div
+            className={cn(
+              'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
+              'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none focus:outline-none',
+              !open && 'pointer-events-none'
+            )}
+            variants={VARIANTS.fadeUp}
+            initial="hidden"
+            animate={open ? 'visible' : 'hidden'}
+          >
           <Dialog.Title className="text-lg font-semibold text-kern-text">Welcome to Kern</Dialog.Title>
           <p className="mt-2 text-sm text-kern-text-2">
             You define the structure. Let&apos;s create your first collection.
@@ -120,6 +139,7 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
               </span>
             </button>
           </div>
+          </motion.div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

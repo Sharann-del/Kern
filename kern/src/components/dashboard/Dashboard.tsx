@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
 
 import { WidgetWrapper } from '@/components/dashboard/WidgetWrapper';
@@ -9,6 +10,7 @@ import { ViewEmbedWidget } from '@/components/dashboard/widgets/ViewEmbedWidget'
 import { Button } from '@/components/ui/Button';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useDeleteWidget, useWidgets } from '@/hooks/useDashboard';
+import { VARIANTS } from '@/lib/animations';
 import type { DashboardWidget } from '@/types/kern';
 
 function renderWidget(widget: DashboardWidget) {
@@ -64,8 +66,8 @@ export function Dashboard({ onOpenAddWidget }: DashboardProps) {
   const deleteWidget = useDeleteWidget();
 
   return (
-    <div className="min-h-full p-6">
-      <div className="mb-6 flex items-center justify-between gap-4">
+    <div className="min-h-full px-3 pb-6 pt-2 sm:px-4">
+      <div className="mb-6 flex items-center justify-between gap-4 pt-1">
         <h1 className="text-xl font-semibold text-kern-text">Dashboard</h1>
         <Button type="button" variant="secondary" size="sm" onClick={onOpenAddWidget}>
           + Add widget
@@ -83,12 +85,15 @@ export function Dashboard({ onOpenAddWidget }: DashboardProps) {
           onAction={onOpenAddWidget}
         />
       ) : (
-        <div
+        <motion.div
           className="grid gap-4"
           style={{
             gridTemplateColumns: 'repeat(12, 1fr)',
             gridAutoRows: 'minmax(128px, auto)',
           }}
+          variants={VARIANTS.dashboardStagger}
+          initial="hidden"
+          animate="visible"
         >
           {widgets.map((widget) => (
             <WidgetWrapper
@@ -99,7 +104,7 @@ export function Dashboard({ onOpenAddWidget }: DashboardProps) {
               {renderWidget(widget)}
             </WidgetWrapper>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

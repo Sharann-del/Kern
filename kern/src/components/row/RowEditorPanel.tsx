@@ -2,6 +2,7 @@ import * as Checkbox from '@radix-ui/react-checkbox';
 import { useQueries } from '@tanstack/react-query';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Check, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { toast } from 'sonner';
 
@@ -26,6 +27,7 @@ import {
   useRemoveRelation,
 } from '@/hooks/useRelations';
 import { useCreateRow, useDeleteRow, useRow, useUpdateRow } from '@/hooks/useRows';
+import { VARIANTS } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/stores/appStore';
 import type {
@@ -55,10 +57,9 @@ type RowEditorPanelInnerProps = {
   rowId: string;
   collectionId: string;
   onClose: () => void;
-  entered: boolean;
 };
 
-function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEditorPanelInnerProps) {
+function RowEditorPanelInner({ rowId, collectionId, onClose }: RowEditorPanelInnerProps) {
   const { data: row, isLoading: rowLoading } = useRow(rowId);
   const { data: fields = [], isLoading: fieldsLoading } = useFields(collectionId);
   const { data: collection, isLoading: colLoading } = useCollectionById(collectionId);
@@ -226,30 +227,37 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
   );
 
   return (
-    <>
-      <button
-        type="button"
-        className="fixed inset-0 z-[30] bg-black/20 transition-opacity duration-200"
-        style={{ opacity: entered ? 1 : 0 }}
-        aria-label="Close row editor"
-        onClick={onClose}
-      />
-      <aside
-        className={cn(
-          'fixed bottom-0 right-0 z-[35] flex w-[480px] max-w-full flex-col border-l border-kern-border bg-kern-bg shadow-ds-md transition-transform duration-200 ease-out',
-          entered ? 'translate-x-0' : 'translate-x-full'
-        )}
-        style={{ top: LAYOUT_TOPBAR_PX }}
-        onClick={(e) => e.stopPropagation()}
-        onKeyDownCapture={(e) => {
-          if (!row) return;
-          if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-            e.preventDefault();
-            flushPendingSaves();
-            onClose();
-          }
-        }}
-      >
+    <motion.div
+      className="fixed inset-0 z-[30]"
+      style={{ top: LAYOUT_TOPBAR_PX }}
+      variants={VARIANTS.fade}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
+        <button
+          type="button"
+          className="absolute inset-0 bg-black/20"
+          aria-label="Close row editor"
+          onClick={onClose}
+        />
+        <motion.aside
+          className="absolute bottom-0 right-0 z-[1] flex w-[480px] max-w-full flex-col border-l border-kern-border bg-kern-bg shadow-ds-md"
+          style={{ top: 0 }}
+          variants={VARIANTS.slideRight}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDownCapture={(e) => {
+            if (!row) return;
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+              e.preventDefault();
+              flushPendingSaves();
+              onClose();
+            }
+          }}
+        >
         {loading || !row ? (
           <div className="flex min-h-0 flex-1 flex-col p-4">
             <Skeleton className="mb-4 h-8 w-48 rounded-kern-md" />
@@ -328,7 +336,7 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
             </footer>
           </>
         )}
-      </aside>
+      </motion.aside>
 
       <ConfirmDialog
         open={deleteRowConfirmOpen && Boolean(row)}
@@ -341,7 +349,7 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
           if (row) runDeleteRow();
         }}
       />
-    </>
+    </motion.div>
   );
 }
 
@@ -638,16 +646,6 @@ export function RowEditorPanel() {
   const openRowCollectionId = useAppStore((s) => s.openRowCollectionId);
   const closeRow = useAppStore((s) => s.closeRow);
   const visible = Boolean(openRowId && openRowCollectionId);
-  const [entered, setEntered] = useState(false);
-
-  useEffect(() => {
-    if (visible) {
-      const id = requestAnimationFrame(() => setEntered(true));
-      return () => cancelAnimationFrame(id);
-    }
-    const id = requestAnimationFrame(() => setEntered(false));
-    return () => cancelAnimationFrame(id);
-  }, [visible]);
 
   useEffect(() => {
     if (!visible) return;
@@ -661,17 +659,16 @@ export function RowEditorPanel() {
     return () => window.removeEventListener('keydown', onKey);
   }, [visible, closeRow]);
 
-  if (!openRowId || !openRowCollectionId) {
-    return null;
-  }
-
   return (
-    <RowEditorPanelInner
-      key={openRowId}
-      rowId={openRowId}
-      collectionId={openRowCollectionId}
-      onClose={closeRow}
-      entered={entered}
-    />
+    <AnimatePresence>
+      {openRowId && openRowCollectionId ? (
+        <RowEditorPanelInner
+          key={`${openRowId}-${openRowCollectionId}`}
+          rowId={openRowId}
+          collectionId={openRowCollectionId}
+          onClose={closeRow}
+        />
+      ) : null}
+    </AnimatePresence>
   );
 }

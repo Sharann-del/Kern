@@ -1,11 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { FolderX, Plus, Table2, X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { FolderX, Table2, X } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 
-import { CollectionHeader } from '@/components/collection/CollectionHeader';
+import { CollectionMainToolbar } from '@/components/collection/CollectionMainToolbar';
+import { CollectionViewTabs } from '@/components/collection/CollectionViewTabs';
 import { FieldPanel } from '@/components/field/FieldPanel';
-import { FieldTypeIcon } from '@/components/field/FieldTypeIcon';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
@@ -21,7 +22,9 @@ import { TableView } from '@/components/views/TableView/TableView';
 import { useCustomView } from '@/hooks/useCustomViews';
 import { useRows, useCreateRow, useUpdateRow, useDeleteRow } from '@/hooks/useRows';
 import { useCreateView, useUpdateView, useViews } from '@/hooks/useViews';
+import { VARIANTS } from '@/lib/animations';
 import { supabase } from '@/lib/supabase';
+import { useSetCollectionChrome } from '@/contexts/CollectionChromeContext';
 import { useAppStore } from '@/stores/appStore';
 import type { KernField, ViewConfig } from '@/types/kern';
 
@@ -36,6 +39,7 @@ export function CollectionPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
   const setActiveCollection = useAppStore((s) => s.setActiveCollection);
+  const setCollectionChrome = useSetCollectionChrome();
   const [panel, setPanel] = useState<FieldPanelState>(null);
   const [newRowCount, setNewRowCount] = useState(0);
   const [rowSearchQuery, setRowSearchQuery] = useState('');
@@ -112,21 +116,27 @@ export function CollectionPage() {
     }
   }, [views, searchParams, setSearchParams]);
 
-  const handleViewChange = (viewId: string) => {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev);
-        next.set('view', viewId);
-        return next;
-      },
-      { replace: true }
-    );
-  };
+  const handleViewChange = useCallback(
+    (viewId: string) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('view', viewId);
+          return next;
+        },
+        { replace: true }
+      );
+    },
+    [setSearchParams]
+  );
 
-  const handleUpdateViewConfig = (partial: Partial<ViewConfig>) => {
-    if (!activeView || !collectionId) return;
-    updateView.mutate({ id: activeView.id, collectionId, config: partial });
-  };
+  const handleUpdateViewConfig = useCallback(
+    (partial: Partial<ViewConfig>) => {
+      if (!activeView || !collectionId) return;
+      updateView.mutate({ id: activeView.id, collectionId, config: partial });
+    },
+    [activeView, collectionId, updateView]
+  );
 
   const { data: rows = [], isLoading: rowsLoading } = useRows(
     collectionId,
@@ -187,6 +197,55 @@ export function CollectionPage() {
   useEffect(() => {
     return () => setActiveCollection(null);
   }, [setActiveCollection]);
+
+  const topbarPropsRef = useRef({
+    collection,
+    slug,
+    views,
+    activeView,
+    handleViewChange,
+    viewsLoading,
+  });
+  topbarPropsRef.current = {
+    collection,
+    slug,
+    views,
+    activeView,
+    handleViewChange,
+    viewsLoading,
+  };
+
+  const collectionTopbarSig = useMemo(
+    () =>
+      [
+        collection?.id ?? '',
+        slug ?? '',
+        views.map((v) => `${v.id}:${v.name}`).join(','),
+        String(viewsLoading),
+        activeView?.id ?? '',
+      ].join('|'),
+    [collection?.id, slug, views, viewsLoading, activeView?.id]
+  );
+
+  useLayoutEffect(() => {
+    const p = topbarPropsRef.current;
+    if (!p.collection || (p.viewsLoading && p.views.length === 0)) {
+      setCollectionChrome(null);
+      return () => setCollectionChrome(null);
+    }
+    setCollectionChrome(
+      <CollectionViewTabs
+        key={`${p.collection.id}-views`}
+        variant="topbarAccent"
+        views={p.views}
+        activeViewId={p.activeView?.id ?? ''}
+        onViewChange={p.handleViewChange}
+        collectionId={p.collection.id}
+        collectionSlug={p.slug ?? ''}
+      />
+    );
+    return () => setCollectionChrome(null);
+  }, [collectionTopbarSig, setCollectionChrome]);
 
   if (!slug) {
     return null;
@@ -257,27 +316,9 @@ export function CollectionPage() {
   };
 
   return (
-    <div className="flex min-h-shell-main flex-1 flex-col bg-kern-bg">
-      {viewsLoading && views.length === 0 ? (
-        <div className="border-b border-kern-border px-6 py-3">
-          <Skeleton className="h-8 w-full max-w-xl rounded-kern-md" />
-        </div>
-      ) : (
-        <CollectionHeader
-          collection={collection}
-          collectionSlug={slug}
-          fields={fields}
-          views={views}
-          activeView={activeView}
-          onViewChange={handleViewChange}
-          onUpdateViewConfig={handleUpdateViewConfig}
-          rowSearchQuery={rowSearchQuery}
-          onRowSearchChange={setRowSearchQuery}
-        />
-      )}
-
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-kern-bg">
       {collection.is_live_source && newRowCount > 0 ? (
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-kern-accent/25 bg-kern-accent/10 px-6 py-2.5 text-sm text-kern-text">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-kern-accent/25 bg-kern-accent/10 px-4 py-2 text-sm text-kern-text sm:px-5">
           <button
             type="button"
             className="min-w-0 flex-1 text-left font-medium hover:underline"
@@ -301,9 +342,23 @@ export function CollectionPage() {
       ) : null}
 
       <ErrorBoundary>
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-8">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-3 pb-3 pt-2 sm:px-4">
+          {!showViewsError ? (
+            <CollectionMainToolbar
+              collection={collection}
+              collectionSlug={slug ?? ''}
+              fields={fields}
+              activeView={activeView}
+              onUpdateViewConfig={handleUpdateViewConfig}
+              rowSearchQuery={rowSearchQuery}
+              onRowSearchChange={setRowSearchQuery}
+              onEditField={(field) => setPanel({ mode: 'edit', field })}
+              onAddField={() => setPanel({ mode: 'create' })}
+            />
+          ) : null}
+
           {!hasPrimaryField && firstFieldForPrimary ? (
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-kern-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-kern-text">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-kern-lg border border-amber-500/40 bg-amber-500/10 px-3 py-2.5 text-sm text-kern-text">
               <span>
                 This collection has no primary field. Mark a field as primary to fix this.
               </span>
@@ -334,164 +389,172 @@ export function CollectionPage() {
             </div>
           ) : null}
 
-        <section className="shrink-0">
-          <h2 className="mb-2 text-xs font-medium uppercase tracking-widest text-kern-text-3">
-            Fields
-          </h2>
-          {fieldsLoading ? (
-            <div className="flex gap-2">
-              <Skeleton className="h-10 w-36 rounded-kern-md" />
-              <Skeleton className="h-10 w-36 rounded-kern-md" />
-              <Skeleton className="h-10 w-36 rounded-kern-md" />
-            </div>
-          ) : (
-            <div className="w-fit max-w-full overflow-x-auto rounded-kern-lg border border-kern-border bg-kern-surface">
-              <div className="flex min-h-11 items-stretch divide-x divide-kern-border bg-kern-surface">
-                {fields.map((f) => (
-                  <button
-                    key={f.id}
-                    type="button"
-                    className="flex min-w-[148px] shrink-0 items-center gap-2 px-3 py-2.5 text-left text-sm transition-colors hover:bg-kern-surface-2"
-                    onClick={() => setPanel({ mode: 'edit', field: f })}
-                  >
-                    <FieldTypeIcon type={f.type} className="text-kern-text-2" />
-                    <span className="truncate font-medium text-kern-text">{f.name}</span>
-                  </button>
-                ))}
-                <button
-                  type="button"
-                  className="flex min-w-[132px] shrink-0 items-center justify-center gap-2 rounded-r-kern-lg px-3 py-2.5 text-sm font-medium text-[#f5f4f0] transition-colors bg-[#1a1a18] hover:bg-[#242420] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/30"
-                  onClick={() => setPanel({ mode: 'create' })}
-                >
-                  <Plus size={16} className="shrink-0 text-[#e8e6e1]" aria-hidden />
-                  Add field
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        <section className="mt-6 flex min-h-[280px] flex-1 flex-col overflow-hidden">
-          <h2 className="mb-2 shrink-0 text-xs font-medium uppercase tracking-widest text-kern-text-3">
-            Data
-          </h2>
-          {showViewsError ? (
-            <EmptyState
-              icon={Table2}
-              title="Could not load views"
-              subtitle="We couldn’t create a default table view. Check your connection and try again."
-              actionLabel="Try again"
-              onAction={retrySeedView}
-            />
-          ) : fieldsLoading || rowsLoading || (views.length === 0 && createView.isPending) ? (
-            <Skeleton className="min-h-[280px] w-full flex-1 rounded-kern-lg" />
-          ) : activeView?.type === 'table' && activeView ? (
-            <TableView
-              rows={rows}
-              fields={fields}
-              viewConfig={activeView.config}
-              viewId={activeView.id}
-              collectionId={collection.id}
-              collection={collection}
-              onEditField={(field) => setPanel({ mode: 'edit', field })}
-              onAddField={() => setPanel({ mode: 'create' })}
-              onAddFieldBefore={(field) => setPanel({ mode: 'create', insertSortOrder: field.sort_order })}
-              onAddFieldAfter={(field) =>
-                setPanel({ mode: 'create', insertSortOrder: field.sort_order + 1 })
-              }
-            />
-          ) : activeView?.type === 'kanban' && activeView ? (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg">
-              <KanbanView
-                rows={rows}
-                fields={fields}
-                viewConfig={activeView.config}
-                collectionId={collection.id}
-                collection={collection}
-                onUpdateViewConfig={handleUpdateViewConfig}
-                onAddField={() => setPanel({ mode: 'create' })}
-              />
-            </div>
-          ) : activeView?.type === 'calendar' && activeView ? (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg p-4">
-              <CalendarView
-                rows={rows}
-                fields={fields}
-                viewConfig={activeView.config}
-                viewId={activeView.id}
-                collectionId={collection.id}
-                collection={collection}
-              />
-            </div>
-          ) : activeView?.type === 'gallery' && activeView ? (
-            <div className="min-h-0 flex-1 overflow-auto">
-              <GalleryView
-                rows={rows}
-                fields={fields}
-                viewConfig={activeView.config}
-                collectionId={collection.id}
-                collection={collection}
-              />
-            </div>
-          ) : activeView?.type === 'list' && activeView ? (
-            <div className="min-h-0 flex-1 overflow-auto">
-              <ListView
-                rows={rows}
-                fields={fields}
-                viewConfig={activeView.config}
-                collectionId={collection.id}
-              />
-            </div>
-          ) : activeView?.type === 'custom' && activeView ? (
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg">
-              {!activeView.custom_view_id ? (
-                <div className="flex min-h-0 flex-1 items-center justify-center p-6 text-center text-sm text-kern-text-3">
-                  This custom view is not linked to code. Open the custom view editor to fix it.
-                </div>
-              ) : customRegistryLoading ? (
-                <Skeleton className="min-h-0 w-full flex-1 rounded-none" />
-              ) : (
-                <CustomViewRenderer
-                  code={customRegistry?.compiled_code ?? null}
-                  rows={rows}
-                  fields={fields}
-                  collectionName={collection.name}
-                  onRowUpdate={(rowId, data) =>
-                    updateRow.mutateAsync({ id: rowId, collectionId: collection.id, data })
-                  }
-                  onRowCreate={async (data) => {
-                    await createRow.mutateAsync({ collectionId: collection.id, data });
-                  }}
-                  onRowDelete={(rowId) =>
-                    deleteRow.mutateAsync({ id: rowId, collectionId: collection.id })
-                  }
-                  onRowClick={(rowId) => openRow(rowId, collection.id)}
-                  onOpenEditor={() =>
-                    activeView.custom_view_id &&
-                    navigate(`/c/${slug}/views/custom/${activeView.custom_view_id}/edit`)
-                  }
+        <section className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <AnimatePresence mode="wait">
+            {showViewsError ? (
+              <motion.div
+                key="views-error"
+                className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                variants={VARIANTS.fade}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <EmptyState
+                  icon={Table2}
+                  title="Could not load views"
+                  subtitle="We couldn’t create a default table view. Check your connection and try again."
+                  actionLabel="Try again"
+                  onAction={retrySeedView}
                 />
-              )}
-            </div>
-          ) : (
-            <div className="flex flex-1 items-center justify-center rounded-kern-lg border border-dashed border-kern-border py-16 text-sm text-kern-text-3">
-              This view type is not implemented yet.
-            </div>
-          )}
+              </motion.div>
+            ) : fieldsLoading || rowsLoading || (views.length === 0 && createView.isPending) ? (
+              <motion.div
+                key={`view-skel-${collection.id}`}
+                className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                variants={VARIANTS.fade}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <Skeleton className="min-h-[280px] w-full flex-1 rounded-kern-lg" />
+              </motion.div>
+            ) : activeView ? (
+              <motion.div
+                key={activeView.id}
+                className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                variants={VARIANTS.fade}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                {activeView.type === 'table' ? (
+                  <TableView
+                    rows={rows}
+                    fields={fields}
+                    viewConfig={activeView.config}
+                    viewId={activeView.id}
+                    collectionId={collection.id}
+                    collection={collection}
+                    onEditField={(field) => setPanel({ mode: 'edit', field })}
+                    onAddField={() => setPanel({ mode: 'create' })}
+                    onAddFieldBefore={(field) =>
+                      setPanel({ mode: 'create', insertSortOrder: field.sort_order })
+                    }
+                    onAddFieldAfter={(field) =>
+                      setPanel({ mode: 'create', insertSortOrder: field.sort_order + 1 })
+                    }
+                  />
+                ) : activeView.type === 'kanban' ? (
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg">
+                    <KanbanView
+                      rows={rows}
+                      fields={fields}
+                      viewConfig={activeView.config}
+                      collectionId={collection.id}
+                      collection={collection}
+                      onUpdateViewConfig={handleUpdateViewConfig}
+                      onAddField={() => setPanel({ mode: 'create' })}
+                    />
+                  </div>
+                ) : activeView.type === 'calendar' ? (
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg p-4">
+                    <CalendarView
+                      rows={rows}
+                      fields={fields}
+                      viewConfig={activeView.config}
+                      viewId={activeView.id}
+                      collectionId={collection.id}
+                      collection={collection}
+                    />
+                  </div>
+                ) : activeView.type === 'gallery' ? (
+                  <div className="min-h-0 flex-1 overflow-auto">
+                    <GalleryView
+                      rows={rows}
+                      fields={fields}
+                      viewConfig={activeView.config}
+                      collectionId={collection.id}
+                      collection={collection}
+                    />
+                  </div>
+                ) : activeView.type === 'list' ? (
+                  <div className="min-h-0 flex-1 overflow-auto">
+                    <ListView
+                      rows={rows}
+                      fields={fields}
+                      viewConfig={activeView.config}
+                      collectionId={collection.id}
+                    />
+                  </div>
+                ) : activeView.type === 'custom' ? (
+                  <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-kern-lg border border-kern-border bg-kern-bg">
+                    {!activeView.custom_view_id ? (
+                      <div className="flex min-h-0 flex-1 items-center justify-center p-6 text-center text-sm text-kern-text-3">
+                        This custom view is not linked to code. Open the custom view editor to fix it.
+                      </div>
+                    ) : customRegistryLoading ? (
+                      <Skeleton className="min-h-0 w-full flex-1 rounded-none" />
+                    ) : (
+                      <CustomViewRenderer
+                        code={customRegistry?.compiled_code ?? null}
+                        rows={rows}
+                        fields={fields}
+                        collectionName={collection.name}
+                        onRowUpdate={(rowId, data) =>
+                          updateRow.mutateAsync({ id: rowId, collectionId: collection.id, data })
+                        }
+                        onRowCreate={async (data) => {
+                          await createRow.mutateAsync({ collectionId: collection.id, data });
+                        }}
+                        onRowDelete={(rowId) =>
+                          deleteRow.mutateAsync({ id: rowId, collectionId: collection.id })
+                        }
+                        onRowClick={(rowId) => openRow(rowId, collection.id)}
+                        onOpenEditor={() =>
+                          activeView.custom_view_id &&
+                          navigate(`/c/${slug}/views/custom/${activeView.custom_view_id}/edit`)
+                        }
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-1 items-center justify-center rounded-kern-lg border border-dashed border-kern-border py-16 text-sm text-kern-text-3">
+                    This view type is not implemented yet.
+                  </div>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="no-active-view"
+                className="flex min-h-0 flex-1 flex-col overflow-hidden"
+                variants={VARIANTS.fade}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <div className="flex flex-1 items-center justify-center rounded-kern-lg border border-dashed border-kern-border py-16 text-sm text-kern-text-3">
+                  This view type is not implemented yet.
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
         </div>
       </ErrorBoundary>
 
-      {panel ? (
-        <FieldPanel
-          key={panel.mode === 'create' ? 'create' : panel.field.id}
-          mode={panel.mode}
-          collectionId={collection.id}
-          field={panel.mode === 'edit' ? panel.field : undefined}
-          createInsertSortOrder={panel.mode === 'create' ? panel.insertSortOrder : undefined}
-          onClose={() => setPanel(null)}
-        />
-      ) : null}
+      <AnimatePresence>
+        {panel ? (
+          <FieldPanel
+            key={panel.mode === 'create' ? 'create' : panel.field.id}
+            mode={panel.mode}
+            collectionId={collection.id}
+            field={panel.mode === 'edit' ? panel.field : undefined}
+            createInsertSortOrder={panel.mode === 'create' ? panel.insertSortOrder : undefined}
+            onClose={() => setPanel(null)}
+          />
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

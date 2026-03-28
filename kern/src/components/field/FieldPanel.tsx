@@ -1,6 +1,7 @@
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { Check, X } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
 import { FieldTypeGrid } from '@/components/field/FieldTypeGrid';
@@ -11,6 +12,8 @@ import { SelectOptionsEditor } from '@/components/field/SelectOptionsEditor';
 import { Button } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Input } from '@/components/ui/Input';
+import { LAYOUT_TOPBAR_PX } from '@/components/layout/layoutConstants';
+import { VARIANTS } from '@/lib/animations';
 import { FIELD_TYPES, SELECT_COLORS } from '@/lib/constants';
 import {
   useCreateField,
@@ -89,12 +92,6 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
   const createField = useCreateField();
   const updateField = useUpdateField();
   const deleteField = useDeleteField();
-
-  const [entered, setEntered] = useState(false);
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(id);
-  }, []);
 
   const [name, setName] = useState(() => (mode === 'edit' && field ? field.name : ''));
   const [fieldType, setFieldType] = useState<FieldType>(() =>
@@ -196,23 +193,28 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
     (fieldType !== 'relation' || Boolean(relationOpts?.target_collection_id));
 
   return (
-    <>
+    <motion.div
+      className="fixed inset-0 z-[29]"
+      style={{ top: LAYOUT_TOPBAR_PX }}
+      variants={VARIANTS.fade}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <button
         type="button"
-        className={cn(
-          'fixed inset-0 z-[29] bg-black/20 transition-opacity duration-200',
-          entered ? 'opacity-100' : 'opacity-0'
-        )}
+        className="absolute inset-0 bg-black/20"
         aria-label="Close panel"
         onClick={onClose}
       />
-      <aside
-        className={cn(
-          'fixed bottom-0 right-0 top-12 z-30 flex w-[360px] max-w-full flex-col border-l border-kern-border bg-kern-bg shadow-ds-md transition-transform duration-200 ease-out',
-          entered ? 'translate-x-0' : 'translate-x-full'
-        )}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <motion.aside
+          className="absolute bottom-0 right-0 top-0 z-[1] flex w-[360px] max-w-full flex-col border-l border-kern-border bg-kern-bg shadow-ds-md"
+          variants={VARIANTS.slideRight}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          onClick={(e) => e.stopPropagation()}
+        >
         <header className="flex shrink-0 items-center justify-between border-b border-kern-border px-4 py-3">
           <h2 className="text-sm font-semibold text-kern-text">
             {mode === 'create' ? 'Add field' : 'Edit field'}
@@ -320,7 +322,7 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
             {mode === 'create' ? 'Add field' : 'Save changes'}
           </Button>
         </footer>
-      </aside>
+      </motion.aside>
 
       {mode === 'edit' && field && !field.is_primary ? (
         <ConfirmDialog
@@ -333,6 +335,6 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
           onConfirm={runDeleteField}
         />
       ) : null}
-    </>
+    </motion.div>
   );
 }

@@ -15,6 +15,21 @@
     font-weight: 400;
     font-style: italic;
   }
+
+  /* Auth — gold focus ring (login / signup inputs only) */
+  .auth-page-input:focus {
+    box-shadow: 0 0 0 2px rgba(200, 168, 75, 0.25);
+  }
+
+  /* Auth — OAuth rows: neutral grey hover */
+  html[data-theme='dark'] .auth-oauth-button:hover:not(:disabled) {
+    background-color: #3d3d3c;
+    border-color: var(--border-strong);
+  }
+  html[data-theme='light'] .auth-oauth-button:hover:not(:disabled) {
+    background-color: #e8e8e6;
+    border-color: var(--border-strong);
+  }
 }
 
 /* Kern design system — Claude-inspired warm greys + muted brass-gold accent. */
@@ -78,7 +93,7 @@ html[data-theme='dark'] {
   --transition-default: 150ms ease;
 
   /* App shell — match layoutConstants (Topbar height) */
-  --layout-topbar-h: 44px;
+  --layout-topbar-h: 54px;
 
   /* Tailwind bridge (existing utilities) */
   --kern-bg: var(--bg-0);
@@ -104,7 +119,7 @@ html[data-theme='dark'] {
 }
 
 html[data-theme='light'] {
-  --layout-topbar-h: 44px;
+  --layout-topbar-h: 54px;
 
   --bg-0: #f5f4f0;
   --bg-1: #eeece7;
