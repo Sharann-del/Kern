@@ -2,9 +2,10 @@ import Link from '@tiptap/extension-link';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Bold, Italic, Link as LinkIcon, List } from 'lucide-react';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/Button';
+import { LinkUrlDialog } from '@/components/ui/LinkUrlDialog';
 import { cn } from '@/lib/utils';
 
 export type RowEditorRichTextProps = {
@@ -15,6 +16,8 @@ export type RowEditorRichTextProps = {
 };
 
 export function RowEditorRichText({ value, onDebouncedChange, onFlush }: RowEditorRichTextProps) {
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [linkDialogDefault, setLinkDialogDefault] = useState('https://');
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const schedule = useCallback(
     (html: string) => {
@@ -69,16 +72,10 @@ export function RowEditorRichText({ value, onDebouncedChange, onFlush }: RowEdit
     return <div className="min-h-[88px] rounded-kern-md border border-kern-border bg-kern-bg" />;
   }
 
-  const setLink = () => {
+  const openLinkDialog = () => {
     const prev = editor.getAttributes('link').href as string | undefined;
-    const url = window.prompt('Link URL', prev ?? 'https://');
-    if (url === null) return;
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
-    }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
-    schedule(editor.getHTML());
+    setLinkDialogDefault(prev ?? 'https://');
+    setLinkDialogOpen(true);
   };
 
   return (
@@ -129,7 +126,7 @@ export function RowEditorRichText({ value, onDebouncedChange, onFlush }: RowEdit
           size="sm"
           className="h-7 w-7 p-0"
           aria-label="Link"
-          onClick={setLink}
+          onClick={openLinkDialog}
         >
           <LinkIcon size={14} />
         </Button>
@@ -144,6 +141,25 @@ export function RowEditorRichText({ value, onDebouncedChange, onFlush }: RowEdit
       >
         <EditorContent editor={editor} className={cn('overflow-hidden')} />
       </div>
+
+      <LinkUrlDialog
+        open={linkDialogOpen}
+        onOpenChange={setLinkDialogOpen}
+        defaultValue={linkDialogDefault}
+        showRemove={editor.isActive('link')}
+        onRemove={() => {
+          editor.chain().focus().extendMarkRange('link').unsetLink().run();
+          schedule(editor.getHTML());
+        }}
+        onConfirm={(url) => {
+          if (url === '') {
+            editor.chain().focus().extendMarkRange('link').unsetLink().run();
+          } else {
+            editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+          }
+          schedule(editor.getHTML());
+        }}
+      />
     </div>
   );
 }

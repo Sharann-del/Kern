@@ -1,6 +1,7 @@
 import { ArrowRight, X } from 'lucide-react';
 import { memo } from 'react';
 
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import type { KernCollection, KernField, KernRow } from '@/types/kern';
 import { rowPrimaryLabel } from '@/lib/rowDisplay';
 import { useAppStore } from '@/stores/appStore';
@@ -25,14 +26,8 @@ function RelationPillInner({
 }: RelationPillProps) {
   const openRow = useAppStore((s) => s.openRow);
   const label = rowPrimaryLabel(row, fields);
-  const iconBlock = collection?.icon ? (
-    <span className="text-xs leading-none">{collection.icon}</span>
-  ) : collection?.color ? (
-    <span
-      className="h-3 w-3 shrink-0 rounded-kern-sm border border-kern-border"
-      style={{ backgroundColor: collection.color }}
-      aria-hidden
-    />
+  const iconBlock = collection ? (
+    <CollectionIconDisplay icon={collection.icon} color={collection.color} size={12} />
   ) : null;
 
   return (

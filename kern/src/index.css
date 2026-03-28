@@ -77,6 +77,9 @@ html[data-theme='dark'] {
   --transition-fast: 80ms ease;
   --transition-default: 150ms ease;
 
+  /* App shell — match layoutConstants (Topbar height) */
+  --layout-topbar-h: 44px;
+
   /* Tailwind bridge (existing utilities) */
   --kern-bg: var(--bg-0);
   --kern-surface: var(--bg-1);
@@ -93,9 +96,16 @@ html[data-theme='dark'] {
   --kern-danger: var(--color-red);
   --kern-success: var(--color-green);
   --kern-warning: var(--color-yellow);
+
+  /* Scrollbar thumb color (used by JS overlay in scroll-scrollbar-hint.ts); native bars stay hidden */
+  --scrollbar-size: 6px;
+  --scrollbar-thumb: color-mix(in srgb, var(--text-tertiary) 38%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 42%, transparent);
 }
 
 html[data-theme='light'] {
+  --layout-topbar-h: 44px;
+
   --bg-0: #f5f4f0;
   --bg-1: #eeece7;
   --bg-2: #ffffff;
@@ -121,12 +131,102 @@ html[data-theme='light'] {
   --accent-muted: var(--accent-tint);
   --accent-hover: var(--accent-dark);
   --on-accent: #1a1a18;
+
+  --scrollbar-thumb: color-mix(in srgb, var(--text-tertiary) 32%, transparent);
+  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 38%, transparent);
+}
+
+/* Sonner: below modals (200+), Kern surfaces, close top-right, theme-aware tokens */
+[data-sonner-toaster] {
+  z-index: 90 !important;
+  --toast-close-button-start: unset;
+  --toast-close-button-end: 0;
+  --toast-close-button-transform: translate(35%, -35%);
+  --width: min(22rem, calc(100vw - 2rem));
+  font-family: 'DM Sans', system-ui, sans-serif !important;
+}
+
+[data-sonner-toaster][data-sonner-theme='dark'],
+[data-sonner-toaster][data-sonner-theme='light'] {
+  --normal-bg: var(--kern-surface);
+  --normal-border: var(--kern-border);
+  --normal-text: var(--kern-text);
+  --normal-bg-hover: var(--kern-surface-2);
+  --normal-border-hover: var(--kern-border-2);
+}
+
+[data-sonner-toast][data-styled='true'] {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+[data-sonner-toast][data-styled='true'] [data-description] {
+  color: var(--kern-text-2) !important;
+}
+
+[data-sonner-toast][data-styled='true'] [data-button] {
+  background: var(--kern-surface-2) !important;
+  color: var(--kern-text) !important;
+  border: 1px solid var(--kern-border) !important;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+}
+
+[data-sonner-toast][data-styled='true'] [data-button]:hover {
+  background: var(--kern-bg) !important;
+}
+
+[data-sonner-toast][data-styled='true'] [data-cancel] {
+  background: transparent !important;
+  color: var(--kern-text-2) !important;
+  border: 1px solid var(--kern-border) !important;
+}
+
+[data-sonner-toast][data-styled='true'] [data-close-button] {
+  background: var(--kern-surface-2) !important;
+  border-color: var(--kern-border) !important;
+  color: var(--kern-text-2) !important;
+}
+
+[data-sonner-toast][data-styled='true'] [data-close-button]:hover {
+  background: var(--kern-bg) !important;
+  color: var(--kern-text) !important;
+}
+
+/* Subtle type cues — no rich “neon” fills */
+[data-sonner-toast][data-type='success'][data-styled='true'] {
+  background: color-mix(in srgb, var(--color-green) 10%, var(--kern-surface)) !important;
+  border-color: color-mix(in srgb, var(--color-green) 20%, var(--kern-border)) !important;
+  color: var(--kern-text) !important;
+}
+
+[data-sonner-toast][data-type='error'][data-styled='true'] {
+  background: color-mix(in srgb, var(--color-red) 9%, var(--kern-surface)) !important;
+  border-color: color-mix(in srgb, var(--color-red) 22%, var(--kern-border)) !important;
+  color: var(--kern-text) !important;
+}
+
+[data-sonner-toast][data-type='warning'][data-styled='true'] {
+  background: color-mix(in srgb, var(--color-yellow) 10%, var(--kern-surface)) !important;
+  border-color: color-mix(in srgb, var(--color-yellow) 22%, var(--kern-border)) !important;
+  color: var(--kern-text) !important;
+}
+
+[data-sonner-toast][data-type='info'][data-styled='true'] {
+  background: color-mix(in srgb, var(--color-blue) 9%, var(--kern-surface)) !important;
+  border-color: color-mix(in srgb, var(--color-blue) 20%, var(--kern-border)) !important;
+  color: var(--kern-text) !important;
+}
+
+[data-sonner-toast][data-type='loading'][data-styled='true'] {
+  background: var(--kern-surface) !important;
+  border-color: var(--kern-border) !important;
 }
 
 @layer base {
   html {
     @apply font-sans antialiased;
     font-weight: 400;
+    overscroll-behavior: none;
   }
 
   body {
@@ -135,6 +235,7 @@ html[data-theme='light'] {
     background-color: var(--bg-0);
     color: var(--text-primary);
     transition: background-color var(--transition-default), color var(--transition-default);
+    overscroll-behavior: none;
   }
 
   label {
@@ -147,4 +248,61 @@ html[data-theme='light'] {
   h4 {
     @apply font-sans font-semibold;
   }
+}
+
+/*
+ * Prefer overlay overflow on Tailwind scroll utilities so the thumb can sit on top of content.
+ * If `overlay` is invalid for an engine, the declaration is ignored and the utility’s `auto` still applies.
+ */
+.overflow-y-auto {
+  overflow-y: overlay !important;
+}
+
+.overflow-x-auto {
+  overflow-x: overlay !important;
+}
+
+.overflow-auto {
+  overflow: overlay !important;
+}
+
+/**
+ * Popovers / modals: bypass the global `overflow-*: overlay` hack so wheel/touch scroll works.
+ * Native bars stay hidden (same as `*` below); `initScrollScrollbarHint()` draws the thumb on scroll/wheel.
+ */
+@layer components {
+  .kern-popover-scroll {
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .kern-popover-scroll::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .kern-popover-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+}
+
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }

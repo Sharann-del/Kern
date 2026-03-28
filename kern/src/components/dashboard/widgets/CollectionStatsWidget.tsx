@@ -1,5 +1,6 @@
 import { formatDistanceToNow } from 'date-fns';
 
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { useCollectionById } from '@/hooks/useCollections';
 import { useRowsCreatedTodayCount } from '@/hooks/useRows';
 
@@ -23,10 +24,8 @@ export function CollectionStatsWidget({ config }: CollectionStatsWidgetProps) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-2">
-        {collection.icon ? (
-          <span className="text-[28px] leading-none" aria-hidden>
-            {collection.icon}
-          </span>
+        {collection.icon || collection.color ? (
+          <CollectionIconDisplay icon={collection.icon} color={collection.color} size={28} />
         ) : null}
         <span className="text-sm font-medium text-kern-text">{collection.name}</span>
       </div>

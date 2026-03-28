@@ -216,7 +216,7 @@ export function FileCell({
           side="bottom"
           sideOffset={6}
           className={cn(
-            'z-50 origin-[var(--radix-popover-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-2 shadow-lg outline-none',
+            'z-[220] origin-[var(--radix-popover-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-2 shadow-lg outline-none',
             'animate-kern-pop-in'
           )}
           onClick={(e) => e.stopPropagation()}

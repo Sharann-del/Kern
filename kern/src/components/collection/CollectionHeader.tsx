@@ -2,6 +2,7 @@ import { Search, X } from 'lucide-react';
 import { useState } from 'react';
 
 import { CollectionActionsMenu } from '@/components/collection/CollectionActionsMenu';
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { CollectionViewTabs } from '@/components/collection/CollectionViewTabs';
 import { ConnectLiveSourceModal } from '@/components/live-sources/ConnectLiveSourceModal';
 import { LiveSourceBadge } from '@/components/live-sources/LiveSourceBadge';
@@ -40,13 +41,11 @@ export function CollectionHeader({
   const filtersPopoverOpen = useAppStore((s) => s.filtersPopoverOpen);
   const setFiltersPopoverOpen = useAppStore((s) => s.setFiltersPopoverOpen);
 
-  const iconBlock = collection.icon ? (
-    <span className="text-2xl leading-none">{collection.icon}</span>
-  ) : (
-    <span
-      className="h-9 w-9 shrink-0 rounded-kern-md border border-kern-border"
-      style={{ backgroundColor: collection.color ?? '#888888' }}
-      aria-hidden
+  const iconBlock = (
+    <CollectionIconDisplay
+      icon={collection.icon}
+      color={collection.icon ? (collection.color ?? undefined) : (collection.color ?? '#888888')}
+      size={36}
     />
   );
 
@@ -97,7 +96,7 @@ export function CollectionHeader({
           collectionSlug={collectionSlug}
         />
         {activeView ? (
-          <div className="flex h-7 w-[160px] shrink-0 items-center gap-1 rounded-kern-md border border-kern-border bg-kern-surface px-2 focus-within:ring-2 focus-within:ring-kern-accent/30">
+          <div className="flex h-8 w-[160px] shrink-0 items-center gap-1 rounded-kern-md border border-kern-border bg-kern-surface px-2 focus-within:ring-2 focus-within:ring-kern-accent/30">
             <Search size={14} className="shrink-0 text-kern-text-3" aria-hidden />
             <input
               type="search"

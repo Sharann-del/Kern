@@ -10,7 +10,6 @@ import {
   Copy,
   Filter,
   FilterX,
-  Folder,
   Keyboard,
   LayoutDashboard,
   LayoutGrid,
@@ -22,6 +21,8 @@ import {
   Table2,
   Trash2,
 } from 'lucide-react';
+
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { toast } from 'sonner';
 
 import { useCollection, useCollections } from '@/hooks/useCollections';
@@ -30,29 +31,18 @@ import { useCreateRow } from '@/hooks/useRows';
 import { useCreateView, useUpdateView, useViews } from '@/hooks/useViews';
 import { OPERATORS_BY_FIELD_TYPE } from '@/lib/field-operators';
 import { getMcpServerUrl } from '@/lib/mcp-url';
-import { cn } from '@/lib/utils';
 import { useAppStore } from '@/stores/appStore';
 import type { CommandDefinition, CommandIconProps } from '@/types/command';
 import type { KernCollection } from '@/types/kern';
 
 function makeCollectionIcon(collection: KernCollection): ComponentType<CommandIconProps> {
   return function CollectionCmdIcon({ size = 16, className }: CommandIconProps) {
-    if (collection.icon) {
-      return (
-        <span
-          className={cn('inline-flex shrink-0 items-center justify-center leading-none', className)}
-          style={{ fontSize: size }}
-          aria-hidden
-        >
-          {collection.icon}
-        </span>
-      );
-    }
     return (
-      <Folder
+      <CollectionIconDisplay
+        icon={collection.icon}
+        color={collection.color}
         size={size}
-        className={cn('text-kern-text-3', className)}
-        style={{ color: collection.color ?? undefined }}
+        className={className}
       />
     );
   };

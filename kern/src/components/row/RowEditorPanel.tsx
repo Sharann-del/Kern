@@ -11,7 +11,10 @@ import { RelationPicker } from '@/components/row/RelationPicker';
 import { RowDatePickerButton } from '@/components/row/RowDatePickerButton';
 import { RowEditorRichText } from '@/components/row/RowEditorRichText';
 import { FieldTypeIcon } from '@/components/field/FieldTypeIcon';
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
+import { LAYOUT_TOPBAR_PX } from '@/components/layout/layoutConstants';
 import { Button } from '@/components/ui/Button';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { Skeleton, SkeletonText } from '@/components/ui/Skeleton';
 import { fetchCollectionById, useCollectionById } from '@/hooks/useCollections';
@@ -68,6 +71,7 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
   const removeRelation = useRemoveRelation();
 
   const [banner, setBanner] = useState<string | null>(null);
+  const [deleteRowConfirmOpen, setDeleteRowConfirmOpen] = useState(false);
   const debouncers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
   const latestQueuedBySlug = useRef<Record<string, unknown>>({});
   const editorScrollRef = useRef<HTMLDivElement>(null);
@@ -180,13 +184,14 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
     []
   );
 
-  const handleDelete = () => {
-    if (!row || !window.confirm('Delete this row? This cannot be undone.')) return;
+  const runDeleteRow = () => {
+    if (!row) return;
     const snapshot = { ...row.data };
     deleteRow.mutate(
       { id: row.id, collectionId },
       {
         onSuccess: () => {
+          setDeleteRowConfirmOpen(false);
           toast.success('Row deleted', {
             duration: 5000,
             action: {
@@ -214,14 +219,8 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
     return null;
   }
 
-  const iconBlock = collection?.icon ? (
-    <span className="text-lg leading-none">{collection.icon}</span>
-  ) : collection?.color ? (
-    <span
-      className="h-6 w-6 shrink-0 rounded-kern-md border border-kern-border"
-      style={{ backgroundColor: collection.color }}
-      aria-hidden
-    />
+  const iconBlock = collection ? (
+    <CollectionIconDisplay icon={collection.icon} color={collection.color} size={24} />
   ) : (
     <span className="h-6 w-6 shrink-0 rounded-kern-md border border-kern-border bg-kern-surface" />
   );
@@ -240,7 +239,7 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
           'fixed bottom-0 right-0 z-[35] flex w-[480px] max-w-full flex-col border-l border-kern-border bg-kern-bg shadow-ds-md transition-transform duration-200 ease-out',
           entered ? 'translate-x-0' : 'translate-x-full'
         )}
-        style={{ top: 48 }}
+        style={{ top: LAYOUT_TOPBAR_PX }}
         onClick={(e) => e.stopPropagation()}
         onKeyDownCapture={(e) => {
           if (!row) return;
@@ -317,13 +316,31 @@ function RowEditorPanelInner({ rowId, collectionId, onClose, entered }: RowEdito
               </ErrorBoundary>
             </div>
             <footer className="flex h-12 shrink-0 items-center border-t border-kern-border px-4">
-              <Button type="button" variant="danger" size="sm" onClick={handleDelete} disabled={deleteRow.isPending}>
+              <Button
+                type="button"
+                variant="danger"
+                size="sm"
+                onClick={() => setDeleteRowConfirmOpen(true)}
+                disabled={deleteRow.isPending}
+              >
                 Delete row
               </Button>
             </footer>
           </>
         )}
       </aside>
+
+      <ConfirmDialog
+        open={deleteRowConfirmOpen && Boolean(row)}
+        onOpenChange={setDeleteRowConfirmOpen}
+        title="Delete this row?"
+        description="This cannot be undone. You can use Undo from the toast to recreate an empty row with the same data snapshot when available."
+        confirmLabel="Delete row"
+        loading={deleteRow.isPending}
+        onConfirm={() => {
+          if (row) runDeleteRow();
+        }}
+      />
     </>
   );
 }

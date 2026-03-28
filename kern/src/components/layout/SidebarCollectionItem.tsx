@@ -1,7 +1,7 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
 import type { DraggableAttributes, DraggableSyntheticListeners } from '@dnd-kit/core';
 import { useQueryClient } from '@tanstack/react-query';
-import { GripVertical, MoreHorizontal } from 'lucide-react';
+import { Copy, GripVertical, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { memo, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -12,22 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Button } from '@/components/ui/Button';
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { fetchFieldsForCollection } from '@/hooks/useFields';
 import { fetchViewsForCollection } from '@/hooks/useViews';
 import { cn } from '@/lib/utils';
 import type { KernCollection } from '@/types/kern';
 
-const FALLBACK_COLOR = '#888888';
+const FALLBACK_COLOR = '#6B6B64';
 
 export type SidebarCollectionItemProps = {
   collection: KernCollection;
   isActive: boolean;
   collapsed: boolean;
   dragAttributes?: DraggableAttributes;
-  /** Expanded: grip handle only. Collapsed: omit; pass `linkDragListeners` on the NavLink instead. */
   handleDragListeners?: DraggableSyntheticListeners;
-  /** Collapsed: NavLink receives these for dragging. */
   linkDragListeners?: DraggableSyntheticListeners;
   onEdit: () => void;
   onDuplicate: () => void;
@@ -80,76 +78,57 @@ function SidebarCollectionItemInner({
   const rowCount = collection.row_count ?? 0;
   const showCount = rowCount > 0;
 
-  const iconNode = collection.icon ? (
-    <span className="flex h-4 w-4 shrink-0 items-center justify-center text-base leading-none">
-      {collection.icon}
-    </span>
-  ) : (
-    <span
-      className="h-4 w-4 shrink-0 rounded-kern-sm border border-kern-border"
-      style={{ backgroundColor: collection.color ?? FALLBACK_COLOR }}
-      aria-hidden
+  const iconNode = (
+    <CollectionIconDisplay
+      icon={collection.icon}
+      color={
+        collection.icon ? (collection.color ?? undefined) : (collection.color ?? FALLBACK_COLOR)
+      }
+      size={13}
     />
   );
 
-  const linkInner = (
-    <>
-      {iconNode}
-      {!collapsed ? (
-        <>
-          <span className="min-w-0 flex-1 truncate text-sm">{collection.name}</span>
-          {showCount ? (
-            <span className="shrink-0 text-xs text-kern-text-3">({rowCount})</span>
-          ) : null}
-        </>
-      ) : null}
-    </>
-  );
-
-  const rowClass = cn(
-    'group relative flex h-8 items-center gap-1 rounded-kern-md px-2',
-    isActive ? 'bg-kern-accent/10 text-kern-accent' : 'text-kern-text-2 hover:bg-kern-surface-2'
-  );
-
-  const linkClass = ({ isActive: navActive }: { isActive: boolean }) =>
-    cn(
-      'flex min-w-0 flex-1 items-center gap-2 overflow-hidden rounded-kern-md py-0.5 pl-1 pr-1',
-      navActive || isActive ? 'text-kern-accent' : ''
-    );
-
-  const handle = (
+  const handle = handleDragListeners ? (
     <button
       type="button"
       className={cn(
-        'flex h-6 w-5 shrink-0 cursor-grab items-center justify-center rounded-kern-sm border border-transparent text-kern-text-3 opacity-0 transition-opacity active:cursor-grabbing',
-        'group-hover:opacity-40'
+        'absolute left-0 top-1/2 z-[2] flex h-[28px] w-7 -translate-y-1/2 cursor-grab items-center justify-center border-0 bg-transparent p-0 text-[#6B6B64] opacity-0 transition-opacity duration-[80ms] ease-in-out active:cursor-grabbing',
+        'group-hover:opacity-[0.35]'
       )}
       aria-label="Drag to reorder"
       {...dragAttributes}
       {...handleDragListeners}
     >
-      <GripVertical size={14} />
+      <GripVertical size={12} strokeWidth={2} />
     </button>
-  );
+  ) : null;
 
   const menu = !collapsed ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="sm"
-          className="h-7 w-7 shrink-0 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+          className={cn(
+            'absolute right-1.5 top-1/2 flex h-5 w-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-[3px] border-0 bg-transparent text-[#6B6B64] opacity-0 transition-[opacity,background-color] duration-[80ms] ease-in-out',
+            'group-hover:opacity-100 hover:bg-[#353533] hover:text-[#A8A89E]'
+          )}
           aria-label="Collection actions"
         >
-          <MoreHorizontal size={16} />
-        </Button>
+          <MoreHorizontal size={13} strokeWidth={2} />
+        </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onSelect={onEdit}>Edit</DropdownMenuItem>
-        <DropdownMenuItem onSelect={onDuplicate}>Duplicate</DropdownMenuItem>
+        <DropdownMenuItem onSelect={onEdit} className="gap-2 text-[13px]">
+          <Pencil size={13} strokeWidth={2} className="shrink-0" />
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={onDuplicate} className="gap-2 text-[13px]">
+          <Copy size={13} strokeWidth={2} className="shrink-0" />
+          Duplicate
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem variant="danger" onSelect={onDelete}>
+        <DropdownMenuItem variant="danger" onSelect={onDelete} className="gap-2 text-[13px]">
+          <Trash2 size={13} strokeWidth={2} className="shrink-0" />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -158,43 +137,81 @@ function SidebarCollectionItemInner({
 
   if (collapsed) {
     return (
-      <Tooltip.Root delayDuration={300}>
-        <Tooltip.Trigger asChild>
-          <NavLink
-            to={`/c/${collection.slug}`}
-            className={({ isActive: navActive }) =>
-              cn(
-                rowClass,
-                'cursor-pointer justify-center px-0',
-                navActive || isActive ? 'bg-kern-accent/10 text-kern-accent' : ''
-              )
-            }
-            {...dragAttributes}
-            {...linkDragListeners}
-            onMouseEnter={onRowMouseEnter}
-            onMouseLeave={onRowMouseLeave}
-          >
-            {linkInner}
-          </NavLink>
-        </Tooltip.Trigger>
-        <Tooltip.Portal>
-          <Tooltip.Content
-            className="z-[70] rounded-kern-md border border-kern-border bg-kern-surface px-2 py-1 text-xs text-kern-text shadow-ds-md"
-            sideOffset={6}
-          >
-            {collection.name}
-            <Tooltip.Arrow className="fill-kern-border" />
-          </Tooltip.Content>
-        </Tooltip.Portal>
-      </Tooltip.Root>
+      <div className="flex w-full min-w-0 shrink-0 justify-center overflow-x-hidden">
+        <Tooltip.Root delayDuration={300}>
+          <Tooltip.Trigger asChild>
+            <NavLink
+              to={`/c/${collection.slug}`}
+              className={({ isActive: navActive }) =>
+                cn(
+                  'box-border flex h-7 w-full min-w-0 max-w-full cursor-pointer items-center justify-center overflow-x-hidden rounded-[4px] transition-[background-color] duration-[80ms] ease-in-out',
+                  navActive || isActive ? 'bg-[#353533]' : 'bg-transparent hover:bg-[#2C2C2A]'
+                )
+              }
+              {...dragAttributes}
+              {...linkDragListeners}
+              onMouseEnter={onRowMouseEnter}
+              onMouseLeave={onRowMouseLeave}
+            >
+              <span className="flex size-7 shrink-0 items-center justify-center overflow-hidden leading-none">
+                {iconNode}
+              </span>
+            </NavLink>
+          </Tooltip.Trigger>
+          <Tooltip.Portal>
+            <Tooltip.Content
+              className="z-[70] rounded-[4px] border border-[#484845] bg-[#353533] px-2 py-1 text-xs text-[#F5F4F0] shadow-[0_2px_8px_rgba(10,10,8,0.5)]"
+              side="right"
+              sideOffset={8}
+            >
+              {collection.name}
+              <Tooltip.Arrow className="fill-[#484845]" />
+            </Tooltip.Content>
+          </Tooltip.Portal>
+        </Tooltip.Root>
+      </div>
     );
   }
 
   return (
-    <div className={rowClass} onMouseEnter={onRowMouseEnter} onMouseLeave={onRowMouseLeave}>
+    <div
+      className={cn(
+        'group relative mb-px mx-1 flex h-[28px] cursor-pointer items-center rounded-[4px] pl-2 pr-2 transition-[background-color] duration-[80ms] ease-in-out',
+        isActive ? 'bg-[#353533]' : 'bg-transparent hover:bg-[#2C2C2A]'
+      )}
+      onMouseEnter={onRowMouseEnter}
+      onMouseLeave={onRowMouseLeave}
+    >
       {handle}
-      <NavLink to={`/c/${collection.slug}`} className={linkClass}>
-        {linkInner}
+      <NavLink
+        to={`/c/${collection.slug}`}
+        className="relative flex min-h-0 min-w-0 flex-1 items-center gap-[7px] overflow-hidden"
+      >
+        {({ isActive: navActive }) => (
+          <>
+            {iconNode}
+            <span
+              className={cn(
+                'min-w-0 max-w-[130px] flex-1 truncate text-[13px] transition-[color] duration-[80ms] ease-in-out',
+                navActive || isActive
+                  ? 'font-medium text-[#F5F4F0]'
+                  : 'font-normal text-[#A8A89E] group-hover:text-[#F5F4F0]'
+              )}
+            >
+              {collection.name}
+            </span>
+            {showCount ? (
+              <span
+                className={cn(
+                  'ml-auto shrink-0 font-mono text-[11px] text-[#6B6B64] transition-opacity duration-[80ms] ease-in-out',
+                  'opacity-100 group-hover:opacity-0'
+                )}
+              >
+                {rowCount}
+              </span>
+            ) : null}
+          </>
+        )}
       </NavLink>
       {menu}
     </div>

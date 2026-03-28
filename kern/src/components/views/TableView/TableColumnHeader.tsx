@@ -17,7 +17,6 @@ export type TableColumnHeaderProps = {
   field: KernField;
   isSorted: false | 'asc' | 'desc';
   onSort: () => void;
-  width: number;
   onResizeStart: (e: React.MouseEvent) => void;
   onEdit: () => void;
   onHide: () => void;
@@ -30,7 +29,6 @@ export function TableColumnHeader({
   field,
   isSorted,
   onSort,
-  width: _width,
   onResizeStart,
   onEdit,
   onHide,
@@ -41,10 +39,7 @@ export function TableColumnHeader({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div
-      className="group/header relative flex h-full shrink-0 items-center border-r border-kern-border bg-kern-bg"
-      style={{ width: _width, minWidth: _width, maxWidth: _width }}
-    >
+    <div className="group/header relative flex h-full min-w-0 w-full items-center bg-kern-bg">
       <button
         type="button"
         className="flex min-w-0 flex-1 items-center gap-1.5 px-2 py-0 text-left"

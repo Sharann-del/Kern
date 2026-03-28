@@ -257,7 +257,7 @@ export function CollectionPage() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-48px)] flex-1 flex-col">
+    <div className="flex min-h-shell-main flex-1 flex-col bg-kern-bg">
       {viewsLoading && views.length === 0 ? (
         <div className="border-b border-kern-border px-6 py-3">
           <Skeleton className="h-8 w-full max-w-xl rounded-kern-md" />
@@ -345,8 +345,8 @@ export function CollectionPage() {
               <Skeleton className="h-10 w-36 rounded-kern-md" />
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-kern-lg border border-kern-border">
-              <div className="flex min-h-11 min-w-0 items-stretch divide-x divide-kern-border bg-kern-surface">
+            <div className="w-fit max-w-full overflow-x-auto rounded-kern-lg border border-kern-border bg-kern-surface">
+              <div className="flex min-h-11 items-stretch divide-x divide-kern-border bg-kern-surface">
                 {fields.map((f) => (
                   <button
                     key={f.id}
@@ -358,16 +358,14 @@ export function CollectionPage() {
                     <span className="truncate font-medium text-kern-text">{f.name}</span>
                   </button>
                 ))}
-                <Button
+                <button
                   type="button"
-                  variant="secondary"
-                  size="md"
-                  className="min-w-[132px] shrink-0 rounded-none border-0 shadow-none"
+                  className="flex min-w-[132px] shrink-0 items-center justify-center gap-2 rounded-r-kern-lg px-3 py-2.5 text-sm font-medium text-[#f5f4f0] transition-colors bg-[#1a1a18] hover:bg-[#242420] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/30"
                   onClick={() => setPanel({ mode: 'create' })}
                 >
-                  <Plus size={16} className="shrink-0" />
-                  <span className="ml-1">Add field</span>
-                </Button>
+                  <Plus size={16} className="shrink-0 text-[#e8e6e1]" aria-hidden />
+                  Add field
+                </button>
               </div>
             </div>
           )}

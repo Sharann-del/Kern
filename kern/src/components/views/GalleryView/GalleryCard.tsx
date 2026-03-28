@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { FieldTypeIcon } from '@/components/field/FieldTypeIcon';
 import { asFileAttachments, useFileUrl } from '@/hooks/useFileUpload';
 import { formatCellValueForCard } from '@/lib/formatCellDisplay';
@@ -63,7 +64,11 @@ export function GalleryCard({
             className="flex h-full w-full items-center justify-center text-4xl"
             style={{ backgroundColor: fallbackBg }}
           >
-            <span aria-hidden>{collection.icon ?? '📁'}</span>
+            <CollectionIconDisplay
+              icon={collection.icon ?? '📁'}
+              color={collection.color}
+              size={22}
+            />
           </div>
         )}
       </div>

@@ -83,7 +83,7 @@ export function CustomViewEditorPage() {
 
   if (collectionLoading) {
     return (
-      <div className="flex min-h-[calc(100vh-48px)] flex-col gap-4 p-8">
+      <div className="flex min-h-shell-main flex-col gap-4 p-8">
         <Skeleton className="h-10 w-64 rounded-kern-md" />
         <SkeletonText className="max-w-md" />
       </div>
@@ -124,7 +124,7 @@ export function CustomViewEditorPage() {
 
   if (!isNew && registryLoading) {
     return (
-      <div className="flex min-h-[calc(100vh-48px)] flex-col gap-4 p-8">
+      <div className="flex min-h-shell-main flex-col gap-4 p-8">
         <Skeleton className="h-10 w-64 rounded-kern-md" />
         <SkeletonText className="max-w-lg" />
       </div>
@@ -147,7 +147,7 @@ export function CustomViewEditorPage() {
 
   if (fieldsLoading) {
     return (
-      <div className="flex min-h-[calc(100vh-48px)] flex-col gap-4 p-8">
+      <div className="flex min-h-shell-main flex-col gap-4 p-8">
         <Skeleton className="h-10 w-64 rounded-kern-md" />
       </div>
     );

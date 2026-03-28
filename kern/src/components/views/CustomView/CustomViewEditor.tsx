@@ -284,7 +284,7 @@ export const CustomViewEditor = forwardRef<CustomViewEditorHandle, CustomViewEdi
     }
 
     return (
-      <div className="flex min-h-[calc(100vh-48px)] min-w-0 flex-1 flex-col bg-kern-bg">
+      <div className="flex min-h-shell-main min-w-0 flex-1 flex-col bg-kern-bg">
         <header className="flex h-12 shrink-0 items-center gap-2 border-b border-kern-border px-3">
           <button
             type="button"
@@ -399,8 +399,8 @@ export const CustomViewEditor = forwardRef<CustomViewEditorHandle, CustomViewEdi
 
         <AlertDialog.Root open={exampleReplaceOpen} onOpenChange={setExampleReplaceOpen}>
           <AlertDialog.Portal>
-            <AlertDialog.Overlay className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" />
-            <AlertDialog.Content className="fixed left-1/2 top-1/2 z-[101] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none">
+            <AlertDialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm" />
+            <AlertDialog.Content className="fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none">
               <AlertDialog.Title className="text-base font-semibold text-kern-text">
                 Replace current code?
               </AlertDialog.Title>

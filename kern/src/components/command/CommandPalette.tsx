@@ -69,10 +69,10 @@ export function CommandPalette() {
   return (
     <Dialog.Root open={paletteOpen} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/40 animate-kern-fade-in" />
+        <Dialog.Overlay className="fixed inset-0 z-[200] bg-black/40 animate-kern-fade-in" />
         <Dialog.Content
           className={cn(
-            'fixed left-1/2 top-[20%] z-[101] w-full max-w-[620px] -translate-x-1/2',
+            'fixed left-1/2 top-[20%] z-[201] w-full max-w-[620px] -translate-x-1/2',
             'overflow-hidden rounded-kern-xl border border-kern-border bg-kern-bg shadow-2xl',
             'animate-kern-dialog-in outline-none'
           )}

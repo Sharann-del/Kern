@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useCollectionById } from '@/hooks/useCollections';
@@ -57,10 +58,8 @@ export function QuickAddWidget({ config }: QuickAddWidgetProps) {
   return (
     <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
       <div className="flex items-center gap-2">
-        {collection.icon ? (
-          <span className="text-lg leading-none" aria-hidden>
-            {collection.icon}
-          </span>
+        {collection.icon || collection.color ? (
+          <CollectionIconDisplay icon={collection.icon} color={collection.color} size={20} />
         ) : null}
         <span className="text-sm font-medium text-kern-text">{collection.name}</span>
       </div>

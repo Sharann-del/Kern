@@ -10,6 +10,8 @@ export type PopoverProps = {
   onOpenChange?: (open: boolean) => void;
   align?: 'start' | 'center' | 'end';
   side?: 'top' | 'bottom' | 'left' | 'right';
+  /** Merged onto `Popover.Content` (e.g. max height + overflow for scrollable panels). */
+  contentClassName?: string;
 };
 
 export function Popover({
@@ -19,6 +21,7 @@ export function Popover({
   onOpenChange,
   align = 'center',
   side = 'bottom',
+  contentClassName,
 }: PopoverProps) {
   return (
     <PopoverPrimitive.Root open={open} onOpenChange={onOpenChange}>
@@ -29,8 +32,10 @@ export function Popover({
           side={side}
           sideOffset={6}
           className={cn(
-            'z-50 origin-[var(--radix-popover-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-2 shadow-lg outline-none',
-            'animate-kern-pop-in'
+            /* Above Modal content (z-[201]) */
+            'z-[220] origin-[var(--radix-popover-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-2 shadow-lg outline-none',
+            'animate-kern-pop-in',
+            contentClassName
           )}
         >
           {children}

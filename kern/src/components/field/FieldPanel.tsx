@@ -9,6 +9,7 @@ import { NumberFieldOptions } from '@/components/field/NumberFieldOptions';
 import { RelationFieldOptions } from '@/components/field/RelationFieldOptions';
 import { SelectOptionsEditor } from '@/components/field/SelectOptionsEditor';
 import { Button } from '@/components/ui/Button';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { Input } from '@/components/ui/Input';
 import { FIELD_TYPES, SELECT_COLORS } from '@/lib/constants';
 import {
@@ -107,6 +108,7 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
   const [isRequired, setIsRequired] = useState(() =>
     mode === 'edit' && field ? field.is_required : false
   );
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const typeMeta = FIELD_TYPES.find((t) => t.type === fieldType);
 
@@ -176,12 +178,16 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
     }
   };
 
-  const handleDelete = () => {
+  const runDeleteField = () => {
     if (!field || field.is_primary) return;
-    if (!window.confirm(`Delete field “${field.name}”? This cannot be undone.`)) return;
     deleteField.mutate(
       { id: field.id, collectionId, slug: field.slug },
-      { onSuccess: () => onClose() }
+      {
+        onSuccess: () => {
+          setDeleteConfirmOpen(false);
+          onClose();
+        },
+      }
     );
   };
 
@@ -289,7 +295,7 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
                 size="sm"
                 className="w-full"
                 disabled={isLoading}
-                onClick={handleDelete}
+                onClick={() => setDeleteConfirmOpen(true)}
               >
                 Delete field
               </Button>
@@ -315,6 +321,18 @@ export function FieldPanel({ mode, collectionId, field, onClose, createInsertSor
           </Button>
         </footer>
       </aside>
+
+      {mode === 'edit' && field && !field.is_primary ? (
+        <ConfirmDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={`Delete field “${field.name}”?`}
+          description="This cannot be undone. Values stored in this field will be removed from all rows."
+          confirmLabel="Delete field"
+          loading={deleteField.isPending}
+          onConfirm={runDeleteField}
+        />
+      ) : null}
     </>
   );
 }

@@ -2,9 +2,11 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useCreateCollection, useDeleteCollection, type CreateCollectionInput } from '@/hooks/useCollections';
+import { cn } from '@/lib/utils';
 import type { KernCollection } from '@/types/kern';
 
 export type DeleteCollectionDialogProps = {
@@ -21,9 +23,11 @@ function DeleteCollectionDialogInner({
 }) {
   const deleteCollection = useDeleteCollection();
   const createCollection = useCreateCollection();
-  const [confirm, setConfirm] = useState('');
+  const [confirmName, setConfirmName] = useState('');
 
-  const canDelete = confirm === collection.name && !deleteCollection.isPending;
+  const nameMatches =
+    confirmName.trim().length > 0 && confirmName.trim() === collection.name.trim();
+  const canDelete = nameMatches && !deleteCollection.isPending;
 
   const handleDelete = () => {
     if (!canDelete) return;
@@ -59,13 +63,11 @@ function DeleteCollectionDialogInner({
     );
   };
 
-  const iconBlock = collection.icon ? (
-    <span className="text-3xl leading-none">{collection.icon}</span>
-  ) : (
-    <span
-      className="h-8 w-8 shrink-0 rounded-kern-md border border-kern-border"
-      style={{ backgroundColor: collection.color ?? '#888888' }}
-      aria-hidden
+  const iconBlock = (
+    <CollectionIconDisplay
+      icon={collection.icon}
+      color={collection.icon ? (collection.color ?? undefined) : (collection.color ?? '#888888')}
+      size={36}
     />
   );
 
@@ -77,8 +79,13 @@ function DeleteCollectionDialogInner({
       }}
     >
       <AlertDialog.Portal>
-        <AlertDialog.Overlay className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
-        <AlertDialog.Content className="fixed left-1/2 top-1/2 z-[101] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2 animate-kern-dialog-in rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none">
+        <AlertDialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
+        <AlertDialog.Content
+          className={cn(
+            'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2',
+            'animate-kern-dialog-in rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none'
+          )}
+        >
           <div className="flex items-start gap-3">
             {iconBlock}
             <div className="min-w-0 flex-1">
@@ -94,12 +101,15 @@ function DeleteCollectionDialogInner({
 
           <div className="mt-6">
             <Input
-              label="Type the collection name to confirm:"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
+              label="Type the collection name to confirm"
+              value={confirmName}
+              onChange={(e) => setConfirmName(e.target.value)}
               autoComplete="off"
               placeholder={collection.name}
             />
+            <p className="mt-2 text-xs text-kern-text-3">
+              Delete stays disabled until the name matches exactly (including spaces).
+            </p>
           </div>
 
           <div className="mt-6 flex justify-end gap-2">
@@ -108,15 +118,20 @@ function DeleteCollectionDialogInner({
                 Cancel
               </Button>
             </AlertDialog.Cancel>
-            <Button
-              type="button"
-              variant="danger"
-              disabled={!canDelete}
-              loading={deleteCollection.isPending}
-              onClick={handleDelete}
-            >
-              Delete
-            </Button>
+            <AlertDialog.Action asChild>
+              <Button
+                type="button"
+                variant="danger"
+                disabled={!canDelete}
+                loading={deleteCollection.isPending}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDelete();
+                }}
+              >
+                Delete
+              </Button>
+            </AlertDialog.Action>
           </div>
         </AlertDialog.Content>
       </AlertDialog.Portal>

@@ -42,7 +42,7 @@ export function RowContextMenu({ children, row, collectionId }: RowContextMenuPr
       <ContextMenu.Trigger asChild>{children}</ContextMenu.Trigger>
       <ContextMenu.Portal>
         <ContextMenu.Content
-          className="z-50 min-w-[160px] rounded-kern-lg border border-kern-border bg-kern-bg p-1 shadow-lg animate-kern-pop-in"
+          className="z-[220] min-w-[160px] rounded-kern-lg border border-kern-border bg-kern-bg p-1 shadow-lg animate-kern-pop-in"
           onClick={(e) => e.stopPropagation()}
         >
           <ContextMenu.Item

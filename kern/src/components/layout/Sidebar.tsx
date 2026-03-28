@@ -21,9 +21,13 @@ import { useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, LayoutDashboard, Plus } from 'lucide-react';
 import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
 import { NavLink, useMatch } from 'react-router-dom';
+import {
+  LAYOUT_SIDEBAR_COLLAPSED_PX,
+  LAYOUT_SIDEBAR_EXPANDED_PX,
+  LAYOUT_TOPBAR_PX,
+} from '@/components/layout/layoutConstants';
 import { SidebarCollectionItem } from '@/components/layout/SidebarCollectionItem';
-import { Button } from '@/components/ui/Button';
-import { SkeletonRow } from '@/components/ui/Skeleton';
+import { Skeleton, SkeletonRow } from '@/components/ui/Skeleton';
 import {
   useCollections,
   useDuplicateCollection,
@@ -61,7 +65,11 @@ function SortableCollectionRow({
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(collapsed && 'w-full min-w-0 shrink-0 overflow-x-hidden')}
+    >
       <SidebarCollectionItem
         collection={collection}
         isActive={isActive}
@@ -131,7 +139,7 @@ export function Sidebar() {
     return { manual: manualList, live: liveList };
   }, [collections]);
 
-  const width = sidebarCollapsed ? 48 : 240;
+  const width = sidebarCollapsed ? LAYOUT_SIDEBAR_COLLAPSED_PX : LAYOUT_SIDEBAR_EXPANDED_PX;
 
   const onDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -153,16 +161,28 @@ export function Sidebar() {
 
   const manualCollectionsList = useMemo(() => {
     if (isLoading) {
+      if (sidebarCollapsed) {
+        return (
+          <div className="flex w-full min-w-0 flex-col items-center gap-1.5 py-1" aria-hidden>
+            <Skeleton className="h-7 w-7 shrink-0 rounded-[4px]" />
+            <Skeleton className="h-7 w-7 shrink-0 rounded-[4px]" />
+            <Skeleton className="h-7 w-7 shrink-0 rounded-[4px]" />
+          </div>
+        );
+      }
       return (
         <>
-          <SkeletonRow className="mx-2 my-1" />
-          <SkeletonRow className="mx-2 my-1" />
-          <SkeletonRow className="mx-2 my-1" />
+          <SkeletonRow className="my-0.5" />
+          <SkeletonRow className="my-0.5" />
+          <SkeletonRow className="my-0.5" />
         </>
       );
     }
     if (manual.length === 0) {
-      return <p className="px-4 py-2 text-xs text-kern-text-3">No collections yet</p>;
+      if (sidebarCollapsed) {
+        return null;
+      }
+      return <p className="px-3 py-2 text-xs text-[#6B6B64]">No collections yet</p>;
     }
     return (
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
@@ -188,7 +208,6 @@ export function Sidebar() {
     onDragEnd,
     activeSlug,
     sidebarCollapsed,
-    collections,
     duplicateCollection,
     openCollectionEditModal,
     openCollectionDeleteDialog,
@@ -196,15 +215,23 @@ export function Sidebar() {
 
   const liveCollectionsList = useMemo(() => {
     if (isLoading) {
+      if (sidebarCollapsed) {
+        return (
+          <div className="flex w-full min-w-0 flex-col items-center gap-1.5 py-1" aria-hidden>
+            <Skeleton className="h-7 w-7 shrink-0 rounded-[4px]" />
+            <Skeleton className="h-7 w-7 shrink-0 rounded-[4px]" />
+          </div>
+        );
+      }
       return (
         <>
-          <SkeletonRow className="mx-2 my-1" />
-          <SkeletonRow className="mx-2 my-1" />
+          <SkeletonRow className="my-0.5" />
+          <SkeletonRow className="my-0.5" />
         </>
       );
     }
     if (live.length === 0 && !sidebarCollapsed) {
-      return <p className="px-2 py-2 text-xs text-kern-text-3">No live sources yet.</p>;
+      return <p className="px-3 py-2 text-xs text-[#6B6B64]">No live sources yet.</p>;
     }
     return live.map((c) => {
       const isActive = activeSlug === c.slug;
@@ -230,118 +257,203 @@ export function Sidebar() {
     openCollectionDeleteDialog,
   ]);
 
+  const dashboardClass = ({ isActive }: { isActive: boolean }) =>
+    cn(
+      'flex h-[30px] items-center gap-2 rounded-[4px] text-[13px] font-medium transition-[background-color,color] duration-[80ms] ease-in-out',
+      sidebarCollapsed
+        ? 'w-8 shrink-0 self-center justify-center gap-0 px-0'
+        : 'pl-3 pr-2',
+      isActive
+        ? 'bg-[#353533] text-[#F5F4F0] [&_svg]:text-[#F5F4F0]'
+        : 'bg-transparent text-[#A8A89E] [&_svg]:text-[#6B6B64]',
+      !isActive &&
+        'hover:bg-[#2C2C2A] hover:text-[#F5F4F0] hover:[&_svg]:text-[#A8A89E]'
+    );
+
+  const dashboardLink = (
+    <NavLink to="/dashboard" className={dashboardClass}>
+      <LayoutDashboard size={16} strokeWidth={1.75} className="shrink-0" />
+      {!sidebarCollapsed ? <span className="truncate">Dashboard</span> : null}
+    </NavLink>
+  );
+
   const inner: ReactNode = (
-    <nav className="flex min-h-full flex-col pb-20">
-      <div className={cn('flex flex-col gap-0.5 p-2', sidebarCollapsed && 'items-center')}>
-        <NavLink
-          to="/dashboard"
-          className={({ isActive }) =>
-            cn(
-              'flex items-center gap-2 rounded-kern-md px-2 py-2 text-sm transition-colors duration-ds-fast',
-              sidebarCollapsed && 'justify-center px-0',
-              isActive
-                ? 'bg-kern-accent/10 font-medium text-kern-accent'
-                : 'text-kern-text-2 hover:bg-kern-surface-2 hover:text-kern-text'
-            )
-          }
+    <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden select-none">
+      <nav className="min-h-0 min-w-0 flex-1 overflow-y-auto overflow-x-hidden pb-2">
+        <div
+          className={cn(
+            'min-w-0',
+            sidebarCollapsed ? 'flex flex-col items-stretch gap-0.5 pt-2' : 'pt-1'
+          )}
         >
-          <LayoutDashboard size={18} className="shrink-0" />
-          {!sidebarCollapsed ? <span>Dashboard</span> : null}
-        </NavLink>
-      </div>
+          {sidebarCollapsed ? (
+            <Tooltip.Root delayDuration={200}>
+              <Tooltip.Trigger asChild>{dashboardLink}</Tooltip.Trigger>
+              <Tooltip.Portal>
+                <Tooltip.Content
+                  className="z-[70] rounded-[4px] border border-[#484845] bg-[#353533] px-2 py-1 text-xs text-[#F5F4F0] shadow-[0_2px_8px_rgba(10,10,8,0.5)]"
+                  side="right"
+                  sideOffset={8}
+                >
+                  Dashboard
+                  <Tooltip.Arrow className="fill-[#484845]" />
+                </Tooltip.Content>
+              </Tooltip.Portal>
+            </Tooltip.Root>
+          ) : (
+            dashboardLink
+          )}
+        </div>
 
-      <div className="mx-2 my-2 h-px bg-kern-border" />
+        <div
+          className={cn(
+            'my-1 h-px min-w-0 shrink-0 bg-[#2A2A28]',
+            sidebarCollapsed ? 'mx-2' : 'mx-3'
+          )}
+        />
 
-      <div className={cn('px-2', sidebarCollapsed && 'px-1')}>
-        {!sidebarCollapsed ? (
-          <div className="mb-2 flex items-center justify-between gap-2 px-1">
-            <span className="text-[10px] font-medium uppercase tracking-widest text-kern-text-3">
-              COLLECTIONS
-            </span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 w-7 shrink-0 p-0"
-              aria-label="New collection"
-              onClick={() => openCreateCollectionModal()}
-            >
-              <Plus size={16} />
-            </Button>
+        <div
+          className={cn(
+            'group/sidebar-section min-w-0',
+            sidebarCollapsed ? 'flex flex-col items-stretch' : ''
+          )}
+        >
+          {!sidebarCollapsed ? (
+            <div className="flex items-center justify-between pr-1 pl-3 pt-4 pb-1">
+              <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#6B6B64]">
+                COLLECTIONS
+              </span>
+              <button
+                type="button"
+                className={cn(
+                  'flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-[3px] border-0 bg-transparent text-[#6B6B64] opacity-0 transition-[opacity,background-color,color] duration-[80ms] ease-in-out',
+                  'group-hover/sidebar-section:opacity-100',
+                  'hover:bg-[#353533] hover:text-[#A8A89E]'
+                )}
+                aria-label="New collection"
+                onClick={() => openCreateCollectionModal()}
+              >
+                <Plus size={12} strokeWidth={2} />
+              </button>
+            </div>
+          ) : (
+            <div className="flex w-full min-w-0 justify-center overflow-x-hidden py-1">
+              <button
+                type="button"
+                className={cn(
+                  'flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-[4px] border-0 bg-transparent text-[#6B6B64] transition-[background-color,color] duration-[80ms] ease-in-out',
+                  'hover:bg-[#353533] hover:text-[#A8A89E]'
+                )}
+                aria-label="New collection"
+                onClick={() => openCreateCollectionModal()}
+              >
+                <Plus size={12} strokeWidth={2} />
+              </button>
+            </div>
+          )}
+          <div
+            className={cn(
+              'flex min-w-0 flex-col',
+              sidebarCollapsed ? 'w-full items-stretch overflow-x-hidden' : ''
+            )}
+          >
+            {manualCollectionsList}
           </div>
-        ) : (
-          <div className="mb-2 flex justify-center">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 w-7 shrink-0 p-0"
-              aria-label="New collection"
-              onClick={() => openCreateCollectionModal()}
-            >
-              <Plus size={16} />
-            </Button>
-          </div>
-        )}
-        <div className="flex flex-col gap-1">{manualCollectionsList}</div>
-      </div>
+        </div>
 
-      <div className="mx-2 my-2 h-px bg-kern-border" />
+        <div
+          className={cn(
+            'my-1 h-px min-w-0 shrink-0 bg-[#2A2A28]',
+            sidebarCollapsed ? 'mx-2' : 'mx-3'
+          )}
+        />
 
-      <div className={cn('px-2', sidebarCollapsed && 'px-1')}>
-        <Collapsible.Root defaultOpen={false}>
-          <Collapsible.Trigger asChild>
-            <button
-              type="button"
+        <Collapsible.Root defaultOpen className="group/live w-full min-w-0">
+          {!sidebarCollapsed ? (
+            <div className="flex items-center justify-between pr-1 pl-3 pt-4 pb-1">
+              <Collapsible.Trigger asChild>
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between border-0 bg-transparent text-left outline-none"
+                >
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.08em] text-[#6B6B64]">
+                    LIVE SOURCES
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    strokeWidth={1.75}
+                    className="shrink-0 text-[#6B6B64] transition-transform duration-[80ms] ease-in-out group-data-[state=open]/live:rotate-180"
+                  />
+                </button>
+              </Collapsible.Trigger>
+            </div>
+          ) : (
+            <div className="flex w-full min-w-0 justify-center overflow-x-hidden py-0.5">
+              <Collapsible.Trigger asChild>
+                <button
+                  type="button"
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[4px] border-0 bg-transparent text-[#6B6B64] outline-none transition-[background-color,color] duration-[80ms] ease-in-out hover:bg-[#2C2C2A] hover:text-[#A8A89E]"
+                  aria-label="Live sources"
+                >
+                  <ChevronDown
+                    size={14}
+                    strokeWidth={1.75}
+                    className="shrink-0 transition-transform duration-[80ms] ease-in-out group-data-[state=open]/live:rotate-180"
+                  />
+                </button>
+              </Collapsible.Trigger>
+            </div>
+          )}
+          <Collapsible.Content className="min-w-0 overflow-hidden data-[state=closed]:animate-none">
+            <div
               className={cn(
-                'group flex w-full items-center gap-2 rounded-kern-md py-2 text-left text-[10px] font-medium uppercase tracking-widest text-kern-text-3 outline-none transition-colors hover:text-kern-text-2',
-                sidebarCollapsed ? 'justify-center px-0' : 'justify-between px-2'
+                'flex min-w-0 flex-col pt-0.5',
+                sidebarCollapsed ? 'items-stretch overflow-x-hidden' : ''
               )}
             >
-              {!sidebarCollapsed ? <span>LIVE SOURCES</span> : null}
-              <ChevronDown
-                size={14}
-                className="shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180"
-              />
-            </button>
-          </Collapsible.Trigger>
-          <Collapsible.Content className="overflow-hidden">
-            <div className="flex flex-col gap-1 pb-2">{liveCollectionsList}</div>
+              {liveCollectionsList}
+            </div>
           </Collapsible.Content>
         </Collapsible.Root>
-      </div>
+      </nav>
 
       <div
         className={cn(
-          'fixed bottom-0 left-0 z-40 border-t border-kern-border bg-kern-surface p-2',
-          'transition-[width] duration-200 ease-in-out'
+          'mt-auto min-w-0 shrink-0 border-t border-[#2A2A28] py-2',
+          sidebarCollapsed ? 'px-0' : 'px-1.5'
         )}
-        style={{ width }}
       >
-        <Button
+        <button
           type="button"
-          variant="secondary"
-          size="sm"
-          className={cn(sidebarCollapsed ? 'h-8 w-8 p-0' : 'w-full')}
+          className={cn(
+            'flex cursor-pointer items-center gap-2 rounded-[4px] border-0 bg-transparent text-[12px] text-[#6B6B64] transition-[background-color,color] duration-[80ms] ease-in-out',
+            'hover:bg-[#2C2C2A] hover:text-[#A8A89E]',
+            sidebarCollapsed
+              ? 'mx-auto h-[30px] w-full min-w-0 max-w-full justify-center px-0'
+              : 'h-[30px] w-full px-2'
+          )}
           onClick={() => openCreateCollectionModal()}
           aria-label="New collection"
         >
-          <Plus size={16} className="shrink-0" />
-          {!sidebarCollapsed ? <span className="ml-1">+ New collection</span> : null}
-        </Button>
+          <Plus size={13} strokeWidth={2} className="shrink-0" />
+          {!sidebarCollapsed ? <span>New collection</span> : null}
+        </button>
       </div>
-    </nav>
+    </div>
   );
 
   return (
     <aside
       className={cn(
-        'fixed bottom-0 left-0 z-40 overflow-y-auto border-r border-kern-border bg-kern-surface',
-        'transition-[width] duration-200 ease-in-out'
+        'fixed bottom-0 left-0 z-40 flex flex-col overflow-hidden border-r border-[#2A2A28] bg-[linear-gradient(180deg,#222220_0%,#1E1E1C_100%)]'
       )}
-      style={{ top: 48, width }}
+      style={{
+        top: LAYOUT_TOPBAR_PX,
+        width,
+        transition: 'width 150ms ease',
+      }}
     >
-      <Tooltip.Provider delayDuration={300}>{inner}</Tooltip.Provider>
+      <Tooltip.Provider delayDuration={240}>{inner}</Tooltip.Provider>
     </aside>
   );
 }

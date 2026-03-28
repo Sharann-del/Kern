@@ -125,6 +125,7 @@ export interface KernCollection {
   user_id: string;
   name: string;
   slug: string;
+  /** Emoji character(s), or `lucide:IconName` (Lucide export name, e.g. `lucide:Table2`). */
   icon: string | null;
   color: string | null;
   description: string | null;

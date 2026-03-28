@@ -8,7 +8,7 @@ import {
 } from '@tanstack/react-table';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { ArrowUpRight, Check, Plus, Table2 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState, memo } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, memo } from 'react';
 import { toast } from 'sonner';
 
 import { CellRenderer } from '@/components/cells/CellRenderer';
@@ -17,6 +17,7 @@ import { BulkActionBar } from '@/components/row/BulkActionBar';
 import { RowContextMenu } from '@/components/row/RowContextMenu';
 import { TableColumnHeader } from '@/components/views/TableView/TableColumnHeader';
 import { Button } from '@/components/ui/Button';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useDeleteField } from '@/hooks/useFields';
 import { useCreateRow, useUpdateRow } from '@/hooks/useRows';
@@ -26,6 +27,63 @@ import { useAppStore } from '@/stores/appStore';
 import type { KernCollection, KernField, KernRow, SortRule, ViewConfig } from '@/types/kern';
 
 const columnHelper = createColumnHelper<KernRow>();
+
+const TABLE_SELECT_COL_PX = 40;
+const TABLE_ADD_COL_MIN_PX = 120;
+const TABLE_FIELD_COL_MIN_PX = 80;
+const TABLE_FIELD_COL_SQUEEZE_PX = 48;
+
+/** Split data-pane width evenly across field columns + “Add field”, after the fixed select column. */
+function computeEqualTableColumnSizing(containerWidth: number, fieldSlugs: string[]): ColumnSizingState {
+  const inner = Math.max(0, containerWidth - TABLE_SELECT_COL_PX);
+  const out: ColumnSizingState = {};
+  const n = fieldSlugs.length;
+
+  if (n === 0) {
+    out._add_field = Math.max(TABLE_ADD_COL_MIN_PX, inner);
+    return out;
+  }
+
+  const minTotal = TABLE_ADD_COL_MIN_PX + n * TABLE_FIELD_COL_MIN_PX;
+  if (inner < minTotal) {
+    const addW = Math.min(TABLE_ADD_COL_MIN_PX, inner);
+    const rest = Math.max(0, inner - addW);
+    const fieldW = n > 0 ? Math.max(TABLE_FIELD_COL_SQUEEZE_PX, Math.floor(rest / n)) : 0;
+    for (const s of fieldSlugs) out[s] = fieldW;
+    out._add_field = Math.max(0, inner - fieldW * n);
+    return out;
+  }
+
+  let share = Math.floor(inner / (n + 1));
+  let fieldW = Math.max(TABLE_FIELD_COL_MIN_PX, share);
+  let addW = inner - fieldW * n;
+  if (addW < TABLE_ADD_COL_MIN_PX) {
+    addW = TABLE_ADD_COL_MIN_PX;
+    fieldW = Math.max(TABLE_FIELD_COL_MIN_PX, Math.floor((inner - addW) / n));
+    addW = inner - fieldW * n;
+  }
+
+  for (const s of fieldSlugs) out[s] = fieldW;
+  out._add_field = Math.max(TABLE_ADD_COL_MIN_PX, addW);
+  return out;
+}
+
+function equalTableSizingMatches(
+  prev: ColumnSizingState,
+  next: ColumnSizingState,
+  fieldSlugs: string[]
+): boolean {
+  const slugSet = new Set(fieldSlugs);
+  for (const k of Object.keys(prev)) {
+    if (k === '_add_field') continue;
+    if (!slugSet.has(k)) return false;
+  }
+  if (prev._add_field !== next._add_field) return false;
+  for (const s of fieldSlugs) {
+    if (prev[s] !== next[s]) return false;
+  }
+  return true;
+}
 
 type TableMeta = {
   rows: KernRow[];
@@ -75,6 +133,7 @@ function TableViewInner({
   const [selectedRowIds, setSelectedRowIds] = useState<Set<string>>(() => new Set());
   const [pendingRowIds, setPendingRowIds] = useState<Set<string>>(() => new Set());
   const [focusedRowIndex, setFocusedRowIndex] = useState<number | null>(null);
+  const [fieldPendingDelete, setFieldPendingDelete] = useState<KernField | null>(null);
 
   const editingCellRef = useRef(editingCell);
   editingCellRef.current = editingCell;
@@ -98,19 +157,9 @@ function TableViewInner({
     [fields, hiddenFields]
   );
 
-  const defaultSizing = useMemo(() => {
-    const o: ColumnSizingState = {};
-    for (const f of visibleFields) {
-      o[f.slug] = viewConfig.table_column_widths[f.slug] ?? 200;
-    }
-    return o;
-  }, [visibleFields, viewConfig.table_column_widths]);
-
   const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
 
-  useEffect(() => {
-    setColumnSizing(defaultSizing);
-  }, [defaultSizing]);
+  const visibleFieldSlugsKey = useMemo(() => visibleFields.map((f) => f.slug).join('\0'), [visibleFields]);
 
   const persistTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -119,6 +168,7 @@ function TableViewInner({
       const merged: Record<string, number> = { ...viewConfig.table_column_widths };
       let changed = false;
       for (const [k, v] of Object.entries(columnSizing)) {
+        if (k === '_add_field') continue;
         if (typeof v === 'number' && merged[k] !== v) {
           merged[k] = v;
           changed = true;
@@ -214,7 +264,7 @@ function TableViewInner({
         const some = m.selectedRowIds.size > 0 && !all;
         return (
           <div
-            className="flex h-full w-10 shrink-0 items-center justify-center border-r border-kern-border bg-kern-bg"
+            className="flex h-full w-full min-w-0 shrink-0 items-center justify-center bg-kern-bg"
             onClick={(e) => e.stopPropagation()}
           >
             <Checkbox.Root
@@ -239,7 +289,7 @@ function TableViewInner({
         const m = table.options.meta as TableMeta;
         return (
           <div
-            className="flex h-full w-10 shrink-0 items-center justify-center border-r border-kern-surface-2"
+            className="flex h-full w-10 shrink-0 items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
             <Checkbox.Root
@@ -274,20 +324,16 @@ function TableViewInner({
         id: field.slug,
         size: viewConfig.table_column_widths[field.slug] ?? 200,
         minSize: 80,
-        maxSize: 640,
+        maxSize: 4000,
         header: ({ header }) => (
           <TableColumnHeader
             field={field}
             isSorted={isSorted}
             onSort={() => toggleSort(field.slug)}
-            width={header.getSize()}
             onResizeStart={header.getResizeHandler()}
             onEdit={() => onEditField(field)}
             onHide={() => hideField(field.slug)}
-            onDelete={() => {
-              if (!window.confirm(`Delete field “${field.name}”? This cannot be undone.`)) return;
-              deleteField.mutate({ id: field.id, collectionId, slug: field.slug });
-            }}
+            onDelete={() => setFieldPendingDelete(field)}
             onAddFieldBefore={() => onAddFieldBefore(field)}
             onAddFieldAfter={() => onAddFieldAfter(field)}
           />
@@ -335,7 +381,7 @@ function TableViewInner({
           };
 
           return (
-            <div className="h-full min-w-0 overflow-hidden border-r border-kern-surface-2" onClick={(e) => e.stopPropagation()}>
+            <div className="h-full min-w-0 w-full overflow-hidden" onClick={(e) => e.stopPropagation()}>
               <div className="h-9 min-h-[36px] w-full">
                 <CellRenderer
                   value={row.original.data[field.slug]}
@@ -373,17 +419,17 @@ function TableViewInner({
       id: '_add_field',
       size: 120,
       minSize: 120,
-      maxSize: 120,
+      maxSize: 4000,
       enableResizing: false,
       header: () => (
-        <div className="flex h-full w-[120px] shrink-0 items-center justify-center border-r border-kern-border bg-kern-bg px-2">
+        <div className="flex h-full w-full min-w-0 shrink-0 items-center justify-center bg-kern-bg px-2">
           <Button type="button" variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={onAddField}>
             <Plus size={12} />
             Add field
           </Button>
         </div>
       ),
-      cell: () => <div className="h-full w-[120px] shrink-0 border-r border-kern-surface-2" />,
+      cell: () => <div className="h-full min-h-9 w-full" aria-hidden />,
     });
 
     return [selectCol, ...fieldCols, addCol];
@@ -427,11 +473,35 @@ function TableViewInner({
     columnResizeMode: 'onChange',
     state: { columnSizing },
     onColumnSizingChange: setColumnSizing,
-    defaultColumn: { minSize: 80, maxSize: 640, size: 200 },
+    defaultColumn: { minSize: 80, maxSize: 4000, size: 200 },
     meta: tableMeta,
   });
 
   const parentRef = useRef<HTMLDivElement>(null);
+  const visibleFieldsRef = useRef(visibleFields);
+  visibleFieldsRef.current = visibleFields;
+
+  /** Equal column widths to fill the data pane; re-run on resize / visible field set (not on manual drag). */
+  useLayoutEffect(() => {
+    const el = parentRef.current;
+    if (!el) return;
+
+    const apply = () => {
+      const cw = el.clientWidth;
+      const slugs = visibleFieldsRef.current.map((f) => f.slug);
+      const next = computeEqualTableColumnSizing(cw, slugs);
+      setColumnSizing((prev) => {
+        if (equalTableSizingMatches(prev, next, slugs)) return prev;
+        return next;
+      });
+    };
+
+    const ro = new ResizeObserver(apply);
+    ro.observe(el);
+    apply();
+    return () => ro.disconnect();
+  }, [visibleFieldSlugsKey]);
+
   const rowVirtualizer = useVirtualizer({
     count: rows.length + 1,
     getScrollElement: () => parentRef.current,
@@ -524,104 +594,116 @@ function TableViewInner({
       <div
         ref={parentRef}
         tabIndex={0}
-        className="min-h-0 flex-1 overflow-auto rounded-kern-lg border border-kern-border outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/25"
+        className="min-h-0 flex-1 overflow-auto rounded-kern-lg border border-kern-border bg-kern-bg outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/25"
         onKeyDown={handleTableKeyDown}
         onFocus={(ev) => {
           if (ev.target !== ev.currentTarget) return;
           if (rows.length && focusedRowIndex === null) setFocusedRowIndex(0);
         }}
       >
-        <div
-          className="sticky top-0 z-10 flex flex-col border-b border-kern-border bg-kern-bg"
-          style={{ width: totalSize, minWidth: '100%' }}
-        >
-          {fields.length === 0 ? (
-            <div className="flex shrink-0 items-center justify-center border-b border-kern-border px-3 py-2">
-              <Button type="button" variant="ghost" size="sm" className="text-kern-accent" onClick={onAddField}>
-                Add your first field →
-              </Button>
-            </div>
-          ) : null}
-          <div className="flex h-9 shrink-0">
-            {headerGroup.headers.map((header) => (
-              <div key={header.id} className="flex shrink-0" style={{ width: header.getSize() }}>
-                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+        {/*
+          inline-block + total width: grid matches column sizes; “Add field” grows with the data pane.
+        */}
+        <div className="inline-block min-w-0 align-top" style={{ width: totalSize }}>
+          <div className="sticky top-0 z-10 flex w-full flex-col border-b border-kern-border bg-kern-bg">
+            {fields.length === 0 ? (
+              <div className="flex shrink-0 items-center justify-center border-b border-kern-border px-3 py-2">
+                <Button type="button" variant="ghost" size="sm" className="text-kern-accent" onClick={onAddField}>
+                  Add your first field →
+                </Button>
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="relative" style={{ height: rowVirtualizer.getTotalSize(), width: totalSize, minWidth: '100%' }}>
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            if (virtualRow.index === rows.length) {
-              return (
+            ) : null}
+            <div className="flex h-9 w-full min-w-0 shrink-0">
+              {headerGroup.headers.map((header) => (
                 <div
-                  key="add-row"
-                  className="absolute left-0 top-0 flex h-9 w-full cursor-pointer items-center border-b border-kern-surface-2 text-sm text-kern-text-3 hover:bg-kern-surface"
-                  style={{
-                    transform: `translateY(${virtualRow.start}px)`,
-                    width: totalSize,
-                  }}
-                  onClick={() => void handleAddRow()}
-                >
-                  <div className="w-10 shrink-0" />
-                  <span className="px-6">+ Add row</span>
-                </div>
-              );
-            }
-
-            const row = table.getRowModel().rows[virtualRow.index];
-            if (!row) return null;
-
-            const isFocused = focusedRowIndex === virtualRow.index;
-
-            return (
-              <RowContextMenu key={row.id} row={row.original} collectionId={collectionId}>
-                <div
-                  role="row"
+                  key={header.id}
                   className={cn(
-                    'group absolute left-0 top-0 flex h-9 w-full border-b border-kern-surface-2 hover:bg-kern-surface',
-                    isFocused && 'bg-kern-accent/5'
+                    'flex min-w-0 shrink-0 overflow-hidden bg-kern-bg',
+                    header.column.id !== '_add_field' && 'border-r border-kern-border'
                   )}
-                  style={{
-                    transform: `translateY(${virtualRow.start}px)`,
-                    width: totalSize,
-                  }}
-                  onClick={() => {
-                    setFocusedRowIndex(virtualRow.index);
-                    openRow(row.original.id, collectionId);
-                  }}
+                  style={{ width: header.getSize() }}
                 >
-                  {pendingRowIds.has(row.original.id) ? (
-                    <span
-                      className="pointer-events-none absolute left-1 top-1/2 z-[2] h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-kern-text-3"
-                      aria-hidden
-                    />
-                  ) : null}
-                  {row.getVisibleCells().map((cell) => (
-                    <div
-                      key={cell.id}
-                      className="flex shrink-0 overflow-hidden"
-                      style={{ width: cell.column.getSize() }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    className="absolute right-2 top-1/2 z-[1] hidden -translate-y-1/2 rounded-kern-sm p-1 text-kern-text-3 hover:bg-kern-surface-2 hover:text-kern-text group-hover:inline-flex"
-                    aria-label="Open row"
-                    onClick={(e) => {
-                      e.stopPropagation();
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative w-full" style={{ height: rowVirtualizer.getTotalSize() }}>
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              if (virtualRow.index === rows.length) {
+                return (
+                  <div
+                    key="add-row"
+                    className="absolute left-0 top-0 flex h-9 w-full cursor-pointer items-center text-sm text-kern-text-3 hover:bg-kern-surface"
+                    style={{
+                      transform: `translateY(${virtualRow.start}px)`,
+                      width: '100%',
+                    }}
+                    onClick={() => void handleAddRow()}
+                  >
+                    <div className="w-10 shrink-0" />
+                    <span className="px-6">+ Add row</span>
+                  </div>
+                );
+              }
+
+              const row = table.getRowModel().rows[virtualRow.index];
+              if (!row) return null;
+
+              const isFocused = focusedRowIndex === virtualRow.index;
+
+              return (
+                <RowContextMenu key={row.id} row={row.original} collectionId={collectionId}>
+                  <div
+                    role="row"
+                    className={cn(
+                      'group absolute left-0 top-0 flex h-9 w-full border-b border-kern-surface-2 hover:bg-kern-surface',
+                      isFocused && 'bg-kern-accent/5'
+                    )}
+                    style={{
+                      transform: `translateY(${virtualRow.start}px)`,
+                      width: '100%',
+                    }}
+                    onClick={() => {
+                      setFocusedRowIndex(virtualRow.index);
                       openRow(row.original.id, collectionId);
                     }}
                   >
-                    <ArrowUpRight size={12} />
-                  </button>
-                </div>
-              </RowContextMenu>
-            );
-          })}
+                    {pendingRowIds.has(row.original.id) ? (
+                      <span
+                        className="pointer-events-none absolute left-1 top-1/2 z-[2] h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-kern-text-3"
+                        aria-hidden
+                      />
+                    ) : null}
+                    {row.getVisibleCells().map((cell) => (
+                      <div
+                        key={cell.id}
+                        className={cn(
+                          'flex min-w-0 shrink-0 overflow-hidden',
+                          cell.column.id !== '_add_field' && 'border-r border-kern-surface-2'
+                        )}
+                        style={{ width: cell.column.getSize() }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="absolute right-2 top-1/2 z-[1] hidden -translate-y-1/2 rounded-kern-sm p-1 text-kern-text-3 hover:bg-kern-surface-2 hover:text-kern-text group-hover:inline-flex"
+                      aria-label="Open row"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openRow(row.original.id, collectionId);
+                      }}
+                    >
+                      <ArrowUpRight size={12} />
+                    </button>
+                  </div>
+                </RowContextMenu>
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -630,6 +712,25 @@ function TableViewInner({
         selectedRowIds={selectedRowIds}
         rowsById={rowsById}
         onClearSelection={() => setSelectedRowIds(new Set())}
+      />
+
+      <ConfirmDialog
+        open={fieldPendingDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setFieldPendingDelete(null);
+        }}
+        title={fieldPendingDelete ? `Delete field “${fieldPendingDelete.name}”?` : 'Delete field?'}
+        description="This cannot be undone. Values in this field will be removed from all rows."
+        confirmLabel="Delete field"
+        loading={deleteField.isPending}
+        onConfirm={() => {
+          if (!fieldPendingDelete) return;
+          const f = fieldPendingDelete;
+          deleteField.mutate(
+            { id: f.id, collectionId, slug: f.slug },
+            { onSuccess: () => setFieldPendingDelete(null) }
+          );
+        }}
       />
     </div>
   );

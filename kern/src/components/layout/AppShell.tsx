@@ -1,12 +1,17 @@
 import { useEffect, useRef } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Toaster } from 'sonner';
+import { KernToaster } from '@/components/ui/KernToaster';
 
 import { CreateCollectionModal } from '@/components/collection/CreateCollectionModal';
 import { DeleteCollectionDialog } from '@/components/collection/DeleteCollectionDialog';
 import { EditCollectionModal } from '@/components/collection/EditCollectionModal';
 import { CommandPalette } from '@/components/layout/CommandPalette';
 import { RowEditorPanel } from '@/components/layout/RowEditorPanel';
+import {
+  LAYOUT_SIDEBAR_COLLAPSED_PX,
+  LAYOUT_SIDEBAR_EXPANDED_PX,
+  LAYOUT_TOPBAR_PX,
+} from '@/components/layout/layoutConstants';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import { WelcomeOnboardingModal } from '@/components/onboarding/WelcomeOnboardingModal';
@@ -162,19 +167,19 @@ export function AppShell() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [openPalette, openCreateCollectionModal, toggleSidebar]);
 
-  const mainMarginLeft = sidebarCollapsed ? 48 : 240;
+  const mainMarginLeft = sidebarCollapsed ? LAYOUT_SIDEBAR_COLLAPSED_PX : LAYOUT_SIDEBAR_EXPANDED_PX;
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-kern-bg">
       <Topbar />
       <Sidebar />
       <main
-        className="flex-1 overflow-y-auto bg-kern-bg"
+        className="min-h-0 min-w-0 flex-1 overflow-y-auto bg-kern-bg text-kern-text"
         style={{
-          marginTop: 48,
+          marginTop: LAYOUT_TOPBAR_PX,
           marginLeft: mainMarginLeft,
-          transition: 'margin-left 200ms ease',
-          minHeight: 'calc(100vh - 48px)',
+          transition: 'margin-left 150ms ease',
+          minHeight: `calc(100vh - ${LAYOUT_TOPBAR_PX}px)`,
         }}
       >
         <Outlet />
@@ -202,7 +207,7 @@ export function AppShell() {
         }}
       />
       <WelcomeOnboardingModal open={welcomeOpen} />
-      <Toaster position="bottom-right" richColors closeButton />
+      <KernToaster />
     </div>
   );
 }

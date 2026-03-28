@@ -3,6 +3,7 @@ import { useQueries } from '@tanstack/react-query';
 import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
+import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
 import { RelationPill } from '@/components/row/RelationPill';
 import { useCollections } from '@/hooks/useCollections';
 import { fetchFieldsForCollection } from '@/hooks/useFields';
@@ -80,12 +81,8 @@ export function ReferencedBySection({ rowId }: ReferencedBySectionProps) {
             return (
               <div key={cid}>
                 <div className="mb-2 flex items-center gap-2 text-xs text-kern-text-3">
-                  {col?.icon ? <span>{col.icon}</span> : null}
-                  {!col?.icon && col?.color ? (
-                    <span
-                      className="h-3 w-3 rounded-kern-sm border border-kern-border"
-                      style={{ backgroundColor: col.color }}
-                    />
+                  {col ? (
+                    <CollectionIconDisplay icon={col.icon} color={col.color} size={14} />
                   ) : null}
                   <span className="font-medium uppercase tracking-wider">{col?.name ?? 'Collection'}</span>
                 </div>

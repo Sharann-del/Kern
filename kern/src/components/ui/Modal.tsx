@@ -5,6 +5,11 @@ import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
+/** Portaled floating layers (Popover, DropdownMenu, etc.) render outside Dialog.Content; don’t dismiss the modal when using them. */
+function isInsideRadixFloatingLayer(node: EventTarget | null): boolean {
+  return node instanceof Element && Boolean(node.closest('[data-radix-popper-content-wrapper]'));
+}
+
 export type ModalProps = {
   open: boolean;
   onOpenChange: (v: boolean) => void;
@@ -27,13 +32,21 @@ export function Modal({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
+        <Dialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
         <Dialog.Content
           className={cn(
-            'fixed left-1/2 top-1/2 z-[101] m-4 w-full max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2',
+            'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2',
             'animate-kern-dialog-in rounded-kern-xl border border-kern-border bg-kern-bg shadow-xl outline-none'
           )}
           style={{ maxWidth }}
+          onInteractOutside={(e) => {
+            const t = e.detail.originalEvent.target;
+            if (isInsideRadixFloatingLayer(t)) e.preventDefault();
+          }}
+          onFocusOutside={(e) => {
+            const t = e.detail.originalEvent.relatedTarget;
+            if (isInsideRadixFloatingLayer(t)) e.preventDefault();
+          }}
         >
           <div className="flex max-h-[min(90vh,calc(100vh-2rem))] flex-col">
             <div className="flex shrink-0 items-start justify-between gap-4 border-b border-kern-border px-6 pb-4 pt-5">

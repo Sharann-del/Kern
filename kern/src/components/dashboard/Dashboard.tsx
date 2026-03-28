@@ -64,7 +64,7 @@ export function Dashboard({ onOpenAddWidget }: DashboardProps) {
   const deleteWidget = useDeleteWidget();
 
   return (
-    <div className="min-h-full bg-kern-surface p-6">
+    <div className="min-h-full p-6">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold text-kern-text">Dashboard</h1>
         <Button type="button" variant="secondary" size="sm" onClick={onOpenAddWidget}>

@@ -38,10 +38,10 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
+        <Dialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm animate-kern-fade-in" />
         <Dialog.Content
           className={cn(
-            'fixed left-1/2 top-1/2 z-[101] m-4 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
+            'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
             'animate-kern-dialog-in rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none',
             'focus:outline-none'
           )}

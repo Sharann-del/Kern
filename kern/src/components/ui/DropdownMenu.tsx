@@ -17,7 +17,7 @@ const DropdownMenuContent = forwardRef<
       sideOffset={sideOffset}
       align={align}
       className={cn(
-        'z-50 min-w-[160px] origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-1 shadow-lg outline-none',
+        'z-[220] min-w-[160px] origin-[var(--radix-dropdown-menu-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-1 shadow-lg outline-none',
         'animate-kern-pop-in',
         className
       )}
@@ -37,9 +37,9 @@ const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item
       ref={ref}
       data-variant={variant}
       className={cn(
-        'flex cursor-pointer items-center gap-2 rounded-kern-sm px-2 py-1.5 text-sm text-kern-text outline-none',
+        'flex h-7 min-h-7 cursor-pointer items-center gap-2 rounded-kern-sm px-2 py-0 text-sm leading-none text-kern-text outline-none',
         'data-[highlighted]:bg-kern-surface-2',
-        'data-[variant=danger]:text-kern-danger data-[highlighted]:data-[variant=danger]:bg-red-50',
+        'data-[variant=danger]:text-kern-danger data-[highlighted]:data-[variant=danger]:bg-kern-danger/12',
         className
       )}
       {...props}

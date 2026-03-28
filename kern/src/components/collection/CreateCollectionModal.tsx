@@ -3,8 +3,8 @@ import { toast } from 'sonner';
 
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
+import { CollectionIconPicker } from '@/components/collection/CollectionIconPicker';
 import { ColorPicker } from '@/components/ui/ColorPicker';
-import { EmojiPicker } from '@/components/ui/EmojiPicker';
 import { Input } from '@/components/ui/Input';
 import { COLLECTION_COLORS } from '@/constants';
 import { useCreateCollection } from '@/hooks/useCollections';
@@ -119,7 +119,7 @@ function CreateCollectionModalForm({ onOpenChange }: Pick<CreateCollectionModalP
       },
       {
         onSuccess: () => {
-          toast.success(`${icon} ${name.trim()} created`);
+          toast.success(`${name.trim()} created`);
           onOpenChange(false);
         },
       }
@@ -150,7 +150,7 @@ function CreateCollectionModalForm({ onOpenChange }: Pick<CreateCollectionModalP
     >
       <form id="create-collection-form" className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="flex gap-3">
-          <EmojiPicker value={icon} onChange={setIcon} />
+          <CollectionIconPicker value={icon} onChange={setIcon} />
           <div className="min-w-0 flex-1 pt-1">
             <p className="mb-1 text-xs text-kern-text-2">Color</p>
             <ColorPicker value={color} onChange={setColor} />

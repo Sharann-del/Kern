@@ -232,7 +232,7 @@ export function KanbanView({
           </Select.Trigger>
           <Select.Portal>
             <Select.Content
-              className="z-50 max-h-72 overflow-hidden rounded-kern-md border border-kern-border bg-kern-bg shadow-lg"
+              className="z-[220] max-h-72 overflow-hidden rounded-kern-md border border-kern-border bg-kern-bg shadow-lg"
               position="popper"
               sideOffset={4}
             >

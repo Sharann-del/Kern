@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/Button';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { useCreateRow, useDeleteRows, useDuplicateRow } from '@/hooks/useRows';
 import type { KernRow } from '@/types/kern';
 
@@ -21,8 +23,7 @@ export function BulkActionBar({
   const deleteRows = useDeleteRows();
   const duplicateRow = useDuplicateRow();
   const createRow = useCreateRow();
-
-  if (n === 0) return null;
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const selectedRows = [...selectedRowIds].map((id) => rowsById.get(id)).filter(Boolean) as KernRow[];
 
@@ -33,58 +34,66 @@ export function BulkActionBar({
     onClearSelection();
   };
 
-  const confirmDelete = () => {
-    toast(`Delete ${n} rows?`, {
-      action: {
-        label: 'Confirm',
-        onClick: () => {
-          const snapshots = new Map(selectedRows.map((r) => [r.id, { ...r.data }]));
-          const ids = [...selectedRowIds];
-          deleteRows.mutate(
-            { ids, collectionId },
-            {
-              onSuccess: () => {
-                toast.success(`${n} row${n === 1 ? '' : 's'} deleted`, {
-                  duration: 5000,
-                  action: {
-                    label: 'Undo',
-                    onClick: () => {
-                      for (const id of ids) {
-                        const data = snapshots.get(id);
-                        if (data) createRow.mutate({ collectionId, data });
-                      }
-                    },
-                  },
-                });
-                onClearSelection();
+  const runBulkDelete = () => {
+    const snapshots = new Map(selectedRows.map((r) => [r.id, { ...r.data }]));
+    const ids = [...selectedRowIds];
+    deleteRows.mutate(
+      { ids, collectionId },
+      {
+        onSuccess: () => {
+          setDeleteConfirmOpen(false);
+          toast.success(`${n} row${n === 1 ? '' : 's'} deleted`, {
+            duration: 5000,
+            action: {
+              label: 'Undo',
+              onClick: () => {
+                for (const id of ids) {
+                  const data = snapshots.get(id);
+                  if (data) createRow.mutate({ collectionId, data });
+                }
               },
-            }
-          );
+            },
+          });
+          onClearSelection();
         },
-      },
-    });
+      }
+    );
   };
 
+  if (n === 0) return null;
+
   return (
-    <div className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-4 rounded-kern-xl border border-kern-border bg-kern-bg px-4 py-2 shadow-xl">
-      <span className="text-sm text-kern-text">
-        {n} row{n === 1 ? '' : 's'} selected
-      </span>
-      <Button type="button" variant="secondary" size="sm" onClick={() => void duplicateAll()}>
-        Duplicate
-      </Button>
-      <Button
-        type="button"
-        variant="danger"
-        size="sm"
-        onClick={confirmDelete}
-        disabled={deleteRows.isPending}
-      >
-        Delete
-      </Button>
-      <Button type="button" variant="ghost" size="sm" onClick={onClearSelection}>
-        Clear
-      </Button>
-    </div>
+    <>
+      <div className="fixed bottom-4 left-1/2 z-[95] flex -translate-x-1/2 items-center gap-4 rounded-kern-xl border border-kern-border bg-kern-bg px-4 py-2 shadow-xl">
+        <span className="text-sm text-kern-text">
+          {n} row{n === 1 ? '' : 's'} selected
+        </span>
+        <Button type="button" variant="secondary" size="sm" onClick={() => void duplicateAll()}>
+          Duplicate
+        </Button>
+        <Button
+          type="button"
+          variant="danger"
+          size="sm"
+          onClick={() => setDeleteConfirmOpen(true)}
+          disabled={deleteRows.isPending}
+        >
+          Delete
+        </Button>
+        <Button type="button" variant="ghost" size="sm" onClick={onClearSelection}>
+          Clear
+        </Button>
+      </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title={`Delete ${n} row${n === 1 ? '' : 's'}?`}
+        description="This cannot be undone. You may be able to recreate rows from the success toast if you act quickly."
+        confirmLabel={`Delete ${n} row${n === 1 ? '' : 's'}`}
+        loading={deleteRows.isPending}
+        onConfirm={runBulkDelete}
+      />
+    </>
   );
 }

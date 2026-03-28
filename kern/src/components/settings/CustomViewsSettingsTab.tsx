@@ -229,8 +229,8 @@ export function CustomViewsSettingsTab() {
 
       <AlertDialog.Root open={deleteTarget !== null} onOpenChange={(o) => !o && setDeleteTarget(null)}>
         <AlertDialog.Portal>
-          <AlertDialog.Overlay className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm" />
-          <AlertDialog.Content className="fixed left-1/2 top-1/2 z-[101] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none">
+          <AlertDialog.Overlay className="fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm" />
+          <AlertDialog.Content className="fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none">
             <AlertDialog.Title className="text-base font-semibold text-kern-text">Delete custom view</AlertDialog.Title>
             <AlertDialog.Description className="mt-2 text-sm text-kern-text-2">
               Remove &quot;{deleteTarget?.name}&quot; from your workspace? Collection tabs using it will unlink.

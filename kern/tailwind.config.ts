@@ -68,6 +68,10 @@ export default {
         'ds-fast': '80ms',
         'ds-default': '150ms',
       },
+      minHeight: {
+        /** Fills viewport below fixed topbar; keep in sync with --layout-topbar-h in index.css */
+        'shell-main': 'calc(100vh - var(--layout-topbar-h))',
+      },
       keyframes: {
         'kern-fade-in': {
           from: { opacity: '0' },

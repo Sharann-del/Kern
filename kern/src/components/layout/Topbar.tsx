@@ -1,7 +1,7 @@
-import { Menu } from 'lucide-react';
+import { PanelLeft } from 'lucide-react';
 
-import { Button } from '@/components/ui/Button';
 import { UserMenu } from '@/components/layout/UserMenu';
+import { cn } from '@/lib/utils';
 import { useAppStore } from '@/stores/appStore';
 
 function formatCollectionBreadcrumb(slug: string): string {
@@ -14,30 +14,53 @@ function formatCollectionBreadcrumb(slug: string): string {
 
 export function Topbar() {
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
+  const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const activeCollectionSlug = useAppStore((s) => s.activeCollectionSlug);
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 flex h-12 items-center border-b border-kern-border bg-kern-bg px-3">
-      <div className="flex min-w-0 flex-1 items-center">
-        <Button
-          type="button"
-          variant="ghost"
-          size="md"
-          className="h-8 w-8 shrink-0 p-0"
-          onClick={() => toggleSidebar()}
-          aria-label="Toggle sidebar"
-        >
-          <Menu size={18} />
-        </Button>
-        <span className="ml-2 font-mono text-lg font-bold text-kern-accent">kern</span>
+    <header
+      className={cn(
+        'fixed left-0 right-0 top-0 z-50 flex h-[44px] items-center gap-2 border-b border-[#2A2A28] bg-[#222220] px-3'
+      )}
+    >
+      <button
+        type="button"
+        className={cn(
+          'flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-[4px] border-0 bg-transparent text-[#6B6B64] transition-[background-color,color] duration-[80ms] ease-in-out',
+          'hover:bg-[#353533] hover:text-[#A8A89E]'
+        )}
+        onClick={() => toggleSidebar()}
+        aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      >
+        <PanelLeft size={15} strokeWidth={1.75} className="shrink-0" />
+      </button>
+
+      <span
+        className="instrument-serif-regular ml-1 select-none text-[17px] font-normal leading-none tracking-[-0.02em] text-[#F5F4F0]"
+        style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
+      >
+        kern
+      </span>
+
+      <div
+        className={cn(
+          'flex min-w-0 flex-1 items-center transition-opacity duration-150',
+          activeCollectionSlug ? 'opacity-100' : 'pointer-events-none opacity-0'
+        )}
+      >
         {activeCollectionSlug ? (
-          <span className="truncate text-kern-text-2">
-            {' '}
-            / {formatCollectionBreadcrumb(activeCollectionSlug)}
-          </span>
+          <>
+            <span className="mx-1 shrink-0 text-[13px] text-[#6B6B64]" aria-hidden>
+              /
+            </span>
+            <span className="min-w-0 truncate text-[13px] font-medium text-[#A8A89E]">
+              {formatCollectionBreadcrumb(activeCollectionSlug)}
+            </span>
+          </>
         ) : null}
       </div>
-      <div className="flex shrink-0 items-center">
+
+      <div className="ml-auto flex items-center">
         <UserMenu />
       </div>
     </header>
