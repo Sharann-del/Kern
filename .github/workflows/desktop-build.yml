@@ -1,5 +1,7 @@
 # Produces native installers you can download from the Actions run summary:
-# .dmg (macOS universal), .exe/.msi (Windows), .deb/.AppImage (Linux).
+# - macOS: .dmg for Apple Silicon (GitHub macos-latest); Intel Macs need a separate x86_64 build if you still support them.
+# - Windows: .exe / .msi
+# - Linux: .deb
 # Trigger: Actions → "Desktop (Tauri) build" → Run workflow, or push a git tag v*.*.*
 name: Desktop (Tauri) build
 
@@ -23,15 +25,12 @@ jobs:
       matrix:
         include:
           - os: macos-latest
-            target: universal-apple-darwin
             artifact: kern-macos
-            bundle_path: apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle
+            bundle_path: apps/desktop/src-tauri/target/release/bundle
           - os: windows-latest
-            target: ''
             artifact: kern-windows
             bundle_path: apps/desktop/src-tauri/target/release/bundle
           - os: ubuntu-22.04
-            target: ''
             artifact: kern-linux
             bundle_path: apps/desktop/src-tauri/target/release/bundle
 
@@ -57,7 +56,6 @@ jobs:
             libxdo-dev
 
       # Omit `version` — action reads pnpm from root package.json `packageManager` (pnpm@…).
-      # Do not set `version: from-package`; it conflicts with `packageManager` in this action.
       - uses: pnpm/action-setup@v4
 
       - uses: actions/setup-node@v4
@@ -66,28 +64,14 @@ jobs:
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
 
-      - name: Rust stable (macOS universal targets)
-        if: matrix.target != ''
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: aarch64-apple-darwin,x86_64-apple-darwin
-
       - name: Rust stable
-        if: matrix.target == ''
         uses: dtolnay/rust-toolchain@stable
 
       - name: Install JS dependencies
         run: pnpm install
 
       - name: Build Tauri bundles
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ -n "${{ matrix.target }}" ]]; then
-            pnpm --filter desktop run build -- --target "${{ matrix.target }}"
-          else
-            pnpm --filter desktop run build
-          fi
+        run: pnpm --filter desktop run build
 
       - name: List bundle output
         shell: bash
