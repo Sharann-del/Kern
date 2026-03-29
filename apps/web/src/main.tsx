@@ -4,10 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 
 import { router } from './App';
 import './index.css';
-import { initScrollScrollbarHint } from './lib/scroll-scrollbar-hint';
 import { QueryProvider } from './providers/QueryProvider';
-
-initScrollScrollbarHint();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

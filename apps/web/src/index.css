@@ -2,23 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Instrument Serif — loaded via Google Fonts (index.html) */
+/* Canela — Kern wordmark & display only (`kern-display` / `kern-display-italic`); body stays DM Sans */
+@font-face {
+  font-family: 'Canela';
+  src: url('/fonts/canela/Canela-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Canela';
+  src: url('/fonts/canela/Canela-RegularItalic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 @layer components {
-  .instrument-serif-regular {
-    font-family: 'Instrument Serif', serif;
+  .kern-display {
+    font-family: 'Canela', Georgia, 'Times New Roman', serif;
     font-weight: 400;
     font-style: normal;
   }
 
-  .instrument-serif-regular-italic {
-    font-family: 'Instrument Serif', serif;
+  .kern-display-italic {
+    font-family: 'Canela', Georgia, 'Times New Roman', serif;
     font-weight: 400;
     font-style: italic;
-  }
-
-  /* Auth — gold focus ring (login / signup inputs only) */
-  .auth-page-input:focus {
-    box-shadow: 0 0 0 2px rgba(200, 168, 75, 0.25);
   }
 
   /* Auth — OAuth rows: neutral grey hover */
@@ -77,11 +88,11 @@ html[data-theme='dark'] {
   --color-pink: #c97a9a;
   --color-gray: #8a8680;
 
-  /* Radius */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 12px;
+  /* Radius — sharp corners (no rounding) */
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
 
   /* Shadows — minimal; prefer borders for depth */
   --shadow-sm: 0 1px 2px rgba(26, 26, 24, 0.35);
@@ -111,11 +122,6 @@ html[data-theme='dark'] {
   --kern-danger: var(--color-red);
   --kern-success: var(--color-green);
   --kern-warning: var(--color-yellow);
-
-  /* Scrollbar thumb color (used by JS overlay in scroll-scrollbar-hint.ts); native bars stay hidden */
-  --scrollbar-size: 6px;
-  --scrollbar-thumb: color-mix(in srgb, var(--text-tertiary) 38%, transparent);
-  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 42%, transparent);
 }
 
 html[data-theme='light'] {
@@ -146,9 +152,6 @@ html[data-theme='light'] {
   --accent-muted: var(--accent-tint);
   --accent-hover: var(--accent-dark);
   --on-accent: #1a1a18;
-
-  --scrollbar-thumb: color-mix(in srgb, var(--text-tertiary) 32%, transparent);
-  --scrollbar-thumb-hover: color-mix(in srgb, var(--text-secondary) 38%, transparent);
 }
 
 /* Sonner: below modals (200+), Kern surfaces, close top-right, theme-aware tokens */
@@ -242,6 +245,14 @@ html[data-theme='light'] {
     @apply font-sans antialiased;
     font-weight: 400;
     overscroll-behavior: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   body {
@@ -251,10 +262,28 @@ html[data-theme='light'] {
     color: var(--text-primary);
     transition: background-color var(--transition-default), color var(--transition-default);
     overscroll-behavior: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  body::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
   }
 
   label {
     @apply font-medium;
+  }
+
+  /* Form controls: no gold accent / no thick blue OS focus chrome */
+  input:focus,
+  input:focus-visible,
+  textarea:focus,
+  textarea:focus-visible,
+  select:focus,
+  select:focus-visible {
+    outline: none;
   }
 
   h1,
@@ -281,43 +310,22 @@ html[data-theme='light'] {
   overflow: overlay !important;
 }
 
-/**
- * Popovers / modals: bypass the global `overflow-*: overlay` hack so wheel/touch scroll works.
- * Native bars stay hidden (same as `*` below); `initScrollScrollbarHint()` draws the thumb on scroll/wheel.
- */
-@layer components {
-  .kern-popover-scroll {
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    overscroll-behavior: contain;
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .kern-popover-scroll::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0 !important;
-  }
-
-  .kern-popover-scroll::-webkit-scrollbar-thumb {
-    background: transparent;
-  }
+/* No visible scrollbars anywhere; scrolling still works (wheel, trackpad, touch). */
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
-* {
-  scrollbar-width: none;
-}
-
-*::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+*::-webkit-scrollbar,
+*::-webkit-scrollbar-corner {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: transparent;
-}
-
-*::-webkit-scrollbar-corner {
-  background: transparent;
+  display: none !important;
 }

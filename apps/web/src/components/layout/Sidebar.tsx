@@ -251,7 +251,7 @@ export function Sidebar() {
 
   const dashboardClass = ({ isActive }: { isActive: boolean }) =>
     cn(
-      'flex h-[30px] min-w-0 w-full items-center gap-2 rounded-[4px] pl-2 pr-2 text-[13px] font-medium transition-[background-color,color] duration-[80ms] ease-in-out',
+      'flex h-[30px] min-w-0 w-full items-center gap-2 pl-2 pr-2 text-[13px] font-medium transition-[background-color,color] duration-[80ms] ease-in-out',
       isActive
         ? 'bg-[#353533] text-[#F5F4F0] [&_svg]:text-[#F5F4F0]'
         : 'bg-transparent text-[#A8A89E] [&_svg]:text-[#6B6B64]',
@@ -283,7 +283,7 @@ export function Sidebar() {
             <button
               type="button"
               className={cn(
-                'flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-[3px] border-0 bg-transparent text-[#6B6B64] opacity-0 transition-[opacity,background-color,color] duration-[80ms] ease-in-out',
+                'flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent text-[#6B6B64] opacity-0 transition-[opacity,background-color,color] duration-[80ms] ease-in-out',
                 'group-hover/sidebar-section:opacity-100',
                 'hover:bg-[#353533] hover:text-[#A8A89E]'
               )}
@@ -326,7 +326,7 @@ export function Sidebar() {
         <button
           type="button"
           className={cn(
-            'flex h-[30px] w-full cursor-pointer items-center gap-2 rounded-[4px] border-0 bg-transparent px-2 text-[12px] text-[#6B6B64] transition-[background-color,color] duration-[80ms] ease-in-out',
+            'flex h-[30px] w-full cursor-pointer items-center gap-2 border-0 bg-transparent px-2 text-[12px] text-[#6B6B64] transition-[background-color,color] duration-[80ms] ease-in-out',
             'hover:bg-[#2C2C2A] hover:text-[#A8A89E]'
           )}
           onClick={() => openCreateCollectionModal()}

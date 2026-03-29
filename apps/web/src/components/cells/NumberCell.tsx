@@ -52,7 +52,7 @@ export function NumberCell({
       type="button"
       className={cn(
         'flex h-full w-full min-w-0 flex-col justify-center gap-1 px-2 text-right outline-none',
-        'rounded-kern-sm hover:bg-kern-surface-2/80 focus-visible:ring-2 focus-visible:ring-kern-accent/30'
+        'rounded-kern-sm hover:bg-kern-surface-2/80 focus-visible:ring-0'
       )}
       onClick={onStartEdit}
     >

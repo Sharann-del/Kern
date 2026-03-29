@@ -109,7 +109,7 @@ function SidebarCollectionItemInner({
         <button
           type="button"
           className={cn(
-            'absolute right-1.5 top-1/2 flex h-5 w-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-[3px] border-0 bg-transparent text-[#6B6B64] opacity-0 transition-[opacity,background-color] duration-[80ms] ease-in-out',
+            'absolute right-1.5 top-1/2 flex h-5 w-5 -translate-y-1/2 cursor-pointer items-center justify-center border-0 bg-transparent text-[#6B6B64] opacity-0 transition-[opacity,background-color] duration-[80ms] ease-in-out',
             'group-hover:opacity-100 hover:bg-[#353533] hover:text-[#A8A89E]'
           )}
           aria-label="Collection actions"
@@ -144,7 +144,7 @@ function SidebarCollectionItemInner({
               to={`/c/${collection.slug}`}
               className={({ isActive: navActive }) =>
                 cn(
-                  'box-border flex h-7 w-full min-w-0 max-w-full cursor-pointer items-center justify-center overflow-x-hidden rounded-[4px] transition-[background-color] duration-[80ms] ease-in-out',
+                  'box-border flex h-7 w-full min-w-0 max-w-full cursor-pointer items-center justify-center overflow-x-hidden transition-[background-color] duration-[80ms] ease-in-out',
                   navActive || isActive ? 'bg-[#353533]' : 'bg-transparent hover:bg-[#2C2C2A]'
                 )
               }
@@ -160,7 +160,7 @@ function SidebarCollectionItemInner({
           </Tooltip.Trigger>
           <Tooltip.Portal>
             <Tooltip.Content
-              className="z-[70] rounded-[4px] border border-[#484845] bg-[#353533] px-2 py-1 text-xs text-[#F5F4F0] shadow-[0_2px_8px_rgba(10,10,8,0.5)]"
+              className="z-[70] border border-[#484845] bg-[#353533] px-2 py-1 text-xs text-[#F5F4F0] shadow-[0_2px_8px_rgba(10,10,8,0.5)]"
               side="right"
               sideOffset={8}
             >
@@ -176,7 +176,7 @@ function SidebarCollectionItemInner({
   return (
     <div
       className={cn(
-        'group relative mb-px mx-2.5 flex h-[28px] cursor-pointer items-center rounded-[4px] pl-2 pr-2 transition-[background-color] duration-[80ms] ease-in-out',
+        'group relative mb-px mx-2.5 flex h-[28px] cursor-pointer items-center pl-2 pr-2 transition-[background-color] duration-[80ms] ease-in-out',
         isActive ? 'bg-[#353533]' : 'bg-transparent hover:bg-[#2C2C2A]'
       )}
       onMouseEnter={onRowMouseEnter}

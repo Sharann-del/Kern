@@ -53,9 +53,9 @@ export function CollectionMainToolbar({
       />
 
       <div className="-mx-3 mb-3 min-w-0 shrink-0 border-b border-[var(--border-subtle)] bg-kern-surface/35 sm:-mx-4">
-        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-center gap-x-2 gap-y-2 px-3 py-2.5 sm:gap-x-3 sm:px-4">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-center gap-2 px-3 py-2.5 sm:px-4">
           {activeView ? (
-            <div className="flex h-9 w-full min-w-0 max-w-[260px] items-center gap-2 rounded-lg bg-kern-surface-2 px-3 sm:w-[260px] sm:shrink-0 focus-within:ring-2 focus-within:ring-kern-accent/25">
+            <div className="flex h-9 w-full min-w-0 max-w-[260px] items-center gap-2 rounded-none bg-kern-surface-2 px-3 sm:w-[260px] sm:shrink-0 focus-within:ring-0">
               <Search size={15} className="shrink-0 text-kern-text-3" aria-hidden />
               <input
                 type="search"
@@ -69,7 +69,7 @@ export function CollectionMainToolbar({
                 <button
                   type="button"
                   onClick={() => onRowSearchChange('')}
-                  className="shrink-0 rounded-md p-1 text-kern-text-3 hover:bg-kern-bg/40 hover:text-kern-text"
+                  className="shrink-0 rounded-none p-1 text-kern-text-3 hover:bg-kern-bg/40 hover:text-kern-text"
                   aria-label="Clear search"
                 >
                   <X size={14} />
@@ -79,7 +79,7 @@ export function CollectionMainToolbar({
           ) : null}
 
           {activeView ? (
-            <div className="flex shrink-0 flex-wrap items-center justify-center gap-1 sm:gap-1.5">
+            <>
               <ViewFilterBar
                 fields={fields}
                 viewConfig={activeView.config}
@@ -104,7 +104,7 @@ export function CollectionMainToolbar({
                 fields={fields}
                 onUpdateViewConfig={onUpdateViewConfig}
               />
-            </div>
+            </>
           ) : null}
 
           <Popover
@@ -115,7 +115,7 @@ export function CollectionMainToolbar({
             trigger={
               <button
                 type="button"
-                className="flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-kern-surface-2 px-3 text-xs font-semibold uppercase tracking-wide text-kern-text-2 transition-colors hover:bg-kern-surface hover:text-kern-text"
+                className="flex h-9 shrink-0 items-center gap-2 rounded-none bg-kern-surface-2 px-3 text-xs font-semibold uppercase tracking-wide text-kern-text-2 transition-colors hover:bg-kern-surface hover:text-kern-text"
               >
                 <Plus size={14} strokeWidth={2} />
                 Fields
@@ -156,27 +156,25 @@ export function CollectionMainToolbar({
           </div>
         </Popover>
 
-          <div className="flex shrink-0 flex-wrap items-center justify-center gap-2">
-            {!collection.is_live_source ? (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                className="h-9 shrink-0 border-0 bg-kern-surface-2 whitespace-nowrap text-kern-text-2 hover:bg-kern-surface hover:text-kern-text"
-                onClick={() => setConnectLiveOpen(true)}
-              >
-                Connect live
-              </Button>
-            ) : (
-              <div className="hidden min-w-0 shrink-0 sm:block">
-                <LiveSourceBadge collection={collection} />
-              </div>
-            )}
-            <CollectionActionsMenu
-              collection={collection}
-              onOpenConnectLiveSource={() => setConnectLiveOpen(true)}
-            />
-          </div>
+          {!collection.is_live_source ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="h-9 shrink-0 border-0 bg-kern-surface-2 px-3 text-sm whitespace-nowrap text-kern-text-2 hover:bg-kern-surface hover:text-kern-text"
+              onClick={() => setConnectLiveOpen(true)}
+            >
+              Connect live
+            </Button>
+          ) : (
+            <div className="hidden min-w-0 shrink-0 sm:block">
+              <LiveSourceBadge collection={collection} />
+            </div>
+          )}
+          <CollectionActionsMenu
+            collection={collection}
+            onOpenConnectLiveSource={() => setConnectLiveOpen(true)}
+          />
         </div>
       </div>
     </>

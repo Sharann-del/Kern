@@ -96,7 +96,7 @@ export function CollectionHeader({
           collectionSlug={collectionSlug}
         />
         {activeView ? (
-          <div className="flex h-8 w-[160px] shrink-0 items-center gap-1 rounded-kern-md border border-kern-border bg-kern-surface px-2 focus-within:ring-2 focus-within:ring-kern-accent/30">
+          <div className="flex h-8 w-[160px] shrink-0 items-center gap-1 rounded-kern-md border border-kern-border bg-kern-surface px-2 focus-within:ring-0">
             <Search size={14} className="shrink-0 text-kern-text-3" aria-hidden />
             <input
               type="search"

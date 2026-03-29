@@ -34,7 +34,7 @@ export function AuthLayout() {
       <div className="relative z-10 flex w-full max-w-[400px] flex-col items-center">
         <div className="relative mb-6">
           <motion.p
-            className="instrument-serif-regular relative z-10 text-center text-5xl leading-none tracking-tight text-kern-text sm:text-6xl"
+            className="kern-display relative z-10 text-center text-5xl leading-none tracking-tight text-kern-text sm:text-6xl"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={authLogoEntrance}

@@ -45,11 +45,11 @@ export function Popover({
             className={cn(
               /* Above Modal content (z-[201]) */
               'z-[220] origin-[var(--radix-popover-content-transform-origin)] rounded-kern-lg border border-kern-border bg-kern-bg p-2 shadow-lg outline-none',
-              !popoverOpen && 'pointer-events-none',
               contentClassName
             )}
             style={{ transformOrigin: 'var(--radix-popover-content-transform-origin)' }}
-            variants={VARIANTS.scaleIn}
+            /* Opacity-only: scale/transform on this ancestor breaks overflow-y scrolling inside (WebKit / Tauri). */
+            variants={VARIANTS.fade}
             initial="hidden"
             animate={popoverOpen ? 'visible' : 'hidden'}
           >

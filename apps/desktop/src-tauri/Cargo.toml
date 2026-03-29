@@ -1,12 +1,12 @@
 [package]
-name = "kern-desktop"
+name = "kern"
 version = "0.1.0"
-description = "Kern desktop application"
+description = "Kern"
 authors = ["you"]
 edition = "2021"
 
 [lib]
-name = "kern_desktop_lib"
+name = "kern_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]

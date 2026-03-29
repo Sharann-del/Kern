@@ -243,7 +243,7 @@ function AppearanceTab() {
             role="radio"
             aria-checked={theme === 'light'}
             onClick={() => applyTheme('light')}
-            className="flex flex-col items-center gap-2 rounded-kern-lg p-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/40"
+            className="flex flex-col items-center gap-2 rounded-kern-lg p-2 text-left outline-none focus-visible:ring-0"
           >
             <ThemePreviewLight selected={theme === 'light'} />
             <span className="text-sm text-kern-text">Light</span>
@@ -253,7 +253,7 @@ function AppearanceTab() {
             role="radio"
             aria-checked={theme === 'dark'}
             onClick={() => applyTheme('dark')}
-            className="flex flex-col items-center gap-2 rounded-kern-lg p-2 text-left outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/40"
+            className="flex flex-col items-center gap-2 rounded-kern-lg p-2 text-left outline-none focus-visible:ring-0"
           >
             <ThemePreviewDark selected={theme === 'dark'} />
             <span className="text-sm text-kern-text">Dark</span>

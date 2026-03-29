@@ -378,7 +378,7 @@ function RowFieldEditor({
   const value = row.data[slug];
 
   const inputClass =
-    'w-full rounded-kern-md border border-kern-border bg-kern-bg px-3 py-2 text-sm text-kern-text outline-none focus:border-kern-accent focus:ring-2 focus:ring-kern-accent/30';
+    'w-full rounded-kern-md border border-kern-border bg-kern-bg px-3 py-2 text-sm text-kern-text outline-none focus:border-kern-border focus:ring-0';
 
   switch (field.type) {
     case 'text':
@@ -500,7 +500,7 @@ function RowFieldEditor({
                 type="button"
                 className={cn(
                   'rounded-full px-3 py-1 text-xs font-medium transition-colors',
-                  active ? 'ring-2 ring-kern-accent ring-offset-1 ring-offset-kern-bg' : 'border border-kern-border'
+                  active ? 'border border-kern-border bg-kern-surface-2' : 'border border-kern-border'
                 )}
                 style={active ? pillStyle(opt.color) : { color: opt.color, borderColor: `${opt.color}66` }}
                 onClick={() => mutateBanner(slug, opt.id)}
@@ -525,7 +525,7 @@ function RowFieldEditor({
                 type="button"
                 className={cn(
                   'rounded-full px-3 py-1 text-xs font-medium transition-colors',
-                  active ? 'ring-2 ring-kern-accent ring-offset-1 ring-offset-kern-bg' : 'border border-kern-border'
+                  active ? 'border border-kern-border bg-kern-surface-2' : 'border border-kern-border'
                 )}
                 style={active ? pillStyle(opt.color) : { color: opt.color, borderColor: `${opt.color}66` }}
                 onClick={() => {

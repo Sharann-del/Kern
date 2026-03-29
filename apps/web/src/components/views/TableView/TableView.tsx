@@ -594,7 +594,7 @@ function TableViewInner({
       <div
         ref={parentRef}
         tabIndex={0}
-        className="min-h-0 flex-1 overflow-auto rounded-kern-lg border border-kern-border bg-kern-bg outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/25"
+        className="min-h-0 flex-1 overflow-auto rounded-kern-lg border border-kern-border bg-kern-bg outline-none focus-visible:ring-0"
         onKeyDown={handleTableKeyDown}
         onFocus={(ev) => {
           if (ev.target !== ev.currentTarget) return;

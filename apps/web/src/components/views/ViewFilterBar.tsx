@@ -55,7 +55,7 @@ function FilterValueInput({
         <Select.Trigger
           className={cn(
             'flex h-8 min-w-[100px] max-w-[140px] flex-1 items-center justify-between gap-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs',
-            'outline-none focus:ring-2 focus:ring-kern-accent/30'
+            'outline-none focus:ring-0'
           )}
         >
           <Select.Value placeholder="Value" />
@@ -90,7 +90,7 @@ function FilterValueInput({
     return (
       <input
         type="date"
-        className="h-8 min-w-[110px] flex-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs text-kern-text outline-none focus:ring-2 focus:ring-kern-accent/30"
+        className="h-8 min-w-[110px] flex-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs text-kern-text outline-none focus:ring-0"
         value={d}
         onChange={(e) => onPatch({ value: e.target.value })}
       />
@@ -101,7 +101,7 @@ function FilterValueInput({
     return (
       <input
         type="number"
-        className="h-8 min-w-[80px] flex-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs text-kern-text outline-none focus:ring-2 focus:ring-kern-accent/30"
+        className="h-8 min-w-[80px] flex-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs text-kern-text outline-none focus:ring-0"
         value={
           rule.value === '' || rule.value === undefined || rule.value === null ? '' : String(rule.value)
         }
@@ -116,7 +116,7 @@ function FilterValueInput({
   return (
     <input
       type="text"
-      className="h-8 min-w-[80px] flex-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs text-kern-text outline-none focus:ring-2 focus:ring-kern-accent/30"
+      className="h-8 min-w-[80px] flex-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs text-kern-text outline-none focus:ring-0"
       value={String(rule.value ?? '')}
       onChange={(e) => onPatch({ value: e.target.value })}
     />
@@ -155,7 +155,7 @@ function FilterRuleRow({
         <Select.Trigger
           className={cn(
             'flex h-8 min-w-[100px] max-w-[120px] items-center justify-between gap-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs',
-            'outline-none focus:ring-2 focus:ring-kern-accent/30'
+            'outline-none focus:ring-0'
           )}
         >
           <span className="flex min-w-0 items-center gap-1 truncate">
@@ -193,7 +193,7 @@ function FilterRuleRow({
         <Select.Trigger
           className={cn(
             'flex h-8 min-w-[88px] items-center justify-between gap-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs',
-            'outline-none focus:ring-2 focus:ring-kern-accent/30'
+            'outline-none focus:ring-0'
           )}
         >
           <Select.Value />
@@ -327,7 +327,7 @@ export function ViewFilterBar({
         <button
           type="button"
           className={cn(
-            'relative flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm transition-colors',
+            'relative flex h-9 items-center gap-2 rounded-none px-3 text-sm transition-colors',
             hasFilters
               ? 'bg-kern-accent/15 text-kern-accent hover:bg-kern-accent/22'
               : 'bg-kern-surface-2 text-kern-text-2 hover:bg-kern-surface hover:text-kern-text'
@@ -336,7 +336,7 @@ export function ViewFilterBar({
           <Filter size={14} />
           <span>Filter</span>
           {hasFilters ? (
-            <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-kern-accent px-1 text-[10px] font-medium text-kern-on-accent">
+            <span className="flex h-4 min-w-[16px] items-center justify-center rounded-none bg-kern-accent px-1 text-[10px] font-medium text-kern-on-accent">
               {filters.length}
             </span>
           ) : null}

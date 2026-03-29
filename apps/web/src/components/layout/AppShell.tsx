@@ -20,6 +20,7 @@ import { KeyboardShortcutsModal } from '@/components/ui/KeyboardShortcutsModal';
 import { useCollections } from '@/hooks/useCollections';
 import { useAuth } from '@/providers/AuthProvider';
 import { isDesktop } from '@/lib/platform';
+import { useMacDesktopWindowShortcuts } from '@/hooks/useMacDesktopWindowShortcuts';
 import { useAppStore } from '@/stores/appStore';
 
 function isEditableTarget(target: EventTarget | null): boolean {
@@ -29,6 +30,7 @@ function isEditableTarget(target: EventTarget | null): boolean {
 }
 
 export function AppShell() {
+  useMacDesktopWindowShortcuts();
   const navigate = useNavigate();
   const { user, profile, loading: authLoading, updateProfile } = useAuth();
   const { data: collections = [], isLoading: colLoading } = useCollections();

@@ -92,16 +92,22 @@ export function CommandPalette() {
           onOpenAutoFocus={(e) => e.preventDefault()}
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
-          <motion.div
+          <div
             className={cn(
-              'fixed left-1/2 top-[20%] z-[201] w-full max-w-[620px] -translate-x-1/2',
-              'overflow-hidden rounded-kern-xl border border-kern-border bg-kern-bg shadow-2xl outline-none',
+              'fixed inset-0 z-[201] flex justify-center overflow-y-auto px-4 pt-[20vh] pb-8 outline-none',
               !paletteOpen && 'pointer-events-none'
             )}
-            variants={VARIANTS.commandScaleIn}
-            initial="hidden"
-            animate={paletteOpen ? 'visible' : 'hidden'}
           >
+            <motion.div
+              className={cn(
+                'relative h-fit w-full max-w-[620px]',
+                'overflow-hidden rounded-kern-xl border border-kern-border bg-kern-bg shadow-2xl outline-none',
+                !paletteOpen && 'pointer-events-none'
+              )}
+              variants={VARIANTS.commandScaleIn}
+              initial="hidden"
+              animate={paletteOpen ? 'visible' : 'hidden'}
+            >
             <Dialog.Title className="sr-only">Command palette</Dialog.Title>
             <Dialog.Description className="sr-only">Search commands and navigate Kern</Dialog.Description>
 
@@ -169,7 +175,8 @@ export function CommandPalette() {
                 })()}
               </Command.List>
             </Command>
-          </motion.div>
+            </motion.div>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

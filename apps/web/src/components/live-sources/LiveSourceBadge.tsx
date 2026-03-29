@@ -17,9 +17,9 @@ export function LiveSourceBadge({ collection }: LiveSourceBadgeProps) {
     <button
       type="button"
       className={cn(
-        'inline-flex w-max max-w-full min-h-9 shrink-0 items-center gap-1.5 whitespace-nowrap text-xs outline-none',
-        'rounded-lg bg-kern-surface-2 px-3 py-1.5 text-kern-text-3 transition-colors',
-        'hover:bg-kern-surface hover:text-kern-text-2 focus-visible:ring-2 focus-visible:ring-kern-accent/35'
+        'inline-flex h-9 w-max max-w-full shrink-0 items-center gap-2 whitespace-nowrap text-sm outline-none',
+        'rounded-none bg-kern-surface-2 px-3 text-kern-text-3 transition-colors',
+        'hover:bg-kern-surface hover:text-kern-text-2 focus-visible:ring-0'
       )}
     >
       {syncStatus === 'idle' ? (

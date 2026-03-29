@@ -34,7 +34,7 @@ export function NumberFieldOptions({ options, onChange }: NumberFieldOptionsProp
           </label>
           <select
             id="number-decimals"
-            className="h-8 w-full rounded-kern-md border border-kern-border bg-kern-bg px-3 text-sm text-kern-text outline-none focus:border-kern-accent focus:ring-2 focus:ring-kern-accent/30"
+            className="h-8 w-full rounded-kern-md border border-kern-border bg-kern-bg px-3 text-sm text-kern-text outline-none focus:border-kern-border focus:ring-0"
             value={o.decimal_places ?? 0}
             onChange={(e) => patch({ decimal_places: Number(e.target.value) })}
           >

@@ -31,7 +31,7 @@ export function Topbar() {
         <button
           type="button"
           className={cn(
-            'flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-[4px] border-0 bg-transparent text-[#6B6B64] transition-[background-color,color] duration-[80ms] ease-in-out',
+            'flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center border-0 bg-transparent text-[#6B6B64] transition-[background-color,color] duration-[80ms] ease-in-out',
             'hover:bg-[#353533] hover:text-[#A8A89E]'
           )}
           onClick={() => toggleSidebar()}
@@ -40,10 +40,7 @@ export function Topbar() {
           <Menu size={18} strokeWidth={2} className="shrink-0" />
         </button>
 
-        <span
-          className="instrument-serif-regular ml-1 select-none text-[17px] font-normal leading-none tracking-[-0.02em] text-[#F5F4F0]"
-          style={{ fontFamily: "'Instrument Serif', Georgia, serif" }}
-        >
+        <span className="kern-display ml-1 select-none text-[17px] font-normal leading-none tracking-[-0.02em] text-[#F5F4F0]">
           kern
         </span>
 

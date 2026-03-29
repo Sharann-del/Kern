@@ -51,7 +51,7 @@ function KernSelect({
       <Select.Trigger
         className={cn(
           'flex h-8 w-full items-center justify-between gap-2 rounded-kern-md border border-kern-border bg-kern-bg px-3 text-sm text-kern-text',
-          'outline-none focus:ring-2 focus:ring-kern-accent/30 disabled:opacity-50'
+          'outline-none focus:ring-0 disabled:opacity-50'
         )}
       >
         <Select.Value placeholder={placeholder} />
@@ -320,7 +320,7 @@ export function AddWidgetModal({ open, onOpenChange }: AddWidgetModalProps) {
               <textarea
                 className={cn(
                   'min-h-[72px] w-full rounded-kern-md border border-kern-border bg-kern-bg px-3 py-2 text-sm text-kern-text',
-                  'placeholder:text-kern-text-3 outline-none focus:ring-2 focus:ring-kern-accent/30'
+                  'placeholder:text-kern-text-3 outline-none focus:ring-0'
                 )}
                 placeholder='e.g. {"status":"todo"}'
                 value={prefillNote}

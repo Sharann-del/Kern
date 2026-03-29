@@ -70,7 +70,7 @@ function SortableSortRow({
         <Select.Trigger
           className={cn(
             'flex h-8 min-w-[120px] flex-1 items-center justify-between gap-1 rounded-kern-md border border-kern-border bg-kern-bg px-2 text-xs',
-            'outline-none focus:ring-2 focus:ring-kern-accent/30'
+            'outline-none focus:ring-0'
           )}
         >
           <span className="flex min-w-0 items-center gap-1 truncate">
@@ -209,7 +209,7 @@ export function ViewSortBar({ fields, viewConfig, onUpdateConfig }: ViewSortBarP
         <button
           type="button"
           className={cn(
-            'flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm transition-colors',
+            'flex h-9 items-center gap-2 rounded-none px-3 text-sm transition-colors',
             sorts.length > 0
               ? 'bg-kern-accent/15 text-kern-accent hover:bg-kern-accent/22'
               : 'bg-kern-surface-2 text-kern-text-2 hover:bg-kern-surface hover:text-kern-text'

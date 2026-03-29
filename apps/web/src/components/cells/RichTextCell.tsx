@@ -141,7 +141,7 @@ export function RichTextCell({
       type="button"
       className={cn(
         'flex h-full w-full min-w-0 items-center px-2 text-left',
-        'rounded-kern-sm outline-none hover:bg-kern-surface-2/80 focus-visible:ring-2 focus-visible:ring-kern-accent/30'
+        'rounded-kern-sm outline-none hover:bg-kern-surface-2/80 focus-visible:ring-0'
       )}
       onClick={onStartEdit}
     >

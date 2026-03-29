@@ -367,7 +367,7 @@ export function CalendarView({
           <Select.Trigger
             className={cn(
               'flex h-10 w-full max-w-xs items-center justify-between gap-2 rounded-kern-md border border-kern-border bg-kern-surface px-3 text-sm',
-              'outline-none focus:ring-2 focus:ring-kern-accent/30'
+              'outline-none focus:ring-0'
             )}
           >
             <Select.Value placeholder="Choose date field…" />

@@ -36,7 +36,7 @@ export function RelationFieldOptions({
           <Select.Trigger
             className={cn(
               'flex h-8 w-full items-center justify-between gap-2 rounded-kern-md border border-kern-border bg-kern-bg px-3 text-sm text-kern-text outline-none',
-              'focus:border-kern-accent focus:ring-2 focus:ring-kern-accent/30'
+              'focus:border-kern-border focus:ring-0'
             )}
             aria-label="Target collection"
           >

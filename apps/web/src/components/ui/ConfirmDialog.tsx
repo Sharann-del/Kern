@@ -48,17 +48,23 @@ export function ConfirmDialog({
           />
         </AlertDialog.Overlay>
         <AlertDialog.Content forceMount asChild>
-          <motion.div
+          <div
             className={cn(
-              'fixed left-1/2 top-1/2 m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2',
-              'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none',
+              'fixed inset-0 flex items-center justify-center overflow-y-auto p-4 outline-none',
               contentZ,
               !open && 'pointer-events-none'
             )}
-            variants={VARIANTS.fadeUp}
-            initial="hidden"
-            animate={open ? 'visible' : 'hidden'}
           >
+            <motion.div
+              className={cn(
+                'relative w-full max-w-md',
+                'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none',
+                !open && 'pointer-events-none'
+              )}
+              variants={VARIANTS.fadeUp}
+              initial="hidden"
+              animate={open ? 'visible' : 'hidden'}
+            >
           <AlertDialog.Title className="text-base font-semibold text-kern-text">{title}</AlertDialog.Title>
           <AlertDialog.Description asChild>
             <div className="mt-2 text-sm text-kern-text-2">{description}</div>
@@ -78,7 +84,8 @@ export function ConfirmDialog({
               {confirmLabel}
             </Button>
           </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </AlertDialog.Content>
       </AlertDialog.Portal>
     </AlertDialog.Root>

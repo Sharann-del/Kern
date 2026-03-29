@@ -1,9 +1,9 @@
 import * as Tooltip from '@radix-ui/react-tooltip';
 import { useState } from 'react';
 
+import { CollectionIconPicker } from '@/components/collection/CollectionIconPicker';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
-import { CollectionIconPicker } from '@/components/collection/CollectionIconPicker';
 import { ColorPicker } from '@/components/ui/ColorPicker';
 import { Input } from '@/components/ui/Input';
 import { COLLECTION_COLORS } from '@/constants';
@@ -27,8 +27,8 @@ function EditCollectionModalInner({
   const updateCollection = useUpdateCollection();
 
   const [name, setName] = useState(collection.name);
-  const [icon, setIcon] = useState(collection.icon ?? '📦');
   const [color, setColor] = useState<string>(collection.color ?? COLLECTION_COLORS[0] ?? '#888888');
+  const [icon, setIcon] = useState<string>(collection.icon ?? '📦');
   const [description, setDescription] = useState(collection.description ?? '');
 
   const canSubmit = name.trim().length > 0 && !updateCollection.isPending;
@@ -75,12 +75,13 @@ function EditCollectionModalInner({
     >
       <Tooltip.Provider delayDuration={300}>
         <form id="edit-collection-form" className="flex flex-col gap-4" onSubmit={handleSubmit}>
-          <div className="flex gap-3">
-            <CollectionIconPicker value={icon} onChange={setIcon} />
-            <div className="min-w-0 flex-1 pt-1">
-              <p className="mb-1 text-xs text-kern-text-2">Color</p>
-              <ColorPicker value={color} onChange={setColor} />
-            </div>
+          <div>
+            <p className="mb-1 text-xs text-kern-text-2">Color</p>
+            <ColorPicker value={color} onChange={setColor} />
+          </div>
+          <div>
+            <p className="mb-1 text-xs text-kern-text-2">Icon</p>
+            <CollectionIconPicker value={icon} onChange={setIcon} color={color} />
           </div>
           <Input
             label="Collection name"
@@ -122,7 +123,7 @@ function EditCollectionModalInner({
               className={cn(
                 'w-full resize-y rounded-kern-md border border-kern-border bg-kern-bg px-3 py-2 text-sm text-kern-text outline-none transition-shadow duration-ds-fast',
                 'placeholder:text-kern-text-3',
-                'focus:border-kern-accent focus:ring-2 focus:ring-kern-accent/30'
+                'focus:border-kern-border focus:ring-0'
               )}
               placeholder="Optional description"
             />

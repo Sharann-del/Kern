@@ -1,99 +1,204 @@
-import * as Tabs from '@radix-ui/react-tabs';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 
+import {
+  COLLECTION_EMOJI_OPTIONS,
+  type CollectionEmojiOption,
+} from '@/components/collection/collectionEmojiPresets';
 import { CollectionIconDisplay } from '@/components/collection/CollectionIconDisplay';
-import { LucideIconPickerPanel } from '@/components/collection/LucideIconPickerPanel';
+import { COLLECTION_LUCIDE_OPTIONS } from '@/components/collection/collectionLucideIcons';
+import type { CollectionLucideOption } from '@/components/collection/collectionLucideIcons';
 import { Popover } from '@/components/ui/Popover';
-import { EmojiPickerPanel } from '@/components/ui/EmojiPickerPanel';
+import { Input } from '@/components/ui/Input';
 import { formatStoredLucideIcon, isLucideIconStored, lucideIconNameFromStored } from '@/lib/collectionIcon';
 import { cn } from '@/lib/utils';
 
-const DEFAULT_EMOJI = '📦';
-const DEFAULT_LUCIDE = 'Table2';
+type Tab = 'emoji' | 'icon';
+
+function matchesEmojiSearch(opt: CollectionEmojiOption, raw: string): boolean {
+  const trimmed = raw.trim();
+  if (!trimmed) return true;
+  if (opt.emoji === trimmed) return true;
+  const t = trimmed.toLowerCase();
+  const words = t.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return true;
+  return words.every((w) => opt.q.includes(w));
+}
+
+function matchesIconSearch(opt: CollectionLucideOption, raw: string): boolean {
+  const trimmed = raw.trim();
+  if (!trimmed) return true;
+  const t = trimmed.toLowerCase();
+  const words = t.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return true;
+  const hay = `${opt.label} ${opt.name}`.toLowerCase().replace(/([a-z])([A-Z])/g, '$1 $2');
+  return words.every((w) => hay.includes(w));
+}
 
 export type CollectionIconPickerProps = {
-  value: string;
-  onChange: (stored: string) => void;
-  className?: string;
+  value: string | null;
+  onChange: (icon: string) => void;
+  /** Tints Lucide glyphs in the preview and grid. */
+  color?: string | null;
+  disabled?: boolean;
 };
 
-export function CollectionIconPicker({ value, onChange, className }: CollectionIconPickerProps) {
+export function CollectionIconPicker({ value, onChange, color, disabled }: CollectionIconPickerProps) {
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<'emoji' | 'icon'>('emoji');
+  const [tab, setTab] = useState<Tab>(() =>
+    value && isLucideIconStored(value) ? 'icon' : 'emoji'
+  );
+  const [query, setQuery] = useState('');
 
-  useEffect(() => {
-    if (!open) return;
-    setTab(isLucideIconStored(value) ? 'icon' : 'emoji');
-  }, [open, value]);
+  const activeLucideName = lucideIconNameFromStored(value);
+  const activeEmoji = value && !isLucideIconStored(value) ? value : null;
 
-  const lucideName = lucideIconNameFromStored(value) ?? DEFAULT_LUCIDE;
-  const emojiValue = isLucideIconStored(value) ? DEFAULT_EMOJI : value || DEFAULT_EMOJI;
+  const filteredEmojis = useMemo(
+    () => COLLECTION_EMOJI_OPTIONS.filter((o) => matchesEmojiSearch(o, query)),
+    [query]
+  );
+
+  const filteredIcons = useMemo(
+    () => COLLECTION_LUCIDE_OPTIONS.filter((o) => matchesIconSearch(o, query)),
+    [query]
+  );
 
   return (
-    <div className={cn('flex flex-col gap-1', className)}>
-      <p className="text-xs text-kern-text-2">Icon</p>
-      <Popover
-        open={open}
-        onOpenChange={setOpen}
-        align="start"
-        contentClassName="flex max-h-[min(85vh,480px)] min-h-0 min-w-0 flex-col overflow-hidden p-3"
-        trigger={
+    <Popover
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o);
+        if (o) {
+          setTab(value && isLucideIconStored(value) ? 'icon' : 'emoji');
+        } else {
+          setQuery('');
+        }
+      }}
+      align="start"
+      contentClassName="w-[min(calc(100vw-3rem),380px)] p-2"
+      trigger={
+        <button
+          type="button"
+          disabled={disabled}
+          aria-label="Choose collection icon"
+          aria-haspopup="dialog"
+          aria-expanded={open}
+          className={cn(
+            'flex h-10 w-10 shrink-0 items-center justify-center rounded-kern-md border border-kern-border bg-kern-surface transition-colors',
+            'hover:bg-kern-surface-2 focus-visible:outline-none focus-visible:ring-0',
+            disabled && 'cursor-not-allowed opacity-50'
+          )}
+        >
+          <CollectionIconDisplay icon={value} color={color} size={22} />
+        </button>
+      }
+    >
+      <div className="flex flex-col gap-2">
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={tab === 'emoji' ? 'Search emojis…' : 'Search icons…'}
+          autoComplete="off"
+          className="text-sm"
+          aria-label={tab === 'emoji' ? 'Search emojis' : 'Search icons'}
+        />
+
+        <div className="flex rounded-kern-md border border-kern-border p-0.5">
           <button
             type="button"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-kern-md border border-kern-border text-kern-text transition-colors hover:bg-kern-surface-2"
-            aria-label="Choose collection icon"
+            onClick={() => {
+              setTab('emoji');
+              setQuery('');
+            }}
+            className={cn(
+              'flex-1 rounded-kern-sm px-2 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-0',
+              tab === 'emoji' ? 'bg-kern-accent text-kern-on-accent' : 'text-kern-text-2'
+            )}
           >
-            <CollectionIconDisplay icon={value || null} size={22} />
+            Emoji
           </button>
-        }
-      >
-        <Tabs.Root value={tab} onValueChange={(v) => setTab(v as 'emoji' | 'icon')} className="flex min-h-0 flex-col">
-          <Tabs.List className="mb-3 flex shrink-0 gap-1 rounded-kern-md bg-kern-surface p-0.5">
-            <Tabs.Trigger
-              value="emoji"
-              className={cn(
-                'flex-1 rounded-kern-sm px-2 py-1.5 text-xs font-medium transition-colors',
-                'text-kern-text-2 outline-none data-[state=active]:bg-kern-bg data-[state=active]:text-kern-text',
-                'hover:text-kern-text'
-              )}
-            >
-              Emoji
-            </Tabs.Trigger>
-            <Tabs.Trigger
-              value="icon"
-              className={cn(
-                'flex-1 rounded-kern-sm px-2 py-1.5 text-xs font-medium transition-colors',
-                'text-kern-text-2 outline-none data-[state=active]:bg-kern-bg data-[state=active]:text-kern-text',
-                'hover:text-kern-text'
-              )}
-            >
-              Icon
-            </Tabs.Trigger>
-          </Tabs.List>
-          <Tabs.Content
-            value="emoji"
-            className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden outline-none data-[state=inactive]:hidden"
+          <button
+            type="button"
+            onClick={() => {
+              setTab('icon');
+              setQuery('');
+            }}
+            className={cn(
+              'flex-1 rounded-kern-sm px-2 py-1.5 text-xs font-medium focus-visible:outline-none focus-visible:ring-0',
+              tab === 'icon' ? 'bg-kern-accent text-kern-on-accent' : 'text-kern-text-2'
+            )}
           >
-            <EmojiPickerPanel
-              embedInFlex
-              value={emojiValue}
-              onChange={(emoji) => onChange(emoji)}
-              onPicked={() => setOpen(false)}
-            />
-          </Tabs.Content>
-          <Tabs.Content
-            value="icon"
-            className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden outline-none data-[state=inactive]:hidden"
+            Icons
+          </button>
+        </div>
+
+        {tab === 'emoji' ? (
+          <div
+            className="max-h-[min(55vh,340px)] min-h-0 overflow-y-auto overscroll-y-contain pr-0.5"
+            onWheel={(e) => e.stopPropagation()}
           >
-            <LucideIconPickerPanel
-              embedInFlex
-              value={lucideName}
-              onChange={(name) => onChange(formatStoredLucideIcon(name))}
-              onPicked={() => setOpen(false)}
-            />
-          </Tabs.Content>
-        </Tabs.Root>
-      </Popover>
-    </div>
+            {filteredEmojis.length === 0 ? (
+              <p className="py-6 text-center text-sm text-kern-text-3">No emojis match your search.</p>
+            ) : (
+              <div className="grid grid-cols-8 gap-1">
+                {filteredEmojis.map((row) => {
+                  const selected = activeEmoji === row.emoji;
+                  return (
+                    <button
+                      key={row.emoji}
+                      type="button"
+                      title={row.q.split(' ').slice(0, 4).join(', ')}
+                      onClick={() => {
+                        onChange(row.emoji);
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-kern-sm text-lg leading-none transition-colors',
+                        'hover:bg-kern-surface-2 focus-visible:outline-none focus-visible:ring-0',
+                        selected && 'border border-kern-border bg-kern-surface-2'
+                      )}
+                    >
+                      {row.emoji}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div
+            className="max-h-[min(55vh,340px)] min-h-0 overflow-y-auto overscroll-y-contain pr-0.5"
+            onWheel={(e) => e.stopPropagation()}
+          >
+            {filteredIcons.length === 0 ? (
+              <p className="py-6 text-center text-sm text-kern-text-3">No icons match your search.</p>
+            ) : (
+              <div className="grid grid-cols-7 gap-1 sm:grid-cols-8">
+                {filteredIcons.map(({ name, label, Icon }) => {
+                  const selected = activeLucideName === name;
+                  return (
+                    <button
+                      key={name}
+                      type="button"
+                      title={label}
+                      onClick={() => {
+                        onChange(formatStoredLucideIcon(name));
+                        setOpen(false);
+                      }}
+                      className={cn(
+                        'flex h-9 w-9 items-center justify-center rounded-kern-sm text-kern-text-2 transition-colors',
+                        'hover:bg-kern-surface-2 hover:text-kern-text focus-visible:outline-none focus-visible:ring-0',
+                        selected && 'border border-kern-border bg-kern-surface-2 text-kern-text'
+                      )}
+                    >
+                      <Icon size={18} style={color ? { color } : undefined} strokeWidth={2} />
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </Popover>
   );
 }

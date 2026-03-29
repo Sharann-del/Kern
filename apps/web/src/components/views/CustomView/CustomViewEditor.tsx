@@ -318,7 +318,7 @@ export const CustomViewEditor = forwardRef<CustomViewEditorHandle, CustomViewEdi
               setViewName(e.target.value);
               markDirty(true);
             }}
-            className="mx-auto min-w-0 max-w-md flex-1 border-0 bg-transparent text-center text-sm font-medium text-kern-text outline-none ring-0 placeholder:text-kern-text-3 focus:border-b focus:border-kern-accent focus:ring-0"
+            className="mx-auto min-w-0 max-w-md flex-1 border-0 bg-transparent text-center text-sm font-medium text-kern-text outline-none ring-0 placeholder:text-kern-text-3 focus:border-b focus:border-kern-border-2 focus:ring-0"
             placeholder="View name"
             aria-label="View name"
           />

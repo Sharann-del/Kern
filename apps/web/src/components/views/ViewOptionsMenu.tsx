@@ -75,7 +75,7 @@ export function ViewOptionsMenu({
         <Select.Trigger
           className={cn(
             'mb-4 flex h-9 w-full items-center justify-between gap-2 rounded-kern-md border border-kern-border bg-kern-surface px-2.5 text-sm',
-            'outline-none focus:ring-2 focus:ring-kern-accent/30'
+            'outline-none focus:ring-0'
           )}
         >
           <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate">
@@ -160,7 +160,7 @@ export function ViewOptionsMenu({
         <Select.Trigger
           className={cn(
             'mb-3 flex h-9 w-full items-center justify-between gap-2 rounded-kern-md border border-kern-border bg-kern-surface px-2.5 text-sm',
-            'outline-none focus:ring-2 focus:ring-kern-accent/30'
+            'outline-none focus:ring-0'
           )}
         >
           <Select.Value placeholder="None" />
@@ -279,9 +279,16 @@ export function ViewOptionsMenu({
     <Popover
       align="end"
       trigger={
-        <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="View options">
-          <MoreHorizontal size={16} />
-        </Button>
+        <button
+          type="button"
+          className={cn(
+            'flex h-9 w-9 shrink-0 items-center justify-center rounded-none bg-kern-surface-2 text-kern-text-2 transition-colors',
+            'hover:bg-kern-surface hover:text-kern-text focus-visible:outline-none focus-visible:ring-0'
+          )}
+          aria-label="View options"
+        >
+          <MoreHorizontal size={16} strokeWidth={2} />
+        </button>
       }
     >
       {content}

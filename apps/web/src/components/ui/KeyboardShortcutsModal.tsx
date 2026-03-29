@@ -1,5 +1,6 @@
 import { Modal } from '@/components/ui/Modal';
 import { Kbd } from '@/components/ui/Kbd';
+import { isDesktop, isMacOS } from '@/lib/platform';
 
 export type KeyboardShortcutsModalProps = {
   open: boolean;
@@ -33,6 +34,14 @@ export function KeyboardShortcutsModal({ open, onOpenChange }: KeyboardShortcuts
             <Row label="Command palette" keys="⌘K" />
             <Row label="Toggle sidebar" keys={'⌘\u005c'} />
             <Row label="Close overlays / palette" keys="Escape" />
+            {isDesktop && isMacOS ? (
+              <>
+                <Row label="Quit app" keys="⌘Q" />
+                <Row label="Close window" keys="⌘W" />
+                <Row label="Minimize window" keys="⌘M" />
+                <Row label="Full screen" keys="⌘F" />
+              </>
+            ) : null}
           </div>
         </div>
         <div>

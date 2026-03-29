@@ -59,16 +59,22 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
           onInteractOutside={(e) => e.preventDefault()}
           aria-describedby={undefined}
         >
-          <motion.div
+          <div
             className={cn(
-              'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-lg -translate-x-1/2 -translate-y-1/2',
-              'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none focus:outline-none',
+              'fixed inset-0 z-[201] flex items-center justify-center overflow-y-auto p-4 outline-none',
               !open && 'pointer-events-none'
             )}
-            variants={VARIANTS.fadeUp}
-            initial="hidden"
-            animate={open ? 'visible' : 'hidden'}
           >
+            <motion.div
+              className={cn(
+                'relative w-full max-w-lg',
+                'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none focus:outline-none',
+                !open && 'pointer-events-none'
+              )}
+              variants={VARIANTS.fadeUp}
+              initial="hidden"
+              animate={open ? 'visible' : 'hidden'}
+            >
           <Dialog.Title className="text-lg font-semibold text-kern-text">Welcome to Kern</Dialog.Title>
           <p className="mt-2 text-sm text-kern-text-2">
             You define the structure. Let&apos;s create your first collection.
@@ -81,7 +87,7 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
               onClick={() => void runTemplate('books')}
               className={cn(
                 'flex w-full items-start gap-3 rounded-kern-lg border border-kern-border bg-kern-surface p-4 text-left outline-none transition-colors',
-                'hover:bg-kern-surface-2 focus-visible:ring-2 focus-visible:ring-kern-accent/30',
+                'hover:bg-kern-surface-2 focus-visible:ring-0',
                 'disabled:opacity-50'
               )}
               aria-label="Create Books and Reading collection"
@@ -103,7 +109,7 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
               onClick={() => void runTemplate('tasks')}
               className={cn(
                 'flex w-full items-start gap-3 rounded-kern-lg border border-kern-border bg-kern-surface p-4 text-left outline-none transition-colors',
-                'hover:bg-kern-surface-2 focus-visible:ring-2 focus-visible:ring-kern-accent/30',
+                'hover:bg-kern-surface-2 focus-visible:ring-0',
                 'disabled:opacity-50'
               )}
               aria-label="Create Tasks and Projects collection"
@@ -125,7 +131,7 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
               onClick={() => openCreateCollectionModal()}
               className={cn(
                 'flex w-full items-start gap-3 rounded-kern-lg border border-kern-border bg-kern-surface p-4 text-left outline-none transition-colors',
-                'hover:bg-kern-surface-2 focus-visible:ring-2 focus-visible:ring-kern-accent/30',
+                'hover:bg-kern-surface-2 focus-visible:ring-0',
                 'disabled:opacity-50'
               )}
               aria-label="Start from scratch with empty collection"
@@ -139,7 +145,8 @@ export function WelcomeOnboardingModal({ open }: WelcomeOnboardingModalProps) {
               </span>
             </button>
           </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

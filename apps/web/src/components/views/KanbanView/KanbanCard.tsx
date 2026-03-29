@@ -44,7 +44,8 @@ function KanbanCardBody({
       role="button"
       tabIndex={0}
       className={cn(
-        'group relative rounded-kern-lg border border-kern-border bg-white p-3 shadow-sm transition-shadow hover:shadow-md',
+        'group relative rounded-kern-lg border border-kern-border bg-kern-surface-2 p-3 shadow-sm',
+        'transition-[box-shadow,background-color,border-color] hover:border-kern-border-2 hover:bg-ds-bg-3 hover:shadow-md',
         className
       )}
       onClick={onOpen}
@@ -97,7 +98,7 @@ function KanbanCardComponent({
     <button
       type="button"
       ref={setActivatorNodeRef}
-      className="absolute left-2 top-2 z-[1] flex h-6 w-6 cursor-grab items-center justify-center rounded-kern-sm opacity-0 transition-opacity group-hover:opacity-40 active:cursor-grabbing"
+      className="absolute left-2 top-2 z-[1] flex h-6 w-6 cursor-grab items-center justify-center rounded-kern-sm text-kern-text-3 opacity-0 transition-opacity group-hover:opacity-60 active:cursor-grabbing"
       aria-label="Drag to reorder"
       onPointerDown={(e) => e.stopPropagation()}
       onClick={(e) => e.stopPropagation()}

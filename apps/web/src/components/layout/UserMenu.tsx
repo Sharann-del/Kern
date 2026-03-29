@@ -28,10 +28,10 @@ export function UserMenu() {
       <DropdownMenu.Trigger asChild>
         <button
           type="button"
-          className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border-0 bg-transparent p-0 outline-none ring-offset-2 ring-offset-[#222220] transition-opacity duration-[80ms] ease-in-out hover:opacity-90 focus-visible:ring-2 focus-visible:ring-kern-accent/40"
+          className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-[9999px] border-0 bg-transparent p-0 outline-none transition-opacity duration-[80ms] ease-in-out hover:opacity-90 focus-visible:ring-0"
           aria-label="User menu"
         >
-          <Avatar.Root className="flex size-full select-none items-center justify-center overflow-hidden rounded-full bg-kern-accent font-medium text-sm text-kern-on-accent">
+          <Avatar.Root className="flex size-full select-none items-center justify-center overflow-hidden rounded-[9999px] bg-kern-accent font-medium text-sm text-kern-on-accent">
             {avatarUrl ? (
               <Avatar.Image src={avatarUrl} alt="" className="h-full w-full object-cover" />
             ) : null}

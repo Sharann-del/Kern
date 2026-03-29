@@ -21,7 +21,7 @@ const variantClasses: Record<NonNullable<ButtonProps['variant']>, string> = {
   ghost:
     'bg-transparent text-kern-text-2 hover:bg-kern-surface hover:text-kern-text border border-transparent',
   danger:
-    'border border-kern-danger bg-kern-danger text-white shadow-none hover:brightness-110 active:brightness-95 focus-visible:ring-2 focus-visible:ring-kern-danger/55 focus-visible:ring-offset-0',
+    'border border-kern-danger bg-kern-danger text-white shadow-none hover:brightness-110 active:brightness-95 focus-visible:ring-0',
 };
 
 const sizeClasses: Record<NonNullable<ButtonProps['size']>, string> = {
@@ -55,7 +55,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       aria-busy={loading || undefined}
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-kern-md text-sm font-medium transition-colors duration-ds-fast',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/30',
+        'focus-visible:outline-none focus-visible:ring-0',
         'disabled:pointer-events-none disabled:opacity-50',
         variantClasses[variant],
         sizeClasses[size],

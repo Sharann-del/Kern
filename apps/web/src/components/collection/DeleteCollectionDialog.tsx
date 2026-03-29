@@ -90,15 +90,16 @@ function DeleteCollectionDialogInner({
           />
         </AlertDialog.Overlay>
         <AlertDialog.Content forceMount asChild>
-          <motion.div
-            className={cn(
-              'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-md -translate-x-1/2 -translate-y-1/2',
-              'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none'
-            )}
-            variants={VARIANTS.fadeUp}
-            initial="hidden"
-            animate="visible"
-          >
+          <div className="fixed inset-0 z-[201] flex items-center justify-center overflow-y-auto p-4 outline-none">
+            <motion.div
+              className={cn(
+                'relative w-full max-w-md',
+                'rounded-kern-xl border border-kern-border bg-kern-bg p-6 shadow-xl outline-none'
+              )}
+              variants={VARIANTS.fadeUp}
+              initial="hidden"
+              animate="visible"
+            >
           <div className="flex items-start gap-3">
             {iconBlock}
             <div className="min-w-0 flex-1">
@@ -146,7 +147,8 @@ function DeleteCollectionDialogInner({
               </Button>
             </AlertDialog.Action>
           </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </AlertDialog.Content>
       </AlertDialog.Portal>
     </AlertDialog.Root>

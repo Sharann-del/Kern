@@ -47,16 +47,22 @@ export function LinkUrlDialog({
           />
         </Dialog.Overlay>
         <Dialog.Content forceMount asChild>
-          <motion.div
+          <div
             className={cn(
-              'fixed left-1/2 top-1/2 z-[201] m-4 w-full max-w-sm -translate-x-1/2 -translate-y-1/2',
-              'rounded-kern-xl border border-kern-border bg-kern-bg p-5 shadow-xl outline-none',
+              'fixed inset-0 z-[201] flex items-center justify-center overflow-y-auto p-4 outline-none',
               !open && 'pointer-events-none'
             )}
-            variants={VARIANTS.fadeUp}
-            initial="hidden"
-            animate={open ? 'visible' : 'hidden'}
           >
+            <motion.div
+              className={cn(
+                'relative w-full max-w-sm',
+                'rounded-kern-xl border border-kern-border bg-kern-bg p-5 shadow-xl outline-none',
+                !open && 'pointer-events-none'
+              )}
+              variants={VARIANTS.fadeUp}
+              initial="hidden"
+              animate={open ? 'visible' : 'hidden'}
+            >
           <Dialog.Title className="text-base font-semibold text-kern-text">Link URL</Dialog.Title>
           <Dialog.Description className="mt-1 text-sm text-kern-text-2">
             Enter a web address. Include <span className="font-mono text-xs">https://</span> when
@@ -101,7 +107,8 @@ export function LinkUrlDialog({
               Save
             </Button>
           </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

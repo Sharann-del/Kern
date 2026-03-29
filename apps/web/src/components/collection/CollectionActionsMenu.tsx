@@ -12,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Button } from '@/components/ui/Button';
 import { exportCollectionAsCSV } from '@/lib/export-collection-csv';
 import { describeFunctionsInvokeError } from '@/lib/functions-invoke';
 import { edgeFunctionForLiveSource } from '@/lib/live-source-sync';
@@ -62,9 +61,13 @@ export function CollectionActionsMenu({ collection, onOpenConnectLiveSource }: C
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" aria-label="Collection actions">
-            <MoreHorizontal size={18} />
-          </Button>
+          <button
+            type="button"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-none bg-kern-surface-2 text-kern-text-2 transition-colors hover:bg-kern-surface hover:text-kern-text focus-visible:outline-none focus-visible:ring-0"
+            aria-label="Collection actions"
+          >
+            <MoreHorizontal size={16} strokeWidth={2} aria-hidden />
+          </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onSelect={() => setEditOpen(true)}>Edit collection</DropdownMenuItem>

@@ -53,10 +53,10 @@ function AddViewPopover({
           className={cn(
             'flex shrink-0 items-center gap-1 transition-colors',
             topbarAccent &&
-              'rounded-md px-3 py-2 text-sm font-medium text-kern-accent/90 hover:bg-white/[0.06] hover:text-kern-accent',
+              'rounded-none px-3 py-2 text-sm font-medium text-kern-accent/90 hover:bg-white/[0.06] hover:text-kern-accent',
             boxed &&
               !topbarAccent &&
-              'rounded-[4px] px-2 py-1 text-[11px] font-medium text-[#A8A89E] hover:bg-[#353533]/80 hover:text-[#F5F4F0]',
+              'px-2 py-1 text-[11px] font-medium text-[#A8A89E] hover:bg-[#353533]/80 hover:text-[#F5F4F0]',
             !boxed && !topbarAccent && 'border-b-2 border-transparent px-3 py-2 text-sm text-kern-text-2 hover:text-kern-text'
           )}
         >
@@ -141,10 +141,10 @@ export function CollectionViewTabs({
       className={cn(
         'flex min-w-0 items-stretch overflow-x-auto',
         topbarAccent &&
-          'pointer-events-auto max-w-[min(100vw-10rem,640px)] shrink-0 gap-1 rounded-lg bg-black/35 p-1',
+          'pointer-events-auto max-w-[min(100vw-10rem,640px)] shrink-0 gap-1 rounded-none bg-black/35 p-1',
         boxed &&
           !topbarAccent &&
-          'shrink-0 gap-0.5 rounded-[6px] border border-[#3f3f3c] bg-[#2c2c2a] p-0.5',
+          'shrink-0 gap-0.5 border border-[#3f3f3c] bg-[#2c2c2a] p-0.5',
         !boxed && !topbarAccent && 'flex-1 items-stretch'
       )}
     >
@@ -167,9 +167,9 @@ export function CollectionViewTabs({
               <input
                 autoFocus
                 className={cn(
-                  'rounded-kern-sm border px-2 py-1 outline-none focus-visible:ring-2 focus-visible:ring-kern-accent/30',
+                  'rounded-kern-sm border px-2 py-1 outline-none focus-visible:ring-0',
                   topbarAccent &&
-                    'mx-0.5 my-0.5 w-[min(200px,40vw)] border-0 bg-[#1a1a18] text-sm text-[#F5F4F0] focus-visible:ring-2 focus-visible:ring-kern-accent/35',
+                    'mx-0.5 my-0.5 w-[min(200px,40vw)] border-0 bg-[#1a1a18] text-sm text-[#F5F4F0] focus-visible:ring-0',
                   boxed &&
                     !topbarAccent &&
                     'mx-0.5 my-0.5 w-[100px] border-kern-border bg-kern-bg text-[11px] text-kern-text',
@@ -192,7 +192,7 @@ export function CollectionViewTabs({
                   'flex max-w-[148px] items-center gap-1.5 transition-colors',
                   topbarAccent &&
                     cn(
-                      'max-w-[200px] gap-2 rounded-md px-3 py-2 text-sm',
+                      'max-w-[200px] gap-2 rounded-none px-3 py-2 text-sm',
                       active
                         ? 'bg-[#32322f] font-semibold text-kern-accent'
                         : 'text-[#A8A89E] hover:bg-white/[0.06] hover:text-kern-accent'
@@ -200,7 +200,7 @@ export function CollectionViewTabs({
                   boxed &&
                     !topbarAccent &&
                     cn(
-                      'rounded-[4px] px-2 py-1 text-[11px]',
+                      'px-2 py-1 text-[11px]',
                       active
                         ? 'bg-[#353533] font-medium text-[#F5F4F0]'
                         : 'text-[#A8A89E] hover:bg-[#353533]/60 hover:text-[#F5F4F0]'
