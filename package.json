@@ -1,9 +1,15 @@
 {
   "name": "kern-monorepo",
   "private": true,
+  "packageManager": "pnpm@10.26.1",
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
-    "web": "pnpm --filter web dev"
+    "web": "pnpm --filter web dev",
+    "desktop": "pnpm --filter desktop tauri dev",
+    "desktop:build": "pnpm --filter desktop tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.10.1"
   }
 }

@@ -7,14 +7,19 @@ import { DeleteCollectionDialog } from '@/components/collection/DeleteCollection
 import { EditCollectionModal } from '@/components/collection/EditCollectionModal';
 import { CommandPalette } from '@/components/layout/CommandPalette';
 import { RowEditorPanel } from '@/components/layout/RowEditorPanel';
-import { LAYOUT_TOPBAR_PX } from '@/components/layout/layoutConstants';
+import {
+  LAYOUT_DESKTOP_TITLEBAR_PX,
+  LAYOUT_TOPBAR_PX,
+} from '@/components/layout/layoutConstants';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { TitleBar } from '@/components/layout/TitleBar';
 import { Topbar } from '@/components/layout/Topbar';
 import { CollectionChromeProvider } from '@/contexts/CollectionChromeContext';
 import { WelcomeOnboardingModal } from '@/components/onboarding/WelcomeOnboardingModal';
 import { KeyboardShortcutsModal } from '@/components/ui/KeyboardShortcutsModal';
 import { useCollections } from '@/hooks/useCollections';
 import { useAuth } from '@/providers/AuthProvider';
+import { isDesktop } from '@/lib/platform';
 import { useAppStore } from '@/stores/appStore';
 
 function isEditableTarget(target: EventTarget | null): boolean {
@@ -163,15 +168,19 @@ export function AppShell() {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [openPalette, openCreateCollectionModal, toggleSidebar]);
 
+  const shellTopInset =
+    LAYOUT_TOPBAR_PX + (isDesktop ? LAYOUT_DESKTOP_TITLEBAR_PX : 0);
+
   return (
     <CollectionChromeProvider>
       <div className="flex min-h-screen flex-col bg-kern-bg">
+        {isDesktop ? <TitleBar /> : null}
         <Topbar />
         <div
           className="flex min-h-0 w-full overflow-hidden"
           style={{
-            marginTop: LAYOUT_TOPBAR_PX,
-            height: `calc(100vh - ${LAYOUT_TOPBAR_PX}px)`,
+            marginTop: shellTopInset,
+            height: `calc(100vh - ${shellTopInset}px)`,
           }}
         >
           <Sidebar />

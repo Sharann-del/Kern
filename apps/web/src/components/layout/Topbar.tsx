@@ -2,6 +2,7 @@ import { Menu } from 'lucide-react';
 
 import { UserMenu } from '@/components/layout/UserMenu';
 import { useCollectionChromeNodeOptional } from '@/contexts/CollectionChromeContext';
+import { isDesktop } from '@/lib/platform';
 import { cn } from '@/lib/utils';
 import { useAppStore } from '@/stores/appStore';
 
@@ -22,7 +23,8 @@ export function Topbar() {
   return (
     <header
       className={cn(
-        'fixed left-0 right-0 top-0 z-50 grid min-h-[var(--layout-topbar-h)] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 border-b border-[#2A2A28] bg-[#222220] box-border px-2 py-1 sm:px-3'
+        'fixed left-0 right-0 z-50 grid min-h-[var(--layout-topbar-h)] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 border-b border-[#2A2A28] bg-[#222220] box-border px-2 py-1 sm:px-3',
+        isDesktop ? 'top-7' : 'top-0'
       )}
     >
       <div className="flex min-w-0 items-center gap-2">
