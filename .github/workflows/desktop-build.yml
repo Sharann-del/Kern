@@ -20,6 +20,10 @@ jobs:
     env:
       # Quieter on runners moving default to Node 24 (see GitHub Actions changelog).
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      # Embedded web build reads these at compile time (no .env.local on runners). If unset,
+      # @supabase/supabase-js throws at import → blank window in the packaged app.
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
     strategy:
       fail-fast: false
       matrix:
@@ -69,6 +73,14 @@ jobs:
 
       - name: Install JS dependencies
         run: pnpm install
+
+      - name: Require Supabase Vite env for bundle
+        shell: bash
+        run: |
+          if [[ -z "${VITE_SUPABASE_URL:-}" || -z "${VITE_SUPABASE_ANON_KEY:-}" ]]; then
+            echo "::error::Add repository secrets VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (same as apps/web/.env.local). Without them the web bundle crashes at startup and the desktop app shows a blank window."
+            exit 1
+          fi
 
       - name: Build Tauri bundles
         run: pnpm --filter desktop run build
