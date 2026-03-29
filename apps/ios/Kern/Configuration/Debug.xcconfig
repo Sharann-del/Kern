@@ -1,0 +1,3 @@
+// Supabase keys: copy Secrets.xcconfig.example → Secrets.xcconfig (gitignored) and fill in values.
+// Do not set SUPABASE_* in the Xcode target — that would override this file.
+#include? "Secrets.xcconfig"

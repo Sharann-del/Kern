@@ -1,0 +1,402 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B01 /* KernApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F01 /* KernApp.swift */; };
+		B02 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F02 /* AppModel.swift */; };
+		B03 /* KernModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = F03 /* KernModels.swift */; };
+		B04 /* KernTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F04 /* KernTheme.swift */; };
+		B05 /* KernButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05 /* KernButton.swift */; };
+		B06 /* KernTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F06 /* KernTextField.swift */; };
+		B07 /* AuthViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07 /* AuthViews.swift */; };
+		B08 /* ShellViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08 /* ShellViews.swift */; };
+		B09 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09 /* DashboardView.swift */; };
+		B0A /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0A /* CollectionDetailView.swift */; };
+		B0B /* ViewRenderers.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0B /* ViewRenderers.swift */; };
+		B0C /* RowEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0C /* RowEditorSheet.swift */; };
+		B0D /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0D /* SettingsView.swift */; };
+		B0E /* CommandSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E /* CommandSearchView.swift */; };
+		B0F /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0F /* DataService.swift */; };
+		B10 /* Filtering.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10 /* Filtering.swift */; };
+		B11 /* DateParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11 /* DateParsing.swift */; };
+		B12 /* OAuthBrandGlyphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13 /* OAuthBrandGlyphs.swift */; };
+		BRES1 /* DMSansVariable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FFONT1 /* DMSansVariable.ttf */; };
+		BRES2 /* Canela-Regular-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = FFONT2 /* Canela-Regular-Trial.otf */; };
+		BRES3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F14 /* Assets.xcassets */; };
+		BFSP /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = SPDB /* Supabase */; };
+		BFSVG /* SVGPath in Frameworks */ = {isa = PBXBuildFile; productRef = SPGSVG /* SVGPath */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		F01 /* KernApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernApp.swift; sourceTree = "<group>"; };
+		F02 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F03 /* KernModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernModels.swift; sourceTree = "<group>"; };
+		F04 /* KernTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernTheme.swift; sourceTree = "<group>"; };
+		F05 /* KernButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernButton.swift; sourceTree = "<group>"; };
+		F06 /* KernTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernTextField.swift; sourceTree = "<group>"; };
+		F07 /* AuthViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViews.swift; sourceTree = "<group>"; };
+		F08 /* ShellViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShellViews.swift; sourceTree = "<group>"; };
+		F09 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		F0A /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
+		F0B /* ViewRenderers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRenderers.swift; sourceTree = "<group>"; };
+		F0C /* RowEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RowEditorSheet.swift; sourceTree = "<group>"; };
+		F0D /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F0E /* CommandSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandSearchView.swift; sourceTree = "<group>"; };
+		F0F /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
+		F10 /* Filtering.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filtering.swift; sourceTree = "<group>"; };
+		F11 /* DateParsing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateParsing.swift; sourceTree = "<group>"; };
+		F13 /* OAuthBrandGlyphs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthBrandGlyphs.swift; sourceTree = "<group>"; };
+		F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F14 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FFONT1 /* DMSansVariable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DMSansVariable.ttf; sourceTree = "<group>"; };
+		FFONT2 /* Canela-Regular-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Canela-Regular-Trial.otf"; sourceTree = "<group>"; };
+		PROD /* Kern.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kern.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		XC1 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		XC2 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		XC3 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		XC4 /* Secrets.xcconfig.example */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FR1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BFSP /* Supabase in Frameworks */,
+				BFSVG /* SVGPath in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GCONF /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				XC1 /* Debug.xcconfig */,
+				XC2 /* Release.xcconfig */,
+				XC3 /* Secrets.xcconfig */,
+				XC4 /* Secrets.xcconfig.example */,
+			);
+			path = Configuration;
+			sourceTree = "<group>";
+		};
+		GFONTS /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				FFONT1 /* DMSansVariable.ttf */,
+				FFONT2 /* Canela-Regular-Trial.otf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		GRES /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				GFONTS /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		GKERN /* Kern */ = {
+			isa = PBXGroup;
+			children = (
+				F14 /* Assets.xcassets */,
+				GRES /* Resources */,
+				F01 /* KernApp.swift */,
+				F02 /* AppModel.swift */,
+				F03 /* KernModels.swift */,
+				F04 /* KernTheme.swift */,
+				F05 /* KernButton.swift */,
+				F06 /* KernTextField.swift */,
+				F07 /* AuthViews.swift */,
+				F08 /* ShellViews.swift */,
+				F09 /* DashboardView.swift */,
+				F0A /* CollectionDetailView.swift */,
+				F0B /* ViewRenderers.swift */,
+				F0C /* RowEditorSheet.swift */,
+				F0D /* SettingsView.swift */,
+				F0E /* CommandSearchView.swift */,
+				F0F /* DataService.swift */,
+				F10 /* Filtering.swift */,
+				F11 /* DateParsing.swift */,
+				F13 /* OAuthBrandGlyphs.swift */,
+				F12 /* Info.plist */,
+			);
+			path = Kern;
+			sourceTree = "<group>";
+		};
+		GPROD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				PROD /* Kern.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GROOT = {
+			isa = PBXGroup;
+			children = (
+				GCONF /* Configuration */,
+				GKERN /* Kern */,
+				GPROD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TARGET1 /* Kern */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CLT /* Build configuration list for PBXNativeTarget "Kern" */;
+			buildPhases = (
+				SRC1 /* Sources */,
+				FR1 /* Frameworks */,
+				RES1 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Kern;
+			packageProductDependencies = (
+				SPDB /* Supabase */,
+				SPGSVG /* SVGPath */,
+			);
+			productName = Kern;
+			productReference = PROD /* Kern.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJECT1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					TARGET1 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = CLP /* Build configuration list for PBXProject "Kern" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GROOT;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				PKGREF /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				PKGSVG /* XCRemoteSwiftPackageReference "SVGPath" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = GPROD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TARGET1 /* Kern */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		RES1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BRES3 /* Assets.xcassets in Resources */,
+				BRES1 /* DMSansVariable.ttf in Resources */,
+				BRES2 /* Canela-Regular-Trial.otf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		SRC1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B01 /* KernApp.swift in Sources */,
+				B02 /* AppModel.swift in Sources */,
+				B03 /* KernModels.swift in Sources */,
+				B04 /* KernTheme.swift in Sources */,
+				B05 /* KernButton.swift in Sources */,
+				B06 /* KernTextField.swift in Sources */,
+				B07 /* AuthViews.swift in Sources */,
+				B08 /* ShellViews.swift in Sources */,
+				B09 /* DashboardView.swift in Sources */,
+				B0A /* CollectionDetailView.swift in Sources */,
+				B0B /* ViewRenderers.swift in Sources */,
+				B0C /* RowEditorSheet.swift in Sources */,
+				B0D /* SettingsView.swift in Sources */,
+				B0E /* CommandSearchView.swift in Sources */,
+				B0F /* DataService.swift in Sources */,
+				B10 /* Filtering.swift in Sources */,
+				B11 /* DateParsing.swift in Sources */,
+				B12 /* OAuthBrandGlyphs.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		PCDBG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		PCREL /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		TCDEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = XC1 /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NAYF92A6NM;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Kern/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = kern;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = sharann.kern;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		TCREL /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = XC2 /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NAYF92A6NM;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Kern/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = kern;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = sharann.kern;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CLP /* Build configuration list for PBXProject "Kern" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				PCDBG /* Debug */,
+				PCREL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CLT /* Build configuration list for PBXNativeTarget "Kern" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				TCDEBUG /* Debug */,
+				TCREL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		PKGREF /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		PKGSVG /* XCRemoteSwiftPackageReference "SVGPath" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nicklockwood/SVGPath";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		SPDB /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKGREF /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		SPGSVG /* SVGPath */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKGSVG /* XCRemoteSwiftPackageReference "SVGPath" */;
+			productName = SVGPath;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = PROJECT1 /* Project object */;
+}

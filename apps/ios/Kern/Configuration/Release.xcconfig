@@ -1,0 +1,2 @@
+// Release builds use the same Supabase secrets as Debug.
+#include? "Secrets.xcconfig"

@@ -1,1 +1,3 @@
 node_modules
+bin/
+apps/ios/Kern/Configuration/Secrets.xcconfig

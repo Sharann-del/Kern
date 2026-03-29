@@ -7,7 +7,11 @@
     "build": "pnpm --filter web build",
     "web": "pnpm --filter web dev",
     "desktop": "pnpm --filter desktop run dev",
-    "desktop:build": "pnpm --filter desktop run build"
+    "desktop:build": "pnpm --filter desktop run build",
+    "tui:build": "cd apps/tui && go build -o ../../bin/kern .",
+    "tui:run": "cd apps/tui && go run .",
+    "tui:install": "cd apps/tui && go build -o \"$(go env GOPATH)/bin/kern\" .",
+    "ios:open": "open apps/ios/Kern/Kern.xcodeproj"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.10.1"
