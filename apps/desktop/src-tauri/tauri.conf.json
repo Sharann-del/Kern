@@ -28,7 +28,19 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["dmg", "nsis", "msi", "deb", "appimage"],
-    "icon": ["icons/icon.png"]
+    "publisher": "Kern",
+    "copyright": "Copyright © Kern",
+    "shortDescription": "Kern",
+    "longDescription": "Kern — personal data operating system.",
+    "targets": ["dmg", "nsis", "msi", "deb"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/64x64.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico",
+      "icons/icon.png"
+    ]
   }
 }

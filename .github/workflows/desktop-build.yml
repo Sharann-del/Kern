@@ -84,9 +84,9 @@ jobs:
         run: |
           set -euo pipefail
           if [[ -n "${{ matrix.target }}" ]]; then
-            pnpm --filter desktop exec tauri build --target "${{ matrix.target }}"
+            pnpm --filter desktop run build -- --target "${{ matrix.target }}"
           else
-            pnpm --filter desktop exec tauri build
+            pnpm --filter desktop run build
           fi
 
       - name: List bundle output

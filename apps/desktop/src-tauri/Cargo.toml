@@ -1,12 +1,12 @@
 [package]
-name = "tauri-app"
+name = "kern-desktop"
 version = "0.1.0"
-description = "Kern desktop shell"
+description = "Kern desktop application"
 authors = ["you"]
 edition = "2021"
 
 [lib]
-name = "tauri_app_lib"
+name = "kern_desktop_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
