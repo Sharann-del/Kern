@@ -21,6 +21,20 @@
                ReferencedContainer = "container:Kern.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "TARGETEXT"
+               BuildableName = "KernLiveActivity.appex"
+               BlueprintName = "KernLiveActivity"
+               ReferencedContainer = "container:Kern.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction

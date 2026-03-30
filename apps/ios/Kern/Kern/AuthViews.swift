@@ -117,11 +117,12 @@ private struct AuthOAuthSection: View {
     ) -> some View {
         Button(action: action) {
             HStack(spacing: 10) {
+                Spacer(minLength: 0)
                 icon()
                 Text(title)
                     .font(KernFont.ui(14, weight: .medium))
                     .foregroundStyle(theme.text)
-                Spacer()
+                Spacer(minLength: 0)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 10)

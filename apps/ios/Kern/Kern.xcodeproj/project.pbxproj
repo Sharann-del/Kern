@@ -25,12 +25,43 @@
 		B10 /* Filtering.swift in Sources */ = {isa = PBXBuildFile; fileRef = F10 /* Filtering.swift */; };
 		B11 /* DateParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11 /* DateParsing.swift */; };
 		B12 /* OAuthBrandGlyphs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13 /* OAuthBrandGlyphs.swift */; };
+		BATTRK /* CalendarLiveActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FATTR /* CalendarLiveActivityAttributes.swift */; };
+		BMGR /* CalendarLiveActivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FMGR /* CalendarLiveActivityManager.swift */; };
+		BATTRX /* CalendarLiveActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = FATTR /* CalendarLiveActivityAttributes.swift */; };
+		BBND /* KernLiveActivityBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBND /* KernLiveActivityBundle.swift */; };
+		BWGT /* CalendarLiveActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = FWGT /* CalendarLiveActivityWidget.swift */; };
+		BWXA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FWXA /* Assets.xcassets */; };
+		BEMB /* KernLiveActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = PRODEXT /* KernLiveActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BRES1 /* DMSansVariable.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FFONT1 /* DMSansVariable.ttf */; };
 		BRES2 /* Canela-Regular-Trial.otf in Resources */ = {isa = PBXBuildFile; fileRef = FFONT2 /* Canela-Regular-Trial.otf */; };
 		BRES3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F14 /* Assets.xcassets */; };
 		BFSP /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = SPDB /* Supabase */; };
 		BFSVG /* SVGPath in Frameworks */ = {isa = PBXBuildFile; productRef = SPGSVG /* SVGPath */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CPX1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PROJECT1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = TARGETEXT;
+			remoteInfo = KernLiveActivity;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		EMB1 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BEMB /* KernLiveActivity.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		F01 /* KernApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernApp.swift; sourceTree = "<group>"; };
@@ -53,9 +84,16 @@
 		F13 /* OAuthBrandGlyphs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthBrandGlyphs.swift; sourceTree = "<group>"; };
 		F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F14 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FATTR /* CalendarLiveActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLiveActivityAttributes.swift; sourceTree = "<group>"; };
+		FMGR /* CalendarLiveActivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLiveActivityManager.swift; sourceTree = "<group>"; };
+		FBND /* KernLiveActivityBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KernLiveActivityBundle.swift; sourceTree = "<group>"; };
+		FWGT /* CalendarLiveActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLiveActivityWidget.swift; sourceTree = "<group>"; };
+		FEXTPLIST /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FWXA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FFONT1 /* DMSansVariable.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = DMSansVariable.ttf; sourceTree = "<group>"; };
 		FFONT2 /* Canela-Regular-Trial.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Canela-Regular-Trial.otf"; sourceTree = "<group>"; };
 		PROD /* Kern.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Kern.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		PRODEXT /* KernLiveActivity.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = KernLiveActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		XC1 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		XC2 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		XC3 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
@@ -69,6 +107,13 @@
 			files = (
 				BFSP /* Supabase in Frameworks */,
 				BFSVG /* SVGPath in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FREXT /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +148,17 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		GLIVE /* KernLiveActivity */ = {
+			isa = PBXGroup;
+			children = (
+				FBND /* KernLiveActivityBundle.swift */,
+				FWGT /* CalendarLiveActivityWidget.swift */,
+				FEXTPLIST /* Info.plist */,
+				FWXA /* Assets.xcassets */,
+			);
+			path = KernLiveActivity;
+			sourceTree = "<group>";
+		};
 		GKERN /* Kern */ = {
 			isa = PBXGroup;
 			children = (
@@ -126,6 +182,8 @@
 				F10 /* Filtering.swift */,
 				F11 /* DateParsing.swift */,
 				F13 /* OAuthBrandGlyphs.swift */,
+				FATTR /* CalendarLiveActivityAttributes.swift */,
+				FMGR /* CalendarLiveActivityManager.swift */,
 				F12 /* Info.plist */,
 			);
 			path = Kern;
@@ -135,6 +193,7 @@
 			isa = PBXGroup;
 			children = (
 				PROD /* Kern.app */,
+				PRODEXT /* KernLiveActivity.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,6 +203,7 @@
 			children = (
 				GCONF /* Configuration */,
 				GKERN /* Kern */,
+				GLIVE /* KernLiveActivity */,
 				GPROD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -158,10 +218,12 @@
 				SRC1 /* Sources */,
 				FR1 /* Frameworks */,
 				RES1 /* Resources */,
+				EMB1 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				TD1 /* PBXTargetDependency */,
 			);
 			name = Kern;
 			packageProductDependencies = (
@@ -171,6 +233,25 @@
 			productName = Kern;
 			productReference = PROD /* Kern.app */;
 			productType = "com.apple.product-type.application";
+		};
+		TARGETEXT /* KernLiveActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CLTEXT /* Build configuration list for PBXNativeTarget "KernLiveActivity" */;
+			buildPhases = (
+				SRCEXT /* Sources */,
+				FREXT /* Frameworks */,
+				RESEXT /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KernLiveActivity;
+			packageProductDependencies = (
+			);
+			productName = KernLiveActivity;
+			productReference = PRODEXT /* KernLiveActivity.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -183,6 +264,9 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					TARGET1 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+					TARGETEXT = {
 						CreatedOnToolsVersion = 16.0;
 					};
 				};
@@ -206,6 +290,7 @@
 			projectRoot = "";
 			targets = (
 				TARGET1 /* Kern */,
+				TARGETEXT /* KernLiveActivity */,
 			);
 		};
 /* End PBXProject section */
@@ -218,6 +303,14 @@
 				BRES3 /* Assets.xcassets in Resources */,
 				BRES1 /* DMSansVariable.ttf in Resources */,
 				BRES2 /* Canela-Regular-Trial.otf in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		RESEXT /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BWXA /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,10 +339,30 @@
 				B10 /* Filtering.swift in Sources */,
 				B11 /* DateParsing.swift in Sources */,
 				B12 /* OAuthBrandGlyphs.swift in Sources */,
+				BATTRK /* CalendarLiveActivityAttributes.swift in Sources */,
+				BMGR /* CalendarLiveActivityManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		SRCEXT /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BATTRX /* CalendarLiveActivityAttributes.swift in Sources */,
+				BBND /* KernLiveActivityBundle.swift in Sources */,
+				BWGT /* CalendarLiveActivityWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		TD1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = TARGETEXT /* KernLiveActivity */;
+			targetProxy = CPX1 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		PCDBG /* Debug */ = {
@@ -343,6 +456,60 @@
 			};
 			name = Release;
 		};
+		TCEXTDBG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = XC1 /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NAYF92A6NM;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KernLiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Kern Live Activity";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = sharann.kern.liveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		TCEXTREL /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = XC2 /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NAYF92A6NM;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = KernLiveActivity/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Kern Live Activity";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = sharann.kern.liveactivity;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -360,6 +527,15 @@
 			buildConfigurations = (
 				TCDEBUG /* Debug */,
 				TCREL /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CLTEXT /* Build configuration list for PBXNativeTarget "KernLiveActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				TCEXTDBG /* Debug */,
+				TCEXTREL /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

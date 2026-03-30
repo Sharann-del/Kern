@@ -1,8 +1,12 @@
+import EventKit
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @Bindable var app: AppModel
     @Environment(\.kernTheme) private var theme
+    @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
     @State private var mcpResult: String?
     @State private var mcpError: String?
     @State private var testing = false
@@ -30,6 +34,53 @@ struct SettingsView: View {
                 .padding(16)
                 .background(theme.bg1)
                 .overlay(Rectangle().stroke(theme.border, lineWidth: 1))
+
+                sectionTitle("Calendar Live Activities")
+                Text("Shows Live Activities on the Lock Screen and Dynamic Island for Apple Calendar events that are happening now. Open Kern (or return to the app) after a meeting starts so it can start the activity. Up to eight overlapping events at once.")
+                    .font(KernFont.body(14))
+                    .foregroundStyle(theme.text2)
+
+                Toggle(isOn: Binding(
+                    get: { KernCalendarLiveActivityPreferences.isLiveActivitiesEnabled },
+                    set: { v in
+                        KernCalendarLiveActivityPreferences.isLiveActivitiesEnabled = v
+                        Task {
+                            if v {
+                                _ = await CalendarLiveActivityManager.shared.requestCalendarAccess()
+                                await CalendarLiveActivityManager.shared.syncWithCalendar()
+                            } else {
+                                await CalendarLiveActivityManager.shared.disableAndEndAll()
+                            }
+                        }
+                    }
+                )) {
+                    Text("Show Live Activities for current events")
+                        .font(KernFont.body(15))
+                        .foregroundStyle(theme.text)
+                }
+                .tint(theme.accent)
+                .padding(16)
+                .background(theme.bg1)
+                .overlay(Rectangle().stroke(theme.border, lineWidth: 1))
+
+                Text(calendarAuthorizationLabel)
+                    .font(KernFont.body(13))
+                    .foregroundStyle(theme.text2)
+
+                HStack(spacing: 12) {
+                    KernButton(title: "Allow calendar access", variant: .secondary) {
+                        Task {
+                            _ = await CalendarLiveActivityManager.shared.requestCalendarAccess()
+                            await CalendarLiveActivityManager.shared.syncWithCalendar()
+                        }
+                    }
+                    KernButton(title: "Open Settings", variant: .ghost) {
+                        if let u = URL(string: UIApplication.openSettingsURLString) {
+                            openURL(u)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 sectionTitle("Claude MCP integration")
                 Text("Test the kern-mcp Edge function with your session (same flow as the web app).")
@@ -87,6 +138,31 @@ struct SettingsView: View {
         }
         .kernNoOverscroll([.vertical])
         .background(theme.bg0)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                calendarAuthRefreshTrigger &+= 1
+            }
+        }
+    }
+
+    @State private var calendarAuthRefreshTrigger = 0
+
+    private var calendarAuthorizationLabel: String {
+        _ = calendarAuthRefreshTrigger
+        switch EKEventStore.authorizationStatus(for: .event) {
+        case .notDetermined:
+            return "Calendar access: not requested yet."
+        case .restricted:
+            return "Calendar access: restricted on this device."
+        case .denied:
+            return "Calendar access: denied. Use Open Settings to allow full access."
+        case .fullAccess:
+            return "Calendar access: full — in‑progress events can appear as Live Activities when enabled above."
+        case .writeOnly:
+            return "Calendar access: write only. Kern needs full access to read your events — use Open Settings."
+        @unknown default:
+            return "Calendar access: unknown status."
+        }
     }
 
     private func sectionTitle(_ s: String) -> some View {

@@ -18,6 +18,7 @@ struct KernApp: App {
 struct RootView: View {
     @Bindable var app: AppModel
     @Environment(\.kernTheme) private var theme
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Group {
@@ -38,6 +39,13 @@ struct RootView: View {
             }
         }
         .environment(\.kernTheme, KernThemeColors.palette(isLight: app.session != nil ? app.isLightTheme : false))
+        .onAppear {
+            Task { await CalendarLiveActivityManager.shared.syncWithCalendar() }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
+            Task { await CalendarLiveActivityManager.shared.syncWithCalendar() }
+        }
     }
 
     private var missingConfigView: some View {
