@@ -11,22 +11,6 @@ struct DashboardView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                HStack {
-                    Text("Dashboard")
-                        .font(KernFont.ui(22, weight: .semibold))
-                        .foregroundStyle(theme.text)
-                    Spacer()
-                    Button {
-                        addPresented = true
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 22))
-                            .foregroundStyle(theme.accent)
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-
                 if loading {
                     ProgressView()
                         .tint(theme.text3)
@@ -54,6 +38,41 @@ struct DashboardView: View {
                 }
             }
             .padding(.bottom, 24)
+        }
+        .safeAreaInset(edge: .top) {
+            VStack(spacing: 0) {
+                HStack(spacing: 16) {
+                    Button {
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.88)) { app.toggleSidebar() }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(theme.text2)
+                            .frame(width: 32, height: 32)
+                            .border(theme.border, width: 1)
+                    }
+                    .buttonStyle(.plain)
+
+                    Text("Dashboard")
+                        .font(KernFont.display(34))
+                        .foregroundStyle(theme.text)
+                    Spacer()
+                    Button {
+                        addPresented = true
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(theme.accent)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(theme.bg0)
+                
+                Rectangle()
+                    .fill(theme.border)
+                    .frame(height: 1)
+            }
         }
         .kernNoOverscroll([.vertical])
         .task { await load() }

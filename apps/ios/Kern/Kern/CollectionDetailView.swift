@@ -49,54 +49,72 @@ struct CollectionDetailView: View {
 
     @ViewBuilder
     private var content: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            viewTabs
-            searchBar
-            if let v = activeView, let c = collection {
-                viewBody(view: v, collection: c)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                viewTabs
+                searchBar
+                if let v = activeView, let c = collection {
+                    viewBody(view: v, collection: c)
+                        .frame(maxWidth: .infinity, minHeight: 400)
+                }
+            }
+        }
+        .safeAreaInset(edge: .top) {
+            VStack(spacing: 0) {
+                HStack(spacing: 16) {
+                    Button {
+                        withAnimation(.spring(response: 0.45, dampingFraction: 0.88)) { app.toggleSidebar() }
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(theme.text2)
+                            .frame(width: 32, height: 32)
+                            .border(theme.border, width: 1)
+                    }
+                    .buttonStyle(.plain)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(collection?.name ?? "")
+                            .font(KernFont.display(34))
+                            .foregroundStyle(theme.text)
+                        if let d = collection?.description, !d.isEmpty {
+                            Text(d)
+                                .font(KernFont.body(14))
+                                .foregroundStyle(theme.text3)
+                        }
+                    }
+                    Spacer()
+                    Menu {
+                        Button("Add field") {
+                            newFieldName = ""
+                            addFieldPresented = true
+                        }
+                        Button("Add row (quick)") {
+                            Task { await createEmptyRow() }
+                        }
+                        Button("New row…") {
+                            guard let col = collection else { return }
+                            onOpenRow(col.id, nil, fields)
+                        }
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(theme.accent)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(theme.bg0)
+                
+                Rectangle()
+                    .fill(theme.border)
+                    .frame(height: 1)
             }
         }
         .sheet(isPresented: $addFieldPresented) {
             addFieldSheet
                 .kernSharpSheetChrome(theme)
         }
-    }
-
-    private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(collection?.name ?? "")
-                    .font(KernFont.ui(20, weight: .semibold))
-                    .foregroundStyle(theme.text)
-                if let d = collection?.description, !d.isEmpty {
-                    Text(d)
-                        .font(KernFont.body(13))
-                        .foregroundStyle(theme.text3)
-                }
-            }
-            Spacer()
-            Menu {
-                Button("Add field") {
-                    newFieldName = ""
-                    addFieldPresented = true
-                }
-                Button("Add row (quick)") {
-                    Task { await createEmptyRow() }
-                }
-                Button("New row…") {
-                    guard let col = collection else { return }
-                    onOpenRow(col.id, nil, fields)
-                }
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(.system(size: 24))
-                    .foregroundStyle(theme.accent)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
     }
 
     private var viewTabs: some View {

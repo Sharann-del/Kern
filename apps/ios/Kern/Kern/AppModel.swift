@@ -13,7 +13,7 @@ final class AppModel {
     var profile: KernProfile?
     var collections: [KernCollection] = []
     var collectionsLoading = false
-    var sidebarCollapsed = false
+    var sidebarCollapsed = true
     var activeCollectionSlug: String?
     var commandSearchPresented = false
 
@@ -30,13 +30,14 @@ final class AppModel {
             supabaseKey: key,
             options: SupabaseClientOptions(
                 auth: SupabaseClientOptions.AuthOptions(
+                    storage: UserDefaultsAuthStorage(suiteName: "group.sharann.kern"),
                     redirectToURL: redirect,
                     emitLocalSessionAsInitialSession: true
                 )
             )
         )
         data = DataService(client: supabase)
-        sidebarCollapsed = false
+        sidebarCollapsed = true
         Task { await listenAuth() }
     }
 

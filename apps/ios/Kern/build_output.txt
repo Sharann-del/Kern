@@ -1,0 +1,213 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Kern.xcodeproj -scheme Kern -destination generic/platform=iOS -configuration Debug build
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  swift-http-types: https://github.com/apple/swift-http-types.git @ 1.5.1
+  Supabase: https://github.com/supabase/supabase-swift @ 2.43.0
+  swift-concurrency-extras: https://github.com/pointfreeco/swift-concurrency-extras @ 1.3.2
+  swift-asn1: https://github.com/apple/swift-asn1.git @ 1.6.0
+  swift-crypto: https://github.com/apple/swift-crypto.git @ 4.3.0
+  SVGPath: https://github.com/nicklockwood/SVGPath @ 1.3.0
+  swift-clocks: https://github.com/pointfreeco/swift-clocks @ 1.0.6
+  xctest-dynamic-overlay: https://github.com/pointfreeco/xctest-dynamic-overlay @ 1.9.0
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (26 targets)
+    Target 'Kern' in project 'Kern'
+        ➜ Explicit dependency on target 'KernLiveActivity' in project 'Kern'
+        ➜ Explicit dependency on target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'SVGPath' in project 'SVGPath'
+    Target 'SVGPath' in project 'SVGPath'
+        ➜ Explicit dependency on target 'SVGPath' in project 'SVGPath'
+    Target 'SVGPath' in project 'SVGPath' (no dependencies)
+    Target 'KernLiveActivity' in project 'Kern'
+        ➜ Explicit dependency on target 'Supabase' in project 'Supabase'
+    Target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Supabase' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Storage' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Realtime' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'PostgREST' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Functions' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'Auth' in project 'Supabase'
+        ➜ Explicit dependency on target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+    Target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'swift-crypto_Crypto' in project 'swift-crypto'
+    Target 'Crypto' in project 'swift-crypto'
+        ➜ Explicit dependency on target 'swift-crypto_Crypto' in project 'swift-crypto'
+    Target 'swift-crypto_Crypto' in project 'swift-crypto' (no dependencies)
+    Target 'Helpers' in project 'Supabase'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+    Target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'XCTestDynamicOverlay' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'Clocks' in project 'swift-clocks'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+    Target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+    Target 'IssueReporting' in project 'xctest-dynamic-overlay'
+        ➜ Explicit dependency on target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay'
+    Target 'IssueReportingPackageSupport' in project 'xctest-dynamic-overlay' (no dependencies)
+    Target 'HTTPTypes' in project 'swift-http-types'
+        ➜ Explicit dependency on target 'HTTPTypes' in project 'swift-http-types'
+    Target 'HTTPTypes' in project 'swift-http-types' (no dependencies)
+    Target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+        ➜ Explicit dependency on target 'ConcurrencyExtras' in project 'swift-concurrency-extras'
+    Target 'ConcurrencyExtras' in project 'swift-concurrency-extras' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk /Users/sharannm/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.0-23A339-81ce72e5b06c9602b9d30b56f2eed08a.sdkstatcache
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -o /Users/sharannm/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.0-23A339-81ce72e5b06c9602b9d30b56f2eed08a.sdkstatcache
+
+SwiftDriver KernLiveActivity normal arm64 com.apple.xcode.tools.swift.compiler (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name KernLiveActivity -Onone -enforce-exclusivity\=checked @/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/KernLiveActivity.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -target arm64-apple-ios17.0 -g -module-cache-path /Users/sharannm/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -application-extension -enable-testing -index-store-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos -emit-localized-strings -emit-localized-strings-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64 -c -j8 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.0-23A339-81ce72e5b06c9602b9d30b56f2eed08a.sdkstatcache -output-file-map /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/KernLiveActivity-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/sharannm/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -sdk-module-cache-path /Users/sharannm/Library/Developer/Xcode/DerivedData/ModuleCache.noindex -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/KernLiveActivity.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/sharannm/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/KernLiveActivity_const_extract_protocols.json -Xcc -iquote -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-generated-files.hmap -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-own-target-headers.hmap -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/Kern-42de7d64d7a50e3b3e95d1ae74fc3810-VFS-iphoneos/all-product-headers.yaml -Xcc -iquote -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-project-headers.hmap -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/include -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources-normal/arm64 -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources/arm64 -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/KernLiveActivity-Swift.h -working-directory /Users/sharannm/Projects/Kern/apps/ios/Kern -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ KernCollectionWidget.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernCollectionWidget.swift (in target 'KernLiveActivity' from project 'Kern')
+
+SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernCollectionWidget.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftCompile normal arm64 Compiling\ CalendarLiveActivityAttributes.swift,\ KernLiveActivityBundle.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/CalendarLiveActivityAttributes.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernLiveActivityBundle.swift (in target 'KernLiveActivity' from project 'Kern')
+
+SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/CalendarLiveActivityAttributes.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernLiveActivityBundle.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftCompile normal arm64 Compiling\ KernCalendarWidget.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernCalendarWidget.swift (in target 'KernLiveActivity' from project 'Kern')
+SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernCalendarWidget.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftCompile normal arm64 Compiling\ CalendarLiveActivityWidget.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CalendarLiveActivityWidget.swift (in target 'KernLiveActivity' from project 'Kern')
+SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CalendarLiveActivityWidget.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ KernLiveActivity (in target 'KernLiveActivity' from project 'Kern')
+
+EmitSwiftModule normal arm64 (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftCompile normal arm64 Compiling\ GeneratedAssetSymbols.swift /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'KernLiveActivity' from project 'Kern')
+
+SwiftCompile normal arm64 /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftCompile normal arm64 Compiling\ CollectionWidgetIntent.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CollectionWidgetIntent.swift (in target 'KernLiveActivity' from project 'Kern')
+Failed frontend command:
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/CalendarLiveActivityAttributes.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernLiveActivityBundle.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CalendarLiveActivityWidget.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/CalendarService.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernCalendarWidget.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/KernCollectionWidget.swift -primary-file /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CollectionWidgetIntent.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/SharedAuthStorage.swift /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources/GeneratedAssetSymbols.swift -emit-dependencies-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/CollectionWidgetIntent.d -emit-const-values-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/CollectionWidgetIntent.swiftconstvalues -emit-reference-dependencies-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/CollectionWidgetIntent.swiftdeps -serialize-diagnostics-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/CollectionWidgetIntent.dia -emit-localized-strings -emit-localized-strings-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64 -target arm64-apple-ios17.0 -module-can-import-version DeveloperToolsSupport 23.0.4 23.0.4 -module-can-import-version SwiftUI 7.0.84.1 7.0.84 -module-can-import-version UIKit 9088.1.113 9088.1.113 -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libAppIntentsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#AppIntentsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libFoundationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#FoundationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libObservationMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#ObservationMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libPreviewsMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#PreviewsMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftMacros -load-resolved-plugin /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins/libSwiftUIMacros.dylib\#/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server\#SwiftUIMacros -disable-implicit-swift-modules -Xcc -fno-implicit-modules -Xcc -fno-implicit-module-maps -explicit-swift-module-map-file /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/KernLiveActivity-dependencies-1.json -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk -I /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/PackageFrameworks -F /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos -no-color-diagnostics -Xcc -fno-color-diagnostics -application-extension -enable-testing -g -debug-info-format\=dwarf -dwarf-version\=4 -module-cache-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -swift-version 5 -enforce-exclusivity\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/KernLiveActivity_const_extract_protocols.json -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/sharannm/Library/Developer/Xcode/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/sharannm/Projects/Kern/apps/ios/Kern -enable-anonymous-context-mangled-names -file-compilation-dir /Users/sharannm/Projects/Kern/apps/ios/Kern -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -Xcc -ivfsstatcache -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphoneos26.0-23A339-81ce72e5b06c9602b9d30b56f2eed08a.sdkstatcache -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-generated-files.hmap -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-own-target-headers.hmap -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/Kern-42de7d64d7a50e3b3e95d1ae74fc3810-VFS-iphoneos/all-product-headers.yaml -Xcc -iquote -Xcc /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/KernLiveActivity-project-headers.hmap -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Products/Debug-iphoneos/include -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources-normal/arm64 -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources/arm64 -Xcc -I/Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/DerivedSources -Xcc -DDEBUG\=1 -no-auto-bridging-header-chaining -module-name KernLiveActivity -frontend-parseable-output -disable-clang-spi -target-sdk-version 26.0 -target-sdk-name iphoneos26.0 -clang-target arm64-apple-ios26.0 -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -o /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Build/Intermediates.noindex/Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/CollectionWidgetIntent.o -index-unit-output-path /Kern.build/Debug-iphoneos/KernLiveActivity.build/Objects-normal/arm64/CollectionWidgetIntent.o -index-store-path /Users/sharannm/Library/Developer/Xcode/DerivedData/Kern-diirubcdxuaswagmlqfyoprnbgxo/Index.noindex/DataStore -index-system-modules
+
+SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CollectionWidgetIntent.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+/Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CollectionWidgetIntent.swift:69:30: error: argument type 'UserDefaultsAuthStorage' does not conform to expected type 'AuthLocalStorage'
+                    storage: UserDefaultsAuthStorage(suiteName: "group.sharann.kern")
+                             ^
+                                                                                      as! AuthLocalStorage
+
+SwiftCompile normal arm64 Compiling\ CalendarService.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/CalendarService.swift (in target 'KernLiveActivity' from project 'Kern')
+
+SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/CalendarService.swift (in target 'KernLiveActivity' from project 'Kern')
+    cd /Users/sharannm/Projects/Kern/apps/ios/Kern
+    
+
+SwiftCompile normal arm64 Compiling\ SharedAuthStorage.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/Kern/SharedAuthStorage.swift (in target 'KernLiveActivity' from project 'Kern')
+
+** BUILD FAILED **
+
+
+The following build commands failed:
+	SwiftCompile normal arm64 Compiling\ CollectionWidgetIntent.swift /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CollectionWidgetIntent.swift (in target 'KernLiveActivity' from project 'Kern')
+	SwiftCompile normal arm64 /Users/sharannm/Projects/Kern/apps/ios/Kern/KernLiveActivity/CollectionWidgetIntent.swift (in target 'KernLiveActivity' from project 'Kern')
+	Building project Kern with scheme Kern and configuration Debug
+(3 failures)

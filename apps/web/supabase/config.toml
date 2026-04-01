@@ -405,6 +405,12 @@ verify_jwt = false
 [functions.test-rss-feed]
 verify_jwt = false
 
+[functions.sync-ics]
+verify_jwt = false
+
+[functions.test-ics-calendar]
+verify_jwt = false
+
 [functions.sync-notion]
 verify_jwt = false
 

@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { GitHubSourceConfig } from '@/components/live-sources/sources/GitHubSourceConfig';
 import { GoogleCalendarSourceConfig } from '@/components/live-sources/sources/GoogleCalendarSourceConfig';
+import { ICSSourceConfig } from '@/components/live-sources/sources/ICSSourceConfig';
 import { LinearSourceConfig } from '@/components/live-sources/sources/LinearSourceConfig';
 import { NotionSourceConfig } from '@/components/live-sources/sources/NotionSourceConfig';
 import { RSSSourceConfig } from '@/components/live-sources/sources/RSSSourceConfig';
@@ -15,7 +16,7 @@ import { slugify } from '@/lib/utils';
 import { useAuth } from '@/providers/AuthProvider';
 import type { KernCollection } from '@/types/kern';
 
-type LiveSourceId = 'github' | 'google_calendar' | 'notion' | 'linear' | 'rss' | 'akiflow';
+type LiveSourceId = 'github' | 'google_calendar' | 'notion' | 'linear' | 'rss' | 'ics' | 'akiflow';
 
 const SOURCES: {
   id: LiveSourceId;
@@ -54,6 +55,12 @@ const SOURCES: {
     icon: Rss,
   },
   {
+    id: 'ics',
+    name: 'ICS Calendar',
+    description: 'Sync from .ics calendar file',
+    icon: Calendar,
+  },
+  {
     id: 'akiflow',
     name: 'Akiflow',
     description: 'Sync tasks and availability',
@@ -73,6 +80,8 @@ function isSourceConnected(sourceId: LiveSourceId, col: KernCollection | null | 
       return t === 'google_calendar_events';
     case 'rss':
       return t === 'rss_feed';
+    case 'ics':
+      return t === 'ics_calendar';
     case 'notion':
       return t === 'notion_database';
     case 'linear':
@@ -230,6 +239,9 @@ export function ConnectLiveSourceModal({
           {selectedSource === 'rss' && activeCollectionId ? (
             <RSSSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
           ) : null}
+          {selectedSource === 'ics' && activeCollectionId ? (
+            <ICSSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
+          ) : null}
           {selectedSource === 'notion' && activeCollectionId ? (
             <NotionSourceConfig collectionId={activeCollectionId} onSuccess={handleConnectSuccess} />
           ) : null}
@@ -240,6 +252,7 @@ export function ConnectLiveSourceModal({
           selectedSource !== 'github' &&
           selectedSource !== 'google_calendar' &&
           selectedSource !== 'rss' &&
+          selectedSource !== 'ics' &&
           selectedSource !== 'notion' &&
           selectedSource !== 'linear' ? (
             <p className="text-sm text-kern-text-2">Coming soon</p>
@@ -248,6 +261,7 @@ export function ConnectLiveSourceModal({
           (selectedSource === 'github' ||
             selectedSource === 'google_calendar' ||
             selectedSource === 'rss' ||
+            selectedSource === 'ics' ||
             selectedSource === 'notion' ||
             selectedSource === 'linear') ? (
             <p className="text-sm text-kern-text-2">No collection selected.</p>

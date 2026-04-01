@@ -17,6 +17,7 @@ const SOURCE_LABELS: Partial<Record<LiveSourceType, string>> = {
   github_repos: 'GitHub Repositories',
   google_calendar_events: 'Google Calendar',
   rss_feed: 'RSS Feed',
+  ics_calendar: 'ICS Calendar',
 };
 
 function labelForType(t: KernCollection['live_source_type']): string {

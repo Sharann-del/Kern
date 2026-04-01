@@ -6,5 +6,6 @@ export function edgeFunctionForLiveSource(liveSourceType: string | null | undefi
   if (liveSourceType === 'rss_feed') return 'sync-rss';
   if (liveSourceType === 'notion_database') return 'sync-notion';
   if (liveSourceType === 'linear_issues') return 'sync-linear';
+  if (liveSourceType === 'ics_calendar') return 'sync-ics';
   return null;
 }

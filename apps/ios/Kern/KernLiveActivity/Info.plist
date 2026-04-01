@@ -20,6 +20,14 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>SUPABASE_URL</key>
+	<string>$(SUPABASE_URL)</string>
+	<key>SUPABASE_ANON_KEY</key>
+	<string>$(SUPABASE_ANON_KEY)</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Kern widgets show your upcoming calendar events on your Home Screen.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>Kern widgets show your reminders alongside calendar events.</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionPointIdentifier</key>

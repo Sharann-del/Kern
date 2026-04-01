@@ -59,7 +59,7 @@ type DashboardModel struct {
 	spinner spinner.Model
 }
 
-func newDashboard(client *api.Client, cfg *config.Config, userID string, w, h int) *DashboardModel {
+ func newDashboard(client *api.Client, cfg *config.Config, userID string, w, h int) *DashboardModel {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(Gold)
@@ -116,6 +116,13 @@ func (d *DashboardModel) Init() tea.Cmd {
 		d.spinner.Tick,
 		loadCollectionsCmd(d.client),
 	)
+}
+
+func refreshSessionCmd(baseURL, anonKey, refreshToken string) tea.Cmd {
+	return func() tea.Msg {
+		res, err := api.RefreshSession(baseURL, anonKey, refreshToken)
+		return sessionRefreshedMsg{res: res, err: err}
+	}
 }
 
 func loadCollectionsCmd(c *api.Client) tea.Cmd {
@@ -220,6 +227,9 @@ func (d *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case collectionsLoadedMsg:
 		d.loading = false
 		if msg.err != nil {
+			if strings.Contains(msg.err.Error(), "401") && d.cfg.RefreshToken != "" {
+				return d, refreshSessionCmd(d.cfg.SupabaseURL, d.cfg.SupabaseKey, d.cfg.RefreshToken)
+			}
 			d.err = msg.err
 			return d, nil
 		}
@@ -241,6 +251,9 @@ func (d *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case fieldsLoadedMsg:
 		if msg.err != nil {
+			if strings.Contains(msg.err.Error(), "401") && d.cfg.RefreshToken != "" {
+				return d, refreshSessionCmd(d.cfg.SupabaseURL, d.cfg.SupabaseKey, d.cfg.RefreshToken)
+			}
 			d.err = msg.err
 			return d, nil
 		}
@@ -250,6 +263,9 @@ func (d *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case rowsLoadedMsg:
 		d.rowsLoading = false
 		if msg.err != nil {
+			if strings.Contains(msg.err.Error(), "401") && d.cfg.RefreshToken != "" {
+				return d, refreshSessionCmd(d.cfg.SupabaseURL, d.cfg.SupabaseKey, d.cfg.RefreshToken)
+			}
 			d.err = msg.err
 			return d, nil
 		}
@@ -275,6 +291,20 @@ func (d *DashboardModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		d.pendingID = ""
 		d.confirmLabel = ""
 		return d, d.reloadAfterMutation()
+
+	case sessionRefreshedMsg:
+		if msg.err != nil {
+			if strings.Contains(msg.err.Error(), "400") {
+				return d, signOutCmd(d.cfg)
+			}
+			d.err = msg.err
+			return d, nil
+		}
+		d.cfg.AccessToken = msg.res.AccessToken
+		d.cfg.RefreshToken = msg.res.RefreshToken
+		d.client.SetAuthToken(msg.res.AccessToken)
+		_ = config.Save(d.cfg)
+		return d, loadCollectionsCmd(d.client)
 
 	case tea.WindowSizeMsg:
 		d.width = msg.Width

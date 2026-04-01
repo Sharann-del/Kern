@@ -5,5 +5,7 @@ import WidgetKit
 struct KernLiveActivityBundle: WidgetBundle {
     var body: some Widget {
         CalendarLiveActivityWidget()
+        KernCalendarWidget()
+        KernCollectionAppWidget()
     }
 }

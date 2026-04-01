@@ -33,6 +33,8 @@
 	<true/>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Kern shows a Live Activity for calendar events that are happening now.</string>
+	<key>NSRemindersFullAccessUsageDescription</key>
+	<string>Kern shows your reminders alongside calendar events.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>

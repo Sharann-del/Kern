@@ -24,5 +24,10 @@ type mutationDoneMsg struct {
 	err error
 }
 
+type sessionRefreshedMsg struct {
+	res *api.AuthResponse
+	err error
+}
+
 // signedOutMsg is sent after remote logout and local config clear; App returns to login.
 type signedOutMsg struct{}

@@ -23,6 +23,7 @@ export type LiveSourceType =
   | 'linear_issues'
   | 'linear_projects'
   | 'rss_feed'
+  | 'ics_calendar'
   | 'akiflow_tasks'
   | 'apple_calendar_events';
 export type FilterOperator =

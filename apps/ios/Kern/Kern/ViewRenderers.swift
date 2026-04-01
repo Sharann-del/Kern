@@ -144,19 +144,21 @@ struct TableRowsView: View {
                         }
                         .buttonStyle(.plain)
                         .frame(width: checkCol)
-                        .frame(minHeight: rowMinH)
+                        .frame(minHeight: rowMinH, maxHeight: .infinity)
                         .background(theme.bg0)
                         .overlay(Rectangle().stroke(theme.border, lineWidth: 0.5))
                         ForEach(fields) { f in
                             tableCell(row: row, field: f)
-                                .frame(width: colW, alignment: .topLeading)
-                                .frame(minHeight: rowMinH)
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+                                .frame(width: colW)
                                 .padding(.horizontal, 8)
-                                .padding(.vertical, 8)
+                                .padding(.vertical, 4)
+                                .frame(minHeight: rowMinH, maxHeight: .infinity, alignment: .leading)
                                 .background(theme.bg0)
                                 .overlay(Rectangle().stroke(theme.border, lineWidth: 0.5))
                         }
                     }
+                    .fixedSize(horizontal: false, vertical: true)
                     .contentShape(Rectangle())
                     .onTapGesture {
                         onTap(row)
