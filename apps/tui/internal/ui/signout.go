@@ -2,8 +2,9 @@ package ui
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/kern/kern-tui/internal/api"
-	"github.com/kern/kern-tui/internal/config"
+	"github.com/Sharann-del/kern/tui/internal/api"
+	"github.com/Sharann-del/kern/tui/internal/auth"
+	"github.com/Sharann-del/kern/tui/internal/config"
 )
 
 func signOutCmd(cfg *config.Config) tea.Cmd {
@@ -12,6 +13,7 @@ func signOutCmd(cfg *config.Config) tea.Cmd {
 			_ = api.SignOut(cfg.SupabaseURL, cfg.SupabaseKey, cfg.AccessToken)
 		}
 		_ = config.Clear()
+		_ = auth.Clear() // also clear the new ~/.config/kern/session.json format
 		return signedOutMsg{}
 	}
 }

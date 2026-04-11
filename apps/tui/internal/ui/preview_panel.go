@@ -9,7 +9,7 @@ import (
 
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kern/kern-tui/internal/api"
+	"github.com/Sharann-del/kern/tui/internal/api"
 )
 
 var htmlTagRe = regexp.MustCompile(`<[^>]*>`)

@@ -7,8 +7,8 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kern/kern-tui/internal/api"
-	"github.com/kern/kern-tui/internal/config"
+	"github.com/Sharann-del/kern/tui/internal/api"
+	"github.com/Sharann-del/kern/tui/internal/config"
 )
 
 const rowsPageSize = 50

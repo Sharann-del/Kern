@@ -4,8 +4,8 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	kernconfig "github.com/kern/kern-tui/internal/config"
-	"github.com/kern/kern-tui/internal/keys"
+	kernconfig "github.com/Sharann-del/kern/tui/internal/config"
+	"github.com/Sharann-del/kern/tui/internal/keys"
 )
 
 const (

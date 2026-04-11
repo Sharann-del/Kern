@@ -19,41 +19,29 @@ The full specification is in [Kern PRD.md](../Kern%20PRD.md) at the repository r
 From this directory (`kern/`):
 
 1. **Install dependencies**
-
-   ```bash
+  ```bash
    npm install
-   ```
-
+  ```
 2. **Environment**
-
-   Copy `.env.example` to `.env.local` (or `.env`) and set at least:
-
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
-
+  Copy `.env.example` to `.env.local` (or `.env`) and set at least:
+  - `VITE_SUPABASE_URL`
+  - `VITE_SUPABASE_ANON_KEY`
    See [.env.example](.env.example) for OAuth client IDs, Edge Function secrets, and MCP-related notes.
-
 3. **Start Supabase locally** (from `kern/` if your `supabase` folder is here, or from the repo root if configured there—use the same directory where `supabase/config.toml` lives)
-
-   ```bash
+  ```bash
    supabase start
-   ```
-
+  ```
 4. **Apply database migrations**
-
-   ```bash
+  ```bash
    supabase db push
-   ```
-
+  ```
 5. **Run the app**
-
-   ```bash
+  ```bash
    npm run dev
-   ```
-
+  ```
    The Vite dev server defaults to `http://localhost:5173`.
 
-Use a **local** Supabase instance when developing against `supabase start`; point `VITE_SUPABASE_*` at that project’s URL and anon key from the CLI output.
+Use a **local** Supabase instance when developing against `supabase start`; point `VITE_SUPABASE_`* at that project’s URL and anon key from the CLI output.
 
 ## Creating your first collection
 
@@ -80,18 +68,20 @@ Refer to the official [Supabase docs](https://supabase.com/docs) for projects, a
 
 ## Scripts
 
-| Command            | Description                |
-| ------------------ | -------------------------- |
-| `npm run dev`      | Start Vite dev server      |
-| `npm run build`    | Production build           |
-| `npm run preview`  | Preview production build   |
-| `npm run lint`     | ESLint                     |
+
+| Command           | Description              |
+| ----------------- | ------------------------ |
+| `npm run dev`     | Start Vite dev server    |
+| `npm run build`   | Production build         |
+| `npm run preview` | Preview production build |
+| `npm run lint`    | ESLint                   |
+
 
 ## Keyboard shortcuts (high level)
 
 - **Cmd+K** (Ctrl+K): command palette  
 - **Cmd+N**: new collection  
 - **G** then **D**: dashboard  
-- **G** then **S**: settings  
+- **G** then **S**: settings
 
 More shortcuts are listed in the in-app **Keyboard shortcuts** modal.

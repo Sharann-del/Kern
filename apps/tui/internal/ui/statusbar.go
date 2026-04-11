@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kern/kern-tui/internal/keys"
+	"github.com/Sharann-del/kern/tui/internal/keys"
 )
 
 func renderStatusBar(d *DashboardModel, email string, spinView string, barW int) string {

@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kern/kern-tui/internal/api"
+	"github.com/Sharann-del/kern/tui/internal/api"
 )
 
 func primarySecondarySlugs(fields []api.Field) (primary string, secondary string) {

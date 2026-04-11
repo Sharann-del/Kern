@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/kern/kern-tui/internal/api"
+	"github.com/Sharann-del/kern/tui/internal/api"
 )
 
 func renderFieldsViewMiddle(d *DashboardModel, innerH, innerW int) string {

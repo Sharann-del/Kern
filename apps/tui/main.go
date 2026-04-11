@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/kern/kern-tui/cmd"
+	"github.com/Sharann-del/kern/tui/cmd"
 )
 
 func main() {

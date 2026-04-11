@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"github.com/kern/kern-tui/internal/api"
+	"github.com/Sharann-del/kern/tui/internal/api"
 )
 
 type collectionsLoadedMsg struct {

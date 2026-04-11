@@ -42,6 +42,10 @@ function isAllowedOrigin(req: Request): boolean {
     if (hostname === 'localhost' || hostname === '127.0.0.1') return true;
     if (hostname === 'claude.ai' || hostname.endsWith('.claude.ai')) return true;
     if (hostname === 'anthropic.com' || hostname.endsWith('.anthropic.com')) return true;
+    // Claude MCP Apps widget runs on {hash}.claudemcpcontent.com (MCP Apps CSP/CORS docs).
+    if (hostname === 'claudemcpcontent.com' || hostname.endsWith('.claudemcpcontent.com')) {
+      return true;
+    }
     return false;
   } catch {
     return false;

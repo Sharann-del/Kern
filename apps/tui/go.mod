@@ -1,11 +1,13 @@
-module github.com/kern/kern-tui
+module github.com/Sharann-del/kern/tui
 
 go 1.22
 
 require (
 	github.com/charmbracelet/bubbles v0.20.0
 	github.com/charmbracelet/bubbletea v1.2.4
+	github.com/charmbracelet/harmonica v0.2.0
 	github.com/charmbracelet/lipgloss v1.0.0
+	github.com/joho/godotenv v1.5.1
 	github.com/spf13/cobra v1.8.1
 )
 
@@ -15,12 +17,14 @@ require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/charmbracelet/glamour v0.8.0 // indirect
+	github.com/charmbracelet/harmonica v0.2.0
 	github.com/charmbracelet/x/ansi v0.4.5 // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect
 	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/joho/godotenv v1.5.1
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
