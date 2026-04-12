@@ -13,13 +13,14 @@ import (
 	"github.com/Sharann-del/kern/tui/internal/config"
 	"github.com/Sharann-del/kern/tui/internal/db"
 	loginpkg "github.com/Sharann-del/kern/tui/internal/ui/login"
+	"github.com/Sharann-del/kern/tui/internal/ui/layout"
 )
 
 // AppModel is the root Bubble Tea model (loading → login → dashboard).
 type AppModel struct {
 	state      string
 	loginModel *loginpkg.Model
-	dashboard  *DashboardModel
+	dashboard  tea.Model // *layout.Model after auth
 	config     *config.Config
 	client     *api.Client
 
@@ -118,7 +119,8 @@ func (a AppModel) applyLoadResult(msg loadConfigMsg) (tea.Model, tea.Cmd) {
 	a.client = api.New(msg.cfg.SupabaseURL, msg.cfg.SupabaseKey, msg.cfg.AccessToken)
 	a.state = "dashboard"
 	a.pendingLoad = nil
-	a.dashboard = newDashboard(a.client, a.config, uid, a.width, a.height)
+	lm := layout.New(a.client, a.width, a.height)
+	a.dashboard = &lm
 	return a, a.dashboard.Init()
 }
 
@@ -135,9 +137,11 @@ func (a AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.WindowSizeMsg:
 		a.width, a.height = msg.Width, msg.Height
-		if a.dashboard != nil {
-			a.dashboard.width = msg.Width
-			a.dashboard.height = msg.Height
+		// layout.Model handles resize via its own Update; DashboardModel needs direct field writes.
+		if d, ok := a.dashboard.(*DashboardModel); ok {
+			d.width = msg.Width
+			d.height = msg.Height
+			a.dashboard = d
 		}
 		// loginModel handles its own WindowSizeMsg in the state-switch delegation below.
 
@@ -173,7 +177,8 @@ func (a AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		a.config = cfg
 		a.client = api.New(cfg.SupabaseURL, cfg.SupabaseKey, cfg.AccessToken)
 		a.state = "dashboard"
-		a.dashboard = newDashboard(a.client, a.config, msg.Session.User.ID, a.width, a.height)
+		lm := layout.New(a.client, a.width, a.height)
+		a.dashboard = &lm
 		return a, a.dashboard.Init()
 
 	// ── dashboard triggered sign-out ──
@@ -205,15 +210,18 @@ func (a AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if km, ok := msg.(tea.KeyMsg); ok {
 			switch km.String() {
 			case "ctrl+c", "q":
-				if !a.dashboard.capturesKeyboard() && !a.dashboard.overlayActive() {
-					return a, tea.Quit
+				// DashboardModel suppresses quit when a form/overlay is active.
+				// layout.Model has no overlays yet, so quit is always allowed.
+				if d, ok := a.dashboard.(*DashboardModel); ok {
+					if d.capturesKeyboard() || d.overlayActive() {
+						break
+					}
 				}
+				return a, tea.Quit
 			}
 		}
 		m, cmd := a.dashboard.Update(msg)
-		if dm, ok := m.(*DashboardModel); ok {
-			a.dashboard = dm
-		}
+		a.dashboard = m
 		return a, cmd
 	}
 
